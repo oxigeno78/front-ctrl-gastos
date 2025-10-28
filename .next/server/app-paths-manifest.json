@@ -1,7 +1,0 @@
-{
-  "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/add-transaction/page": "app/dashboard/add-transaction/page.js",
-  "/auth/login/page": "app/auth/login/page.js",
-  "/dashboard/transactions/page": "app/dashboard/transactions/page.js",
-  "/dashboard/reports/page": "app/dashboard/reports/page.js"
-}
