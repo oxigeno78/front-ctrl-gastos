@@ -1,0 +1,61 @@
+'use client';
+
+import React from 'react';
+import { Layout, Typography } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+
+const { Header, Content } = Layout;
+const { Title } = Typography;
+
+interface AuthLayoutProps {
+  children: React.ReactNode;
+  title: string;
+}
+
+const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title }) => {
+  return (
+    <Layout style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+      <Header style={{ 
+        background: 'rgba(255, 255, 255, 0.1)', 
+        backdropFilter: 'blur(10px)',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <UserOutlined style={{ fontSize: '24px', color: 'white' }} />
+          <Title level={3} style={{ color: 'white', margin: 0 }}>
+            Control de Gastos
+          </Title>
+        </div>
+      </Header>
+      
+      <Content style={{ 
+        padding: '50px 20px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          background: 'white',
+          borderRadius: '12px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          padding: '40px',
+          width: '100%',
+          maxWidth: '400px',
+          backdropFilter: 'blur(10px)'
+        }}>
+          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            <Title level={2} style={{ margin: 0, color: '#1890ff' }}>
+              {title}
+            </Title>
+          </div>
+          {children}
+        </div>
+      </Content>
+    </Layout>
+  );
+};
+
+export default AuthLayout;
