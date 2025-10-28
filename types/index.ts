@@ -67,6 +67,7 @@ export interface TransactionFilters {
   limit?: number;
   type?: 'income' | 'expense';
   category?: string;
+  description?: string;
   startDate?: string;
   endDate?: string;
 }

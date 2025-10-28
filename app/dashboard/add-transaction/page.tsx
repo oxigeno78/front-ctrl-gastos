@@ -43,7 +43,7 @@ const transactionSchema = yup.object({
     .required('La descripción es requerida')
     .max(200, 'La descripción no puede exceder 200 caracteres'),
   date: yup
-    .mixed()
+    .mixed<dayjs.Dayjs>()
     .required('La fecha es requerida'),
 });
 
@@ -163,10 +163,8 @@ const AddTransactionPage: React.FC = () => {
                   min={0}
                   step={0.01}
                   precision={2}
-                  formatter={(value) => `€ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                  parser={(value) => value!.replace(/€\s?|(,*)/g, '')}
-                  {...register('amount')}
-                  onChange={(value) => setValue('amount', value || 0)}
+                  formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  onChange={(value) => setValue('amount', typeof value === 'number' ? value : 0)}
                 />
               </Form.Item>
 
@@ -196,7 +194,6 @@ const AddTransactionPage: React.FC = () => {
                 <Input.TextArea
                   rows={3}
                   placeholder="Describe brevemente esta transacción"
-                  {...register('description')}
                   onChange={(e) => setValue('description', e.target.value)}
                 />
               </Form.Item>
@@ -209,7 +206,7 @@ const AddTransactionPage: React.FC = () => {
                 <DatePicker
                   style={{ width: '100%' }}
                   format="DD/MM/YYYY"
-                  {...register('date')}
+                  defaultValue={dayjs()}
                   onChange={(date) => setValue('date', date || dayjs())}
                 />
               </Form.Item>

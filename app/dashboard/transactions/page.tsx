@@ -140,7 +140,14 @@ const TransactionsPage: React.FC = () => {
                 placeholder="Buscar por descripción..."
                 prefix={<SearchOutlined />}
                 style={{ width: 200 }}
-                onChange={(e) => handleFilterChange('description', e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFilters({
+                    ...filters,
+                    description: value || undefined,
+                    page: 1,
+                  });
+                }}
               />
               
               <Select

@@ -14,7 +14,6 @@ import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { useTransactionStore } from '@/store';
-import { Transaction, TransactionSummary } from '@/types';
 import { formatCurrency, formatDate } from '@/utils/helpers';
 
 const { Title } = Typography;
@@ -112,8 +111,8 @@ const DashboardPage: React.FC = () => {
                   value={summary?.totalIncome || 0}
                   precision={2}
                   valueStyle={{ color: '#3f8600' }}
-                  prefix={<ArrowUpOutlined />}
-                  suffix="€"
+                  suffix={<ArrowUpOutlined />}
+                  prefix="$"
                 />
               </Card>
             </Col>
@@ -124,8 +123,8 @@ const DashboardPage: React.FC = () => {
                   value={summary?.totalExpense || 0}
                   precision={2}
                   valueStyle={{ color: '#cf1322' }}
-                  prefix={<ArrowDownOutlined />}
-                  suffix="€"
+                  suffix={<ArrowDownOutlined />}
+                  prefix="$"
                 />
               </Card>
             </Col>
@@ -138,8 +137,8 @@ const DashboardPage: React.FC = () => {
                   valueStyle={{ 
                     color: (summary?.balance || 0) >= 0 ? '#3f8600' : '#cf1322' 
                   }}
-                  prefix={<DollarOutlined />}
-                  suffix="€"
+                  suffix={<DollarOutlined />}
+                  prefix="$"
                 />
               </Card>
             </Col>

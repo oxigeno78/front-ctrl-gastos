@@ -15,21 +15,6 @@ interface AuthLayoutProps {
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title }) => {
   return (
     <Layout style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-      <Header style={{ 
-        background: 'rgba(255, 255, 255, 0.1)', 
-        backdropFilter: 'blur(10px)',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <UserOutlined style={{ fontSize: '24px', color: 'white' }} />
-          <Title level={3} style={{ color: 'white', margin: 0 }}>
-            Control de Gastos
-          </Title>
-        </div>
-      </Header>
       
       <Content style={{ 
         padding: '50px 20px',
