@@ -65,7 +65,6 @@ const AddTransactionPage: React.FC = () => {
   const defaultType = searchParams.get('type') as 'income' | 'expense' || 'income';
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
     setValue,

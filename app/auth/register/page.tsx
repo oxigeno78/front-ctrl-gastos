@@ -51,7 +51,6 @@ const RegisterPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
   } = useForm<RegisterFormData>({
     resolver: yupResolver(registerSchema),
   });

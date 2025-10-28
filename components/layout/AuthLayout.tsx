@@ -2,9 +2,8 @@
 
 import React from 'react';
 import { Layout, Typography } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 const { Title } = Typography;
 
 interface AuthLayoutProps {
