@@ -31,9 +31,7 @@ export interface Pagination {
 }
 
 export interface TransactionsResponse {
-  transactions: Transaction[];
-  pagination: Pagination;
-  summary: TransactionSummary;
+  data: TransactionData;
 }
 
 export interface AuthResponse {
@@ -70,4 +68,10 @@ export interface TransactionFilters {
   description?: string;
   startDate?: string;
   endDate?: string;
+}
+
+interface TransactionData {
+  transactions: Transaction[];
+  pagination: Pagination;
+  summary: TransactionSummary;
 }

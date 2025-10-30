@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Select, Typography, Spin, message } from 'antd';
-import { Column, Pie, Line } from '@ant-design/charts';
+import { Column, Pie, Line, ColumnConfig } from '@ant-design/charts';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
@@ -105,14 +105,14 @@ const ReportsPage: React.FC = () => {
   const pieData = getPieData();
   const trendData = getTrendData();
 
-  const columnConfig = {
+  const columnConfig: ColumnConfig = {
     data: categoryData,
     xField: 'category',
     yField: 'amount',
     seriesField: 'type',
     color: ['#52c41a', '#ff4d4f'],
     label: {
-      position: 'middle',
+      position: 'top',
       formatter: (datum: any) => formatCurrency(datum.amount),
     },
     tooltip: {
@@ -130,8 +130,7 @@ const ReportsPage: React.FC = () => {
     radius: 0.8,
     color: ['#52c41a', '#ff4d4f'],
     label: {
-      type: 'outer',
-      content: '{name}: {percentage}',
+      text: (datum: any) => `${datum.type}: ${(datum.percent * 100).toFixed(1)}%`,
     },
     tooltip: {
       formatter: (datum: any) => ({

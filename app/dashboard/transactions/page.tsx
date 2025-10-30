@@ -33,11 +33,11 @@ const TransactionsPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await transactionAPI.getTransactions(filters);
-      setTransactions(response.transactions);
+      setTransactions(response.data.transactions);
       setPagination({
-        current: response.pagination.page,
-        pageSize: response.pagination.limit,
-        total: response.pagination.total,
+        current: response.data.pagination.page,
+        pageSize: response.data.pagination.limit,
+        total: response.data.pagination.total,
       });
     } catch (error) {
       const apiError = handleApiError(error);

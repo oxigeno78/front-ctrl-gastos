@@ -31,8 +31,8 @@ const DashboardPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await transactionAPI.getTransactions({ limit: 5 });
-      setTransactions(response.transactions);
-      setSummary(response.summary);
+      setTransactions(response.data.transactions);
+      setSummary(response.data.summary);
     } catch (error) {
       const apiError = handleApiError(error);
       message.error(apiError.message);

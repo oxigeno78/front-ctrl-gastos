@@ -2,9 +2,9 @@ import dayjs from 'dayjs';
 
 // Formatear moneda
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('es-ES', {
+  return new Intl.NumberFormat('es-MX', {
     style: 'currency',
-    currency: 'EUR',
+    currency: 'MXN',
   }).format(amount);
 };
 
