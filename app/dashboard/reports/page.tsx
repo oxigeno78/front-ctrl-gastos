@@ -102,8 +102,6 @@ const ReportsPage: React.FC = () => {
         });
       }
     }
-    console.log('monthlyStats', monthlyStats);
-    console.log('months', months);
     return months;
   };
 
