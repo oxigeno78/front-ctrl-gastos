@@ -121,7 +121,6 @@ const ReportsPage: React.FC = () => {
     },
     tooltip: {
       formatter: (datum: any) => {
-        console.log('datum', datum);
         return {
           name: datum.type,
           value: `${formatCurrency(Number(datum.amount) || 0)} (${Number(datum.count) || 0} transacciones)`,
