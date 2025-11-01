@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from 'axios';
-import Cookies from 'js-cookie';
 import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1.0.0';
@@ -16,7 +15,7 @@ const api = axios.create({
 // Interceptor para agregar token a las requests
 api.interceptors.request.use(
   (config) => {
-    const token = Cookies.get('token');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,7 +32,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token expirado o inválido
-      Cookies.remove('token');
+      if (typeof window !== 'undefined') { localStorage.removeItem('token'); }
       window.location.href = '/auth/login';
     }
     return Promise.reject(error);

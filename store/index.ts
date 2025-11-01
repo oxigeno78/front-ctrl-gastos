@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import Cookies from 'js-cookie';
 import { User, Transaction, TransactionSummary } from '@/types';
 
 interface AuthState {
@@ -31,11 +30,15 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       login: (user: User, token: string) => {
-        Cookies.set('token', token, { expires: 7 });
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', token);
+        }
         set({ user, token, isAuthenticated: true });
       },
       logout: () => {
-        Cookies.remove('token');
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+        }
         set({ user: null, token: null, isAuthenticated: false });
       },
       setUser: (user: User) => set({ user }),
@@ -43,8 +46,9 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       partialize: (state) => ({ 
-        user: state.user, 
-        isAuthenticated: state.isAuthenticated 
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
       }),
     }
   )

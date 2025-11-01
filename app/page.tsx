@@ -4,14 +4,13 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Spin } from 'antd';
 import { useAuthStore } from '@/store';
-import Cookies from 'js-cookie';
 
 const HomePage: React.FC = () => {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    const token = Cookies.get('token');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     
     if (token && isAuthenticated) {
       router.push('/dashboard');

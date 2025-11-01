@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store';
-import Cookies from 'js-cookie';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,17 +11,22 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const token = Cookies.get('token');
-    
-    if (!token || !isAuthenticated || !user) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (!token) {
       router.push('/auth/login');
     }
-  }, [isAuthenticated, user, router]);
+  }, [mounted, router]);
 
-  if (!isAuthenticated || !user) {
-    return null; // O un componente de loading
+  if (!mounted) {
+    return null;
   }
 
   return <>{children}</>;

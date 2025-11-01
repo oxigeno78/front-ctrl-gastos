@@ -53,7 +53,7 @@ const ReportsPage: React.FC = () => {
   // Preparar datos para gráfica de barras por categoría
   const getCategoryData = () => {
     if (!monthlyStats?.stats) return [];
-
+    
     const categoryData: any[] = [];
     
     monthlyStats.stats.forEach(stat => {
@@ -61,8 +61,8 @@ const ReportsPage: React.FC = () => {
         categoryData.push({
           category: cat.category,
           type: stat._id === 'income' ? 'Ingresos' : 'Gastos',
-          amount: cat.total,
-          count: cat.count,
+          amount: Number(cat.total) || 0,
+          count: Number(cat.count) || 0,
         });
       });
     });
@@ -76,8 +76,8 @@ const ReportsPage: React.FC = () => {
 
     return monthlyStats.stats.map(stat => ({
       type: stat._id === 'income' ? 'Ingresos' : 'Gastos',
-      value: stat.total,
-      count: stat.count,
+      value: Number(stat.total) || 0,
+      count: Number(stat.count) || 0,
     }));
   };
 
@@ -86,24 +86,31 @@ const ReportsPage: React.FC = () => {
     // Para esta demo, generamos datos de los últimos 6 meses
     const months = [];
     const currentDate = dayjs();
-    
-    for (let i = 5; i >= 0; i--) {
-      const date = currentDate.subtract(i, 'month');
-      months.push({
-        month: date.format('MMM YYYY'),
-        monthNumber: date.month() + 1,
-        year: date.year(),
-        income: Math.random() * 5000 + 2000, // Datos simulados
-        expense: Math.random() * 4000 + 1500,
-      });
-    }
 
+    if(monthlyStats?.stats){
+      for (let i = 5; i >= 0; i--) {
+        const date = currentDate.subtract(i, 'month');
+        const currentMonth = date.month() + 1;
+        const income = monthlyStats.month == currentMonth ? monthlyStats.stats.find(s => s._id === 'income')?.total || 0 : 0;
+        const expense = monthlyStats.month == currentMonth ? monthlyStats.stats.find(s => s._id === 'expense')?.total || 0 : 0;
+        months.push({
+          month: date.format('MMM YYYY'),
+          monthNumber: currentMonth,
+          year: date.year(),
+          income,
+          expense
+        });
+      }
+    }
+    console.log('monthlyStats', monthlyStats);
+    console.log('months', months);
     return months;
   };
 
   const categoryData = getCategoryData();
   const pieData = getPieData();
   const trendData = getTrendData();
+  const totalPie = pieData.reduce((sum: number, d: any) => sum + (Number(d.value) || 0), 0);
 
   const columnConfig: ColumnConfig = {
     data: categoryData,
@@ -112,14 +119,16 @@ const ReportsPage: React.FC = () => {
     seriesField: 'type',
     color: ['#52c41a', '#ff4d4f'],
     label: {
-      position: 'top',
-      formatter: (datum: any) => formatCurrency(datum.amount),
+      formatter: (datum: any) => formatCurrency(datum)
     },
     tooltip: {
-      formatter: (datum: any) => ({
-        name: datum.type,
-        value: `${formatCurrency(datum.amount)} (${datum.count} transacciones)`,
-      }),
+      formatter: (datum: any) => {
+        console.log('datum', datum);
+        return {
+          name: datum.type,
+          value: `${formatCurrency(Number(datum.amount) || 0)} (${Number(datum.count) || 0} transacciones)`,
+        }
+      }
     },
   };
 
@@ -130,12 +139,15 @@ const ReportsPage: React.FC = () => {
     radius: 0.8,
     color: ['#52c41a', '#ff4d4f'],
     label: {
-      text: (datum: any) => `${datum.type}: ${(datum.percent * 100).toFixed(1)}%`,
+      text: (datum: any) => {
+        const percent = Number.isFinite(datum.value) ? (datum.value / totalPie * 100).toFixed(1) : '0.0';
+        return `${datum.type}: ${percent}%`;
+      },
     },
     tooltip: {
       formatter: (datum: any) => ({
         name: datum.type,
-        value: `${formatCurrency(datum.value)} (${datum.count} transacciones)`,
+        value: `${formatCurrency(Number(datum.value) || 0)} (${Number(datum.count) || 0} transacciones)`,
       }),
     },
   };
@@ -166,7 +178,7 @@ const ReportsPage: React.FC = () => {
             <Title level={2} style={{ margin: 0 }}>
               Reportes y Análisis
             </Title>
-            
+
             <div style={{ display: 'flex', gap: '12px' }}>
               <Select
                 value={selectedYear}
@@ -182,7 +194,7 @@ const ReportsPage: React.FC = () => {
                   );
                 })}
               </Select>
-              
+
               <Select
                 value={selectedMonth}
                 onChange={setSelectedMonth}
@@ -210,10 +222,10 @@ const ReportsPage: React.FC = () => {
                   )}
                 </Card>
               </Col>
-              
+
               <Col xs={24} lg={12}>
                 <Card title={`Distribución Ingresos vs Gastos - ${getMonthName(selectedMonth)} ${selectedYear}`}>
-                  {pieData.length > 0 ? (
+                  {totalPie > 0 ? (
                     <Pie {...pieConfig} height={300} />
                   ) : (
                     <div style={{ textAlign: 'center', padding: '50px', color: '#999' }}>
@@ -222,7 +234,7 @@ const ReportsPage: React.FC = () => {
                   )}
                 </Card>
               </Col>
-              
+
               <Col xs={24}>
                 <Card title="Tendencia de los Últimos 6 Meses">
                   <Line {...lineConfig} height={300} />
@@ -242,7 +254,7 @@ const ReportsPage: React.FC = () => {
                     </div>
                   </Card>
                 </Col>
-                
+
                 <Col xs={24} md={8}>
                   <Card>
                     <div style={{ textAlign: 'center' }}>
@@ -253,18 +265,18 @@ const ReportsPage: React.FC = () => {
                     </div>
                   </Card>
                 </Col>
-                
+
                 <Col xs={24} md={8}>
                   <Card>
                     <div style={{ textAlign: 'center' }}>
-                      <div style={{ 
-                        fontSize: '24px', 
-                        fontWeight: 'bold', 
-                        color: (monthlyStats.stats.find(s => s._id === 'income')?.total || 0) - 
-                               (monthlyStats.stats.find(s => s._id === 'expense')?.total || 0) >= 0 ? '#52c41a' : '#ff4d4f'
+                      <div style={{
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        color: (monthlyStats.stats.find(s => s._id === 'income')?.total || 0) -
+                          (monthlyStats.stats.find(s => s._id === 'expense')?.total || 0) >= 0 ? '#52c41a' : '#ff4d4f'
                       }}>
                         {formatCurrency(
-                          (monthlyStats.stats.find(s => s._id === 'income')?.total || 0) - 
+                          (monthlyStats.stats.find(s => s._id === 'income')?.total || 0) -
                           (monthlyStats.stats.find(s => s._id === 'expense')?.total || 0)
                         )}
                       </div>
