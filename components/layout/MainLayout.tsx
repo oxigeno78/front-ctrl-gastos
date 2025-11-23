@@ -13,6 +13,7 @@ import {
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store';
+import { authAPI } from '@/utils/api';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -49,7 +50,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     },
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    user && await authAPI.logout({email: user.email});
     logout();
     router.push('/auth/login');
   };
