@@ -50,6 +50,14 @@ export const authAPI = {
     const response: AxiosResponse<AuthResponse> = await api.post('/auth/login', data);
     return response.data;
   },
+  logout: async (): Promise<{ success: boolean }> => {
+    const response = await api.post('/auth/logout');
+    return response.data;
+  },
+  recoveryPassword: async (data: { email: string }): Promise<{ success: boolean }> => {
+    const response = await api.post('/auth/recover-password', data);
+    return response.data;
+  },
 };
 
 // API de transacciones

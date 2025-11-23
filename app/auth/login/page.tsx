@@ -117,6 +117,16 @@ const LoginPage: React.FC = () => {
             </Link>
           </Text>
         </div>
+
+        <div style={{ textAlign: 'center' }}>
+          <Text>
+            ¿Olvidaste tu contraseña?{' '}
+            <Link href="/auth/recoverypass" style={{ color: '#1890ff' }}>
+              Recupera tu contraseña aquí
+            </Link>
+          </Text>
+        </div>
+
       </Form>
     </AuthLayout>
   );
