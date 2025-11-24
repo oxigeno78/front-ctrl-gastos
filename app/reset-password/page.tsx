@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
             name="password"
             rules={[
               { required: true, message: 'Por favor, ingresa tu nueva contraseña' },
-              { min: 6, message: 'La contraseña debe tener al menos 6 caracteres' },
+              { min: 12, message: 'La contraseña debe tener al menos 12 caracteres' },
             ]}
           >
             <Input.Password />

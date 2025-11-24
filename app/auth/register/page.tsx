@@ -34,7 +34,7 @@ const registerSchema = yup.object({
   password: yup
     .string()
     .required('La contraseña es requerida')
-    .min(6, 'La contraseña debe tener al menos 6 caracteres'),
+    .min(12, 'La contraseña debe tener al menos 12 caracteres'),
   confirmPassword: yup
     .string()
     .required('Confirma tu contraseña')
@@ -118,7 +118,7 @@ const RegisterPage: React.FC = () => {
         >
           <Input.Password
             prefix={<LockOutlined />}
-            placeholder="Mínimo 6 caracteres"
+            placeholder="Mínimo 12 caracteres"
             {...register('password')}
             onChange={(e) => setValue('password', e.target.value)}
           />
