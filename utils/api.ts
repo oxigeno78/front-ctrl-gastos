@@ -50,7 +50,7 @@ export const authAPI = {
     const response: AxiosResponse<AuthResponse> = await api.post('/auth/login', data);
     return response.data;
   },
-  logout: async (data: {email: string}): Promise<{ success: boolean }> => {
+  logout: async (data: { email: string }): Promise<{ success: boolean }> => {
     const response = await api.post('/auth/logout', data);
     return response.data;
   },
@@ -68,7 +68,7 @@ export const authAPI = {
 export const transactionAPI = {
   getTransactions: async (filters?: TransactionFilters): Promise<TransactionsResponse> => {
     const params = new URLSearchParams();
-    
+
     if (filters?.page) params.append('page', filters.page.toString());
     if (filters?.limit) params.append('limit', filters.limit.toString());
     if (filters?.type) params.append('type', filters.type);
@@ -82,8 +82,23 @@ export const transactionAPI = {
     return response.data;
   },
 
+  getTransactionById: async (id: string): Promise<{ success: boolean; data: any }> => {
+    const response = await api.get(`/transactions/${id}`);
+    return response.data;
+  },
+
   createTransaction: async (data: CreateTransactionData): Promise<{ success: boolean; data: any }> => {
     const response = await api.post('/transactions', data);
+    return response.data;
+  },
+
+  updateTransaction: async (id: string, data: CreateTransactionData): Promise<{ success: boolean; data: any }> => {
+    const response = await api.put(`/transactions/${id}`, data);
+    return response.data;
+  },
+
+  deleteTransaction: async (id: string): Promise<{ success: boolean }> => {
+    const response = await api.delete(`/transactions/${id}`);
     return response.data;
   },
 
@@ -106,7 +121,7 @@ export const handleApiError = (error: any): ApiError => {
   if (error.response?.data) {
     return error.response.data;
   }
-  
+
   return {
     success: false,
     message: error.message || 'Error de conexión',

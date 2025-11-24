@@ -7,7 +7,9 @@ import {
   ArrowDownOutlined, 
   PlusOutlined,
   EyeOutlined,
-  DollarOutlined
+  DollarOutlined,
+  EditOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
@@ -15,6 +17,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { useTransactionStore } from '@/store';
 import { formatCurrency, formatDate } from '@/utils/helpers';
+import { Transaction } from '@/types';
 
 const { Title } = Typography;
 
@@ -39,6 +42,16 @@ const DashboardPage: React.FC = () => {
     } finally {
       setLoading(false);
       setLoadingState(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await transactionAPI.deleteTransaction(id);
+      loadTransactions();
+    } catch (error) {
+      const apiError = handleApiError(error);
+      message.error(apiError.message);
     }
   };
 
@@ -76,6 +89,24 @@ const DashboardPage: React.FC = () => {
       key: 'date',
       render: (date: string) => formatDate(date),
     },
+    {
+      title: 'Acciones',
+      key: 'actions',
+      render: (record: Transaction) => (
+        <Space>
+          <Button 
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => router.push(`/dashboard/transactions/${record._id}`)}
+          />
+          <Button 
+            type="link"
+            icon={<DeleteOutlined />}
+            onClick={() => handleDelete(record._id)}
+          />
+        </Space>
+      ),
+    }
   ];
 
   return (
