@@ -11,6 +11,7 @@ import Link from 'next/link';
 import AuthLayout from '@/components/layout/AuthLayout';
 import { authAPI, handleApiError } from '@/utils/api';
 import { useAuthStore } from '@/store';
+import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
 
 const { Text } = Typography;
 
@@ -45,6 +46,7 @@ const RegisterPage: React.FC = () => {
   const router = useRouter();
   const { login } = useAuthStore();
   const [loading, setLoading] = React.useState(false);
+  const { executeRecaptcha } = useInvisibleRecaptcha('register');
 
   const {
     register,
@@ -58,10 +60,12 @@ const RegisterPage: React.FC = () => {
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     try {
+      const recaptchaToken = await executeRecaptcha();
       const response = await authAPI.register({
         name: data.name,
         email: data.email,
         password: data.password,
+        recaptchaToken,
       });
 
       if (response.success) {

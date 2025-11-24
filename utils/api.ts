@@ -41,12 +41,12 @@ api.interceptors.response.use(
 
 // API de autenticación
 export const authAPI = {
-  register: async (data: { name: string; email: string; password: string }): Promise<AuthResponse> => {
+  register: async (data: { name: string; email: string; password: string; recaptchaToken?: string }): Promise<AuthResponse> => {
     const response: AxiosResponse<AuthResponse> = await api.post('/auth/register', data);
     return response.data;
   },
 
-  login: async (data: { email: string; password: string }): Promise<AuthResponse> => {
+  login: async (data: { email: string; password: string; recaptchaToken?: string }): Promise<AuthResponse> => {
     const response: AxiosResponse<AuthResponse> = await api.post('/auth/login', data);
     return response.data;
   },
