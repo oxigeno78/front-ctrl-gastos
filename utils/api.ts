@@ -62,6 +62,14 @@ export const authAPI = {
     const response = await api.post('/auth/reset-password', data);
     return response.data;
   },
+  changePassword: async (data: { token: string; email: string; password: string }): Promise<{ success: boolean }> => {
+    const response = await api.post('/auth/change-password', data);
+    return response.data;
+  },
+  deleteAccount: async (): Promise<{ success: boolean }> => {
+    const response = await api.delete('/auth/delete-account');
+    return response.data;
+  },
 };
 
 // API de transacciones
