@@ -115,9 +115,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           }}
         >
           <div>
-            <Text strong style={{ fontSize: '20px' }}>
-              Panel de Control
-            </Text>
+            <Text strong style={{ fontSize: '20px' }}></Text>
           </div>
 
           <Dropdown
