@@ -78,6 +78,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         style={{
           background: '#fff',
           boxShadow: '2px 0 8px rgba(0, 0, 0, 0.1)',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          height: '100vh',
+          overflow: 'auto',
         }}
         breakpoint="lg"
         collapsedWidth="0"
@@ -103,7 +109,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         />
       </Sider>
 
-      <Layout>
+      <Layout
+        style={{
+          marginLeft: 250,
+          minHeight: '100vh',
+        }}
+      >
         <Header
           style={{
             background: '#fff',
@@ -112,6 +123,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            position: 'fixed',
+            top: 0,
+            left: 250,
+            right: 0,
+            zIndex: 10,
           }}
         >
           <div>
@@ -133,6 +149,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Content
           style={{
             margin: '24px',
+            marginTop: 88,
             padding: '24px',
             background: '#fff',
             borderRadius: '8px',
