@@ -58,6 +58,10 @@ export const authAPI = {
     const response = await api.post('/auth/recover-password', data);
     return response.data;
   },
+  resetPassword: async (data: { token: string; email: string; password: string }): Promise<{ success: boolean }> => {
+    const response = await api.post('/auth/reset-password', data);
+    return response.data;
+  },
 };
 
 // API de transacciones
