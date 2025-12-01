@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError } from '@/types';
+import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1.0.0';
 
@@ -116,10 +116,22 @@ export const transactionAPI = {
   },
 };
 
-// API de métricas
-export const metricsAPI = {
-  getMetrics: async (): Promise<any> => {
-    const response = await api.get('/metrics');
+// API de Categorias
+export const categoryAPI = {
+  getCategories: async (): Promise<CategoriesResponse> => {
+    const response: AxiosResponse<CategoriesResponse> = await api.get('/categories');
+    return response.data;
+  },
+  createCategory: async (data: { name: string; transactionType: 'income' | 'expense'; description?: string; color?: string }): Promise<{ success: boolean; data: Category }> => {
+    const response = await api.post('/categories', data);
+    return response.data;
+  },
+  updateCategory: async (id: string, data: { name: string; transactionType: 'income' | 'expense'; description?: string; color?: string }): Promise<{ success: boolean; data: Category }> => {
+    const response = await api.put(`/categories/${id}`, data);
+    return response.data;
+  },
+  deleteCategory: async (id: string): Promise<{ success: boolean }> => {
+    const response = await api.delete(`/categories/${id}`);
     return response.data;
   },
 };

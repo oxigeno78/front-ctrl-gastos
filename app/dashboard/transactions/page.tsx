@@ -8,6 +8,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { Transaction, TransactionFilters } from '@/types';
 import { formatCurrency, formatDate } from '@/utils/helpers';
+import { useCategories } from '@/hooks/useCategories';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -24,6 +25,7 @@ const TransactionsPage: React.FC = () => {
     page: 1,
     limit: 10,
   });
+  const { categories, loading: categoriesLoading } = useCategories();
 
   useEffect(() => {
     loadTransactions();
@@ -164,17 +166,14 @@ const TransactionsPage: React.FC = () => {
                 placeholder="Filtrar por categoría"
                 style={{ width: 150 }}
                 allowClear
+                loading={categoriesLoading}
                 onChange={(value) => handleFilterChange('category', value)}
               >
-                <Option value="Alimentación">Alimentación</Option>
-                <Option value="Transporte">Transporte</Option>
-                <Option value="Vivienda">Vivienda</Option>
-                <Option value="Entretenimiento">Entretenimiento</Option>
-                <Option value="Salud">Salud</Option>
-                <Option value="Educación">Educación</Option>
-                <Option value="Salario">Salario</Option>
-                <Option value="Freelance">Freelance</Option>
-                <Option value="Inversiones">Inversiones</Option>
+                {categories.map((category) => (
+                  <Option key={category._id} value={category.name}>
+                    {category.name}
+                  </Option>
+                ))}
               </Select>
 
               <Button 

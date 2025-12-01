@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { useTransactionStore } from '@/store';
 import { CreateTransactionData, Transaction } from '@/types';
+import { useCategories } from '@/hooks/useCategories';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -45,11 +46,12 @@ const transactionSchema = yup.object({
         .required('La fecha es requerida'),
 });
 
-const incomeCategories = [
+// Categorías por defecto (fallback si la API no retorna datos)
+const defaultIncomeCategories = [
     'Salario', 'Freelance', 'Inversiones', 'Ventas', 'Bonificaciones', 'Otros'
 ];
 
-const expenseCategories = [
+const defaultExpenseCategories = [
     'Alimentación', 'Transporte', 'Vivienda', 'Entretenimiento', 'Salud',
     'Educación', 'Ropa', 'Tecnología', 'Servicios', 'Otros'
 ];
@@ -63,6 +65,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
     const router = useRouter();
     const { addTransaction } = useTransactionStore();
     const [loading, setLoading] = useState(false);
+    const { incomeCategories, expenseCategories, loading: categoriesLoading } = useCategories();
 
     const isEditMode = !!transaction;
 
@@ -191,10 +194,16 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                             onChange={(value) => setValue('category', value)}
                             style={{ width: '100%' }}
                             value={watch('category')}
+                            loading={categoriesLoading}
+                            showSearch
+                            optionFilterProp="children"
                         >
-                            {(selectedType === 'income' ? incomeCategories : expenseCategories).map((category) => (
-                                <Option key={category} value={category}>
-                                    {category}
+                            {(selectedType === 'income'
+                                ? (incomeCategories.length > 0 ? incomeCategories : defaultIncomeCategories.map(name => ({ _id: name, name })))
+                                : (expenseCategories.length > 0 ? expenseCategories : defaultExpenseCategories.map(name => ({ _id: name, name })))
+                            ).map((category) => (
+                                <Option key={typeof category === 'string' ? category : category._id} value={typeof category === 'string' ? category : category._id}>
+                                    {typeof category === 'string' ? category : category.name}
                                 </Option>
                             ))}
                         </Select>

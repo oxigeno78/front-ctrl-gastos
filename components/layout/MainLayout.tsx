@@ -4,7 +4,7 @@ import React from 'react';
 import { Layout, Menu, Button, Avatar, Dropdown, Typography } from 'antd';
 import {
   DashboardOutlined,
-  PlusOutlined,
+  AppstoreOutlined,
   HistoryOutlined,
   BarChartOutlined,
   LogoutOutlined,
@@ -34,9 +34,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       label: <Link href="/dashboard">Dashboard</Link>,
     },
     {
-      key: '/dashboard/add-transaction',
-      icon: <PlusOutlined />,
-      label: <Link href="/dashboard/add-transaction">Agregar Movimiento</Link>,
+      key: '/dashboard/categories',
+      icon: <AppstoreOutlined />,
+      label: <Link href="/dashboard/categories">Categorías</Link>,
     },
     {
       key: '/dashboard/transactions',

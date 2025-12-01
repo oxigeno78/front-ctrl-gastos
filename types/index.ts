@@ -4,6 +4,23 @@ export interface User {
   email: string;
 }
 
+export interface Category {
+  _id: string;
+  name: string;
+  type: 'user';
+  transactionType: 'income' | 'expense';
+  description?: string;
+  color?: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CategoriesResponse {
+  success: boolean;
+  data: Category[];
+}
+
 export interface Transaction {
   _id: string;
   userId: string;

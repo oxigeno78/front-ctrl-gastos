@@ -21,6 +21,7 @@ interface MonthlyStats {
       category: string;
       total: number;
       count: number;
+      color?: string;
     }>;
     total: number;
     count: number;
@@ -63,10 +64,12 @@ const ReportsPage: React.FC = () => {
           type: stat._id === 'income' ? 'Ingresos' : 'Gastos',
           amount: Number(cat.total) || 0,
           count: Number(cat.count) || 0,
+          color: cat.color || '#44769dff',
         });
       });
     });
-
+    
+    console.log('[<ReportsPage|getCategoryData>categoryData] ', categoryData);
     return categoryData;
   };
 
@@ -110,23 +113,32 @@ const ReportsPage: React.FC = () => {
   const trendData = getTrendData();
   const totalPie = pieData.reduce((sum: number, d: any) => sum + (Number(d.value) || 0), 0);
 
+  // Crear mapa de colores por categoría
+  const categoryColorMap: Record<string, string> = {};
+  categoryData.forEach(d => {
+    if (d.category && d.color) {
+      categoryColorMap[d.category] = d.color;
+    }
+  });
+
   const columnConfig: ColumnConfig = {
     data: categoryData,
-    xField: 'category',
+    xField: 'type',
     yField: 'amount',
-    seriesField: 'type',
-    color: ['#52c41a', '#ff4d4f'],
+    colorField: 'category',
+    color: (datum: any) => categoryColorMap[datum.category] || '#1890ff',
     label: {
       formatter: (datum: any) => formatCurrency(datum)
     },
     tooltip: {
       formatter: (datum: any) => {
         return {
-          name: datum.type,
+          name: datum.category,
           value: `${formatCurrency(Number(datum.amount) || 0)} (${Number(datum.count) || 0} transacciones)`,
         }
       }
     },
+    legend: false
   };
 
   const pieConfig = {
@@ -145,8 +157,9 @@ const ReportsPage: React.FC = () => {
       formatter: (datum: any) => ({
         name: datum.type,
         value: `${formatCurrency(Number(datum.value) || 0)} (${Number(datum.count) || 0} transacciones)`,
-      }),
+      })
     },
+    legend: false,
   };
 
   const lineConfig = {
@@ -213,7 +226,7 @@ const ReportsPage: React.FC = () => {
                   {categoryData.length > 0 ? (
                     <Column {...columnConfig} height={300} />
                   ) : (
-                    <div style={{ textAlign: 'center', padding: '50px', color: '#999' }}>
+                    <div style={{ textAlign: 'center', padding: '50px' }}>
                       No hay datos para mostrar
                     </div>
                   )}
@@ -225,7 +238,7 @@ const ReportsPage: React.FC = () => {
                   {totalPie > 0 ? (
                     <Pie {...pieConfig} height={300} />
                   ) : (
-                    <div style={{ textAlign: 'center', padding: '50px', color: '#999' }}>
+                    <div style={{ textAlign: 'center', padding: '50px' }}>
                       No hay datos para mostrar
                     </div>
                   )}
