@@ -60,7 +60,55 @@
       "passwordsMismatch": "Las contraseñas no coinciden"
     },
     "logout": "Cerrar sesión",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "recovery": {
+      "title": "Recuperar Contraseña",
+      "email": "Email",
+      "emailPlaceholder": "tu@email.com",
+      "emailRequired": "Por favor, ingresa tu email",
+      "submit": "Recuperar contraseña",
+      "success": "Se ha enviado un correo con el enlace de recuperación"
+    },
+    "resetPassword": {
+      "title": "Restablecer Contraseña",
+      "invalidLink": "El enlace de recuperación es inválido o ha expirado. Solicita uno nuevo desde la opción \"Recuperar contraseña\".",
+      "email": "Email",
+      "newPassword": "Nueva contraseña",
+      "newPasswordRequired": "Por favor, ingresa tu nueva contraseña",
+      "newPasswordMin": "La contraseña debe tener al menos 12 caracteres",
+      "confirmPassword": "Confirmar contraseña",
+      "confirmPasswordRequired": "Por favor, confirma tu nueva contraseña",
+      "passwordsMismatch": "Las contraseñas no coinciden",
+      "submit": "Guardar nueva contraseña",
+      "success": "Tu contraseña ha sido actualizada correctamente"
+    }
+  },
+  "profile": {
+    "title": "Perfil de Usuario",
+    "noUserData": "No se encontraron datos de usuario",
+    "noUserDataDescription": "Vuelve a iniciar sesión para ver la información de tu perfil.",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "userId": "ID de usuario",
+    "changePassword": "Cambiar contraseña",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "confirmNewPassword": "Confirmar nueva contraseña",
+    "updatePassword": "Actualizar contraseña",
+    "passwordUpdated": "Tu contraseña se actualizó correctamente.",
+    "sessionError": "No se pudo obtener la sesión actual. Vuelve a iniciar sesión.",
+    "fillAllFields": "Por favor completa todos los campos.",
+    "passwordMinLength": "La nueva contraseña debe tener al menos 8 caracteres.",
+    "passwordMismatch": "La confirmación de la contraseña no coincide.",
+    "dangerZone": "Zona de peligro",
+    "dangerZoneDescription": "Si eliminas tu cuenta, se borrarán de forma permanente todos tus datos y movimientos asociados. Esta acción es irreversible y tu sesión se cerrará automáticamente.",
+    "deleteAccount": "Eliminar cuenta permanentemente",
+    "deleteAccountConfirmTitle": "Confirmar eliminación de cuenta",
+    "deleteAccountConfirmDescription": "Esta operación es irreversible y cerrará tu sesión inmediatamente. Para confirmar que entiendes y estás de acuerdo, escribe exactamente el siguiente texto:",
+    "deleteAccountConfirmText": "ELIMINAR MI CUENTA",
+    "deleteAccountConfirmPlaceholder": "Escribe aquí la frase de confirmación",
+    "deleteAccountConfirmButton": "Sí, eliminar mi cuenta",
+    "accountDeleted": "Tu cuenta ha sido eliminada correctamente."
   },
   "dashboard": {
     "title": "Resumen Financiero",

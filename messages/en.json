@@ -60,7 +60,55 @@
             "passwordsMismatch": "Passwords do not match"
         },
         "logout": "Sign out",
-        "profile": "Profile"
+        "profile": "Profile",
+        "recovery": {
+            "title": "Recover Password",
+            "email": "Email",
+            "emailPlaceholder": "your@email.com",
+            "emailRequired": "Please enter your email",
+            "submit": "Recover password",
+            "success": "A recovery link has been sent to your email"
+        },
+        "resetPassword": {
+            "title": "Reset Password",
+            "invalidLink": "The recovery link is invalid or has expired. Please request a new one from the \"Recover password\" option.",
+            "email": "Email",
+            "newPassword": "New password",
+            "newPasswordRequired": "Please enter your new password",
+            "newPasswordMin": "Password must be at least 12 characters",
+            "confirmPassword": "Confirm password",
+            "confirmPasswordRequired": "Please confirm your new password",
+            "passwordsMismatch": "Passwords do not match",
+            "submit": "Save new password",
+            "success": "Your password has been updated successfully"
+        }
+    },
+    "profile": {
+        "title": "User Profile",
+        "noUserData": "No user data found",
+        "noUserDataDescription": "Please sign in again to view your profile information.",
+        "name": "Name",
+        "email": "Email",
+        "userId": "User ID",
+        "changePassword": "Change password",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmNewPassword": "Confirm new password",
+        "updatePassword": "Update password",
+        "passwordUpdated": "Your password has been updated successfully.",
+        "sessionError": "Could not get current session. Please sign in again.",
+        "fillAllFields": "Please fill in all fields.",
+        "passwordMinLength": "New password must be at least 8 characters.",
+        "passwordMismatch": "Password confirmation does not match.",
+        "dangerZone": "Danger Zone",
+        "dangerZoneDescription": "If you delete your account, all your data and transactions will be permanently deleted. This action is irreversible and your session will be closed automatically.",
+        "deleteAccount": "Delete account permanently",
+        "deleteAccountConfirmTitle": "Confirm account deletion",
+        "deleteAccountConfirmDescription": "This operation is irreversible and will close your session immediately. To confirm that you understand and agree, type exactly the following text:",
+        "deleteAccountConfirmText": "DELETE MY ACCOUNT",
+        "deleteAccountConfirmPlaceholder": "Type the confirmation phrase here",
+        "deleteAccountConfirmButton": "Yes, delete my account",
+        "accountDeleted": "Your account has been deleted successfully."
     },
     "dashboard": {
         "title": "Financial Summary",
