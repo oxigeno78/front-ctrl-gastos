@@ -12,6 +12,7 @@ import { authAPI, handleApiError } from '@/utils/api';
 import { useAuthStore } from '@/store';
 import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
 import { Link, useRouter } from '@/i18n/routing';
+import { type Locale } from '@/i18n/config';
 
 const { Text } = Typography;
 
@@ -58,8 +59,14 @@ const LoginPage: React.FC = () => {
 
       if (response.success) {
         message.success(t('auth.login.success'));
-        login(response.data.user, response.data.token);
-        router.push('/dashboard');
+        const userLanguage = response.data.language || response.data.user.language;
+        login(response.data.user, response.data.token, userLanguage);
+        // Redirigir al dashboard con el idioma del usuario
+        if (userLanguage) {
+          router.replace('/dashboard', { locale: userLanguage as Locale });
+        } else {
+          router.push('/dashboard');
+        }
       }
     } catch (error) {
       const apiError = handleApiError(error);
@@ -116,18 +123,16 @@ const LoginPage: React.FC = () => {
 
         <div style={{ textAlign: 'center' }}>
           <Text>
-            {t('auth.login.noAccount')}{' '}
             <Link href="/auth/register" style={{ color: '#1890ff' }}>
-              {t('auth.login.register')}
+              {t('auth.login.noAccount')}
             </Link>
           </Text>
         </div>
 
         <div style={{ textAlign: 'center' }}>
           <Text>
-            {t('auth.login.forgotPassword')}{' '}
             <Link href="/auth/recoverypass" style={{ color: '#1890ff' }}>
-              {t('auth.login.recoverPassword')}
+              {t('auth.login.forgotPassword')}
             </Link>
           </Text>
         </div>

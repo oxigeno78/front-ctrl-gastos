@@ -2,6 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  language?: string;
 }
 
 export interface Category {
@@ -57,6 +58,7 @@ export interface AuthResponse {
   data: {
     user: User;
     token: string;
+    language?: string;
   };
 }
 

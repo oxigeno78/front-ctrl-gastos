@@ -1,20 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Descriptions, Typography, Space, Alert, Button, Modal, Input, message } from 'antd';
-import { useTranslations } from 'next-intl';
+import { Card, Descriptions, Typography, Space, Alert, Button, Modal, Input, message, Select } from 'antd';
+import { GlobalOutlined } from '@ant-design/icons';
+import { useTranslations, useLocale } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useAuthStore } from '@/store';
 import { useRouter } from '@/i18n/routing';
 import { authAPI, handleApiError } from '@/utils/api';
+import { locales, type Locale } from '@/i18n/config';
 
 const { Title, Text } = Typography;
 
+const languageLabels: Record<Locale, string> = {
+  esp: 'Español',
+  eng: 'English',
+};
+
 const ProfilePage: React.FC = () => {
   const t = useTranslations();
+  const locale = useLocale();
   const CONFIRM_TEXT = t('profile.deleteAccountConfirmText');
-  const { user, logout, token } = useAuthStore();
+  const { user, logout, token, setUserLanguage } = useAuthStore();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmValue, setConfirmValue] = useState('');
@@ -23,6 +31,7 @@ const ProfilePage: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isChangingLanguage, setIsChangingLanguage] = useState(false);
 
   const openModal = () => {
     setConfirmValue('');
@@ -87,6 +96,22 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  const handleChangeLanguage = async (newLanguage: string) => {
+    setIsChangingLanguage(true);
+    try {
+      await authAPI.updateLanguage(newLanguage);
+      setUserLanguage(newLanguage);
+      message.success(t('profile.languageUpdated'));
+      // Cambiar el idioma de la aplicación
+      router.replace('/dashboard/profile', { locale: newLanguage as Locale });
+    } catch (error: any) {
+      const apiError = handleApiError(error);
+      message.error(apiError.message || t('profile.languageUpdateError'));
+    } finally {
+      setIsChangingLanguage(false);
+    }
+  };
+
   return (
     <ProtectedRoute>
       <MainLayout>
@@ -118,6 +143,24 @@ const ProfilePage: React.FC = () => {
                     <Text type="secondary">{user.id}</Text>
                   </Descriptions.Item>
                 </Descriptions>
+              </Card>
+
+              <Card title={t('profile.languagePreference')}>
+                <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                  <Text>{t('profile.language')}</Text>
+                  <Select
+                    value={user.language || locale}
+                    onChange={handleChangeLanguage}
+                    style={{ width: 200 }}
+                    suffixIcon={<GlobalOutlined />}
+                    loading={isChangingLanguage}
+                    disabled={isChangingLanguage}
+                    options={locales.map((loc) => ({
+                      value: loc,
+                      label: languageLabels[loc],
+                    }))}
+                  />
+                </Space>
               </Card>
 
               <Card title={t('profile.changePassword')}>

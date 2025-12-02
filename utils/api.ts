@@ -41,7 +41,7 @@ api.interceptors.response.use(
 
 // API de autenticación
 export const authAPI = {
-  register: async (data: { name: string; email: string; password: string; recaptchaToken?: string }): Promise<AuthResponse> => {
+  register: async (data: { name: string; email: string; password: string; language?: string; recaptchaToken?: string }): Promise<AuthResponse> => {
     const response: AxiosResponse<AuthResponse> = await api.post('/auth/register', data);
     return response.data;
   },
@@ -68,6 +68,10 @@ export const authAPI = {
   },
   deleteAccount: async (): Promise<{ success: boolean }> => {
     const response = await api.delete('/auth/delete-account');
+    return response.data;
+  },
+  updateLanguage: async (language: string): Promise<{ success: boolean }> => {
+    const response = await api.put('/auth/language', { language });
     return response.data;
   },
 };

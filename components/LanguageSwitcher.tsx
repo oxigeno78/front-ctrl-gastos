@@ -8,8 +8,8 @@ import { useRouter, usePathname } from '@/i18n/routing';
 import { locales, type Locale } from '@/i18n/config';
 
 const languageLabels: Record<Locale, string> = {
-  es: 'Español',
-  en: 'English',
+  esp: 'Español',
+  eng: 'English',
 };
 
 const LanguageSwitcher: React.FC = () => {

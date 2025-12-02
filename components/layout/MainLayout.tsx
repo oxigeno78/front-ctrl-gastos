@@ -14,7 +14,6 @@ import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store';
 import { authAPI } from '@/utils/api';
 import { Link, useRouter, usePathname } from '@/i18n/routing';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -133,7 +132,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           }}
         >
           <div>
-            <LanguageSwitcher />
           </div>
 
           <Dropdown

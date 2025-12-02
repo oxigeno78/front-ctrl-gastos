@@ -1,19 +1,25 @@
 'use client';
 
 import React from 'react';
-import { Form, Input, Button, message, Typography } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Form, Input, Button, message, Typography, Select } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined, GlobalOutlined } from '@ant-design/icons';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import AuthLayout from '@/components/layout/AuthLayout';
 import { authAPI, handleApiError } from '@/utils/api';
 import { useAuthStore } from '@/store';
 import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
 import { Link, useRouter } from '@/i18n/routing';
+import { locales, type Locale } from '@/i18n/config';
 
 const { Text } = Typography;
+
+const languageLabels: Record<Locale, string> = {
+  esp: 'Español',
+  eng: 'English',
+};
 
 interface RegisterFormData {
   name: string;
@@ -24,9 +30,11 @@ interface RegisterFormData {
 
 const RegisterPage: React.FC = () => {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const { login } = useAuthStore();
   const [loading, setLoading] = React.useState(false);
+  const [selectedLanguage, setSelectedLanguage] = React.useState<string>(locale);
   const { executeRecaptcha } = useInvisibleRecaptcha('register');
 
   const registerSchema = yup.object({
@@ -54,9 +62,7 @@ const RegisterPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<RegisterFormData>({
-    resolver: yupResolver(registerSchema),
-  });
+  } = useForm<RegisterFormData>({ resolver: yupResolver(registerSchema) });
 
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
@@ -66,13 +72,16 @@ const RegisterPage: React.FC = () => {
         name: data.name,
         email: data.email,
         password: data.password,
+        language: selectedLanguage,
         recaptchaToken,
       });
 
       if (response.success) {
         message.success(t('auth.register.success'));
-        login(response.data.user, response.data.token);
-        router.push('/dashboard');
+        const userLanguage = response.data.language || selectedLanguage;
+        login(response.data.user, response.data.token, userLanguage);
+        // Redirigir al dashboard con el idioma seleccionado
+        router.replace('/dashboard', { locale: userLanguage as Locale });
       }
     } catch (error) {
       const apiError = handleApiError(error);
@@ -139,6 +148,20 @@ const RegisterPage: React.FC = () => {
             placeholder={t('auth.register.confirmPasswordPlaceholder')}
             {...register('confirmPassword')}
             onChange={(e) => setValue('confirmPassword', e.target.value)}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label={t('auth.register.language')}
+        >
+          <Select
+            value={selectedLanguage}
+            onChange={(value) => setSelectedLanguage(value)}
+            suffixIcon={<GlobalOutlined />}
+            options={locales.map((loc) => ({
+              value: loc,
+              label: languageLabels[loc],
+            }))}
           />
         </Form.Item>
 

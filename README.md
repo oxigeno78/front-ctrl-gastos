@@ -81,12 +81,12 @@ frontend/
 │   └── transactions/
 │       └── TransactionForm.tsx
 ├── i18n/                     # Configuración de internacionalización
-│   ├── config.ts             # Locales disponibles (es, en)
+│   ├── config.ts             # Locales disponibles (esp, eng)
 │   ├── request.ts            # Carga de mensajes del servidor
 │   └── routing.ts            # Navegación con soporte i18n
 ├── messages/                 # Archivos de traducciones
-│   ├── es.json               # Español (por defecto)
-│   └── en.json               # Inglés
+│   ├── esp.json              # Español (por defecto)
+│   └── eng.json              # Inglés
 ├── middleware.ts             # Middleware de detección de idioma
 ├── store/                    # Estado global con Zustand
 │   └── index.ts
@@ -133,12 +133,12 @@ frontend/
 La aplicación soporta múltiples idiomas usando **next-intl**.
 
 ### Idiomas Disponibles
-- **Español (es)** - Idioma por defecto
-- **English (en)**
+- **Español (esp)** - Idioma por defecto
+- **English (eng)**
 
 ### Estructura de URLs
-- Español (por defecto): `/dashboard`, `/auth/login`
-- Inglés: `/en/dashboard`, `/en/auth/login`
+- Español (por defecto): `/esp/dashboard`, `/esp/auth/login`
+- Inglés: `/eng/dashboard`, `/eng/auth/login`
 
 ### Uso en Componentes
 ```tsx
@@ -153,10 +153,10 @@ const MyComponent = () => {
 ### Agregar Nuevo Idioma
 1. Crear archivo de traducciones en `/messages/[locale].json`
 2. Agregar el locale en `/i18n/config.ts`
-3. Agregar label en `LanguageSwitcher.tsx`
+3. Agregar label en los componentes de registro/perfil
 
-### Selector de Idioma
-El componente `LanguageSwitcher` está disponible en el header del dashboard para cambiar entre idiomas.
+### Idioma del Usuario
+El idioma preferido del usuario se guarda en el perfil y se sincroniza con el backend. Al iniciar sesión o registrarse, la aplicación redirige automáticamente al locale correspondiente al idioma del usuario.
 
 ## 📊 Características del Dashboard
 

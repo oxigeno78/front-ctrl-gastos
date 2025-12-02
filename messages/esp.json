@@ -43,6 +43,8 @@
       "passwordPlaceholder": "Mínimo 12 caracteres",
       "confirmPassword": "Confirmar contraseña",
       "confirmPasswordPlaceholder": "Repite tu contraseña",
+      "language": "Idioma preferido",
+      "languagePlaceholder": "Selecciona tu idioma",
       "submit": "Crear cuenta",
       "hasAccount": "¿Ya tienes cuenta?",
       "login": "Inicia sesión",
@@ -108,7 +110,11 @@
     "deleteAccountConfirmText": "ELIMINAR MI CUENTA",
     "deleteAccountConfirmPlaceholder": "Escribe aquí la frase de confirmación",
     "deleteAccountConfirmButton": "Sí, eliminar mi cuenta",
-    "accountDeleted": "Tu cuenta ha sido eliminada correctamente."
+    "accountDeleted": "Tu cuenta ha sido eliminada correctamente.",
+    "language": "Idioma",
+    "languagePreference": "Preferencia de idioma",
+    "languageUpdated": "Idioma actualizado correctamente",
+    "languageUpdateError": "Error al actualizar el idioma"
   },
   "dashboard": {
     "title": "Resumen Financiero",
