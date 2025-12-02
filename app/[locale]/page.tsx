@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Spin } from 'antd';
 import { useAuthStore } from '@/store';
+import { useRouter } from '@/i18n/routing';
 
 const HomePage: React.FC = () => {
   const router = useRouter();
