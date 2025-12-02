@@ -99,7 +99,19 @@ const ProfilePage: React.FC = () => {
   const handleChangeLanguage = async (newLanguage: string) => {
     setIsChangingLanguage(true);
     try {
-      await authAPI.updateLanguage(newLanguage);
+      if (!user) {
+        message.error(t('profile.sessionError'));
+        setIsChangingLanguage(false);
+        return;
+      }
+      const email = user.email;
+      if (!email) {
+        message.error(t('profile.emailRequired'));
+        setIsChangingLanguage(false);
+        return;
+      }
+      console.log('Changing language to:', newLanguage, 'for email:', email);
+      await authAPI.updateLanguage(newLanguage, email);
       setUserLanguage(newLanguage);
       message.success(t('profile.languageUpdated'));
       // Cambiar el idioma de la aplicación

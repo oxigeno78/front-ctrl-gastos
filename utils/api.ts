@@ -70,8 +70,8 @@ export const authAPI = {
     const response = await api.delete('/auth/delete-account');
     return response.data;
   },
-  updateLanguage: async (language: string): Promise<{ success: boolean }> => {
-    const response = await api.put('/auth/language', { language });
+  updateLanguage: async (language: string, email: string): Promise<{ success: boolean }> => {
+    const response = await api.put('/auth/language', { language, email });
     return response.data;
   },
 };
