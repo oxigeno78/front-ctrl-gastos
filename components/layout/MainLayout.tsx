@@ -10,10 +10,11 @@ import {
   LogoutOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useRouter, usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store';
 import { authAPI } from '@/utils/api';
+import { Link, useRouter, usePathname } from '@/i18n/routing';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -23,6 +24,7 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
@@ -31,22 +33,22 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     {
       key: '/dashboard',
       icon: <DashboardOutlined />,
-      label: <Link href="/dashboard">Dashboard</Link>,
+      label: <Link href="/dashboard">{t('navigation.dashboard')}</Link>,
     },
     {
       key: '/dashboard/categories',
       icon: <AppstoreOutlined />,
-      label: <Link href="/dashboard/categories">Categorías</Link>,
+      label: <Link href="/dashboard/categories">{t('navigation.categories')}</Link>,
     },
     {
       key: '/dashboard/transactions',
       icon: <HistoryOutlined />,
-      label: <Link href="/dashboard/transactions">Historial</Link>,
+      label: <Link href="/dashboard/transactions">{t('navigation.history')}</Link>,
     },
     {
       key: '/dashboard/reports',
       icon: <BarChartOutlined />,
-      label: <Link href="/dashboard/reports">Reportes</Link>,
+      label: <Link href="/dashboard/reports">{t('navigation.reports')}</Link>,
     },
   ];
 
@@ -60,13 +62,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: 'Perfil',
+      label: t('auth.profile'),
       onClick: () => router.push('/dashboard/profile'),
     },
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: 'Cerrar sesión',
+      label: t('auth.logout'),
       onClick: handleLogout,
     },
   ];
@@ -94,7 +96,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           borderBottom: '1px solid #f0f0f0'
         }}>
           <Text strong style={{ fontSize: '18px', color: '#1890ff' }}>
-            Control Gastos
+            {t('common.appName')}
           </Text>
         </div>
         
@@ -131,7 +133,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           }}
         >
           <div>
-            <Text strong style={{ fontSize: '20px' }}></Text>
+            <LanguageSwitcher />
           </div>
 
           <Dropdown

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Select, Typography, Spin, message } from 'antd';
 import { Column, Pie, Line, ColumnConfig } from '@ant-design/charts';
+import { useTranslations } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
@@ -29,6 +30,7 @@ interface MonthlyStats {
 }
 
 const ReportsPage: React.FC = () => {
+  const t = useTranslations();
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(dayjs().year());
@@ -61,7 +63,7 @@ const ReportsPage: React.FC = () => {
       stat.categories.forEach(cat => {
         categoryData.push({
           category: cat.category,
-          type: stat._id === 'income' ? 'Ingresos' : 'Gastos',
+          type: stat._id === 'income' ? t('transactions.incomes') : t('transactions.expenses'),
           amount: Number(cat.total) || 0,
           count: Number(cat.count) || 0,
           color: cat.color || '#44769dff',
@@ -69,7 +71,7 @@ const ReportsPage: React.FC = () => {
       });
     });
     
-    console.log('[<ReportsPage|getCategoryData>categoryData] ', categoryData);
+    //console.log('[<ReportsPage|getCategoryData>categoryData] ', categoryData);
     return categoryData;
   };
 
@@ -78,7 +80,7 @@ const ReportsPage: React.FC = () => {
     if (!monthlyStats?.stats) return [];
 
     return monthlyStats.stats.map(stat => ({
-      type: stat._id === 'income' ? 'Ingresos' : 'Gastos',
+      type: stat._id === 'income' ? t('transactions.incomes') : t('transactions.expenses'),
       value: Number(stat.total) || 0,
       count: Number(stat.count) || 0,
     }));
@@ -174,7 +176,7 @@ const ReportsPage: React.FC = () => {
     },
     tooltip: {
       formatter: (datum: any) => ({
-        name: datum.type === 'income' ? 'Ingresos' : 'Gastos',
+        name: datum.type === 'income' ? t('transactions.incomes') : t('transactions.expenses'),
         value: formatCurrency(datum.value),
       }),
     },
@@ -186,7 +188,7 @@ const ReportsPage: React.FC = () => {
         <div>
           <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Title level={2} style={{ margin: 0 }}>
-              Reportes y Análisis
+              {t('reports.title')}
             </Title>
 
             <div style={{ display: 'flex', gap: '12px' }}>
@@ -222,31 +224,31 @@ const ReportsPage: React.FC = () => {
           <Spin spinning={loading}>
             <Row gutter={[16, 16]}>
               <Col xs={24} lg={12}>
-                <Card title={`Gastos por Categoría - ${getMonthName(selectedMonth)} ${selectedYear}`}>
+                <Card title={`${t('reports.expensesByCategory')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
                   {categoryData.length > 0 ? (
                     <Column {...columnConfig} height={300} />
                   ) : (
                     <div style={{ textAlign: 'center', padding: '50px' }}>
-                      No hay datos para mostrar
+                      {t('reports.noDataToShow')}
                     </div>
                   )}
                 </Card>
               </Col>
 
               <Col xs={24} lg={12}>
-                <Card title={`Distribución Ingresos vs Gastos - ${getMonthName(selectedMonth)} ${selectedYear}`}>
+                <Card title={`${t('reports.incomeVsExpenses')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
                   {totalPie > 0 ? (
                     <Pie {...pieConfig} height={300} />
                   ) : (
                     <div style={{ textAlign: 'center', padding: '50px' }}>
-                      No hay datos para mostrar
+                      {t('reports.noDataToShow')}
                     </div>
                   )}
                 </Card>
               </Col>
 
               <Col xs={24}>
-                <Card title="Tendencia de los Últimos 6 Meses">
+                <Card title={t('reports.last6MonthsTrend')}>
                   <Line {...lineConfig} height={300} />
                 </Card>
               </Col>
@@ -260,7 +262,7 @@ const ReportsPage: React.FC = () => {
                       <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
                         {formatCurrency(monthlyStats.stats.find(s => s._id === 'income')?.total || 0)}
                       </div>
-                      <div style={{ color: '#666' }}>Total Ingresos</div>
+                      <div style={{ color: '#666' }}>{t('reports.totalIncome')}</div>
                     </div>
                   </Card>
                 </Col>
@@ -271,7 +273,7 @@ const ReportsPage: React.FC = () => {
                       <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#ff4d4f' }}>
                         {formatCurrency(monthlyStats.stats.find(s => s._id === 'expense')?.total || 0)}
                       </div>
-                      <div style={{ color: '#666' }}>Total Gastos</div>
+                      <div style={{ color: '#666' }}>{t('reports.totalExpenses')}</div>
                     </div>
                   </Card>
                 </Col>
@@ -290,7 +292,7 @@ const ReportsPage: React.FC = () => {
                           (monthlyStats.stats.find(s => s._id === 'expense')?.total || 0)
                         )}
                       </div>
-                      <div style={{ color: '#666' }}>Balance</div>
+                      <div style={{ color: '#666' }}>{t('reports.balance')}</div>
                     </div>
                   </Card>
                 </Col>

@@ -6,12 +6,12 @@ import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import AuthLayout from '@/components/layout/AuthLayout';
 import { authAPI, handleApiError } from '@/utils/api';
 import { useAuthStore } from '@/store';
 import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
+import { Link, useRouter } from '@/i18n/routing';
 
 const { Text } = Typography;
 
@@ -20,21 +20,22 @@ interface LoginFormData {
   password: string;
 }
 
-const loginSchema = yup.object({
-  email: yup
-    .string()
-    .required('El email es requerido')
-    .email('Email inválido'),
-  password: yup
-    .string()
-    .required('La contraseña es requerida'),
-});
-
 const LoginPage: React.FC = () => {
+  const t = useTranslations();
   const router = useRouter();
   const { login } = useAuthStore();
   const [loading, setLoading] = React.useState(false);
   const { executeRecaptcha } = useInvisibleRecaptcha('login');
+
+  const loginSchema = yup.object({
+    email: yup
+      .string()
+      .required(t('auth.validation.emailRequired'))
+      .email(t('auth.validation.emailInvalid')),
+    password: yup
+      .string()
+      .required(t('auth.validation.passwordRequired')),
+  });
 
   const {
     register,
@@ -56,7 +57,7 @@ const LoginPage: React.FC = () => {
       });
 
       if (response.success) {
-        message.success('Inicio de sesión exitoso');
+        message.success(t('auth.login.success'));
         login(response.data.user, response.data.token);
         router.push('/dashboard');
       }
@@ -69,7 +70,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <AuthLayout title="Iniciar Sesión">
+    <AuthLayout title={t('auth.login.title')}>
       <Form
         name="login"
         onFinish={handleSubmit(onSubmit)}
@@ -77,26 +78,26 @@ const LoginPage: React.FC = () => {
         size="large"
       >
         <Form.Item
-          label="Email"
+          label={t('auth.login.email')}
           validateStatus={errors.email ? 'error' : ''}
           help={errors.email?.message}
         >
           <Input
             prefix={<MailOutlined />}
-            placeholder="tu@email.com"
+            placeholder={t('auth.login.emailPlaceholder')}
             {...register('email')}
             onChange={(e) => setValue('email', e.target.value)}
           />
         </Form.Item>
 
         <Form.Item
-          label="Contraseña"
+          label={t('auth.login.password')}
           validateStatus={errors.password ? 'error' : ''}
           help={errors.password?.message}
         >
           <Input.Password
             prefix={<LockOutlined />}
-            placeholder="Tu contraseña"
+            placeholder={t('auth.login.passwordPlaceholder')}
             {...register('password')}
             onChange={(e) => setValue('password', e.target.value)}
           />
@@ -109,24 +110,24 @@ const LoginPage: React.FC = () => {
             loading={loading}
             style={{ width: '100%', height: '45px' }}
           >
-            Iniciar sesión
+            {t('auth.login.submit')}
           </Button>
         </Form.Item>
 
         <div style={{ textAlign: 'center' }}>
           <Text>
-            ¿No tienes cuenta?{' '}
+            {t('auth.login.noAccount')}{' '}
             <Link href="/auth/register" style={{ color: '#1890ff' }}>
-              Regístrate aquí
+              {t('auth.login.register')}
             </Link>
           </Text>
         </div>
 
         <div style={{ textAlign: 'center' }}>
           <Text>
-            ¿Olvidaste tu contraseña?{' '}
+            {t('auth.login.forgotPassword')}{' '}
             <Link href="/auth/recoverypass" style={{ color: '#1890ff' }}>
-              Recupera tu contraseña aquí
+              {t('auth.login.recoverPassword')}
             </Link>
           </Text>
         </div>

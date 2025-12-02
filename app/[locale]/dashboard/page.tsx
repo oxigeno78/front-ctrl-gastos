@@ -11,17 +11,19 @@ import {
   EditOutlined,
   DeleteOutlined
 } from '@ant-design/icons';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { useTransactionStore } from '@/store';
 import { formatCurrency, formatDate } from '@/utils/helpers';
 import { Transaction } from '@/types';
+import { useRouter } from '@/i18n/routing';
 
 const { Title } = Typography;
 
 const DashboardPage: React.FC = () => {
+  const t = useTranslations();
   const router = useRouter();
   const { transactions, summary, setTransactions, setSummary, setLoading } = useTransactionStore();
   const [loading, setLoadingState] = useState(true);
@@ -57,40 +59,40 @@ const DashboardPage: React.FC = () => {
 
   const columns = [
     {
-      title: 'Tipo',
+      title: t('transactions.type'),
       dataIndex: 'type',
       key: 'type',
       render: (type: string) => (
         <Tag color={type === 'income' ? 'green' : 'red'}>
-          {type === 'income' ? 'Ingreso' : 'Gasto'}
+          {type === 'income' ? t('transactions.income') : t('transactions.expense')}
         </Tag>
       ),
     },
     {
-      title: 'Monto',
+      title: t('transactions.amount'),
       dataIndex: 'amount',
       key: 'amount',
       render: (amount: number) => formatCurrency(amount),
     },
     {
-      title: 'Categoría',
+      title: t('transactions.category'),
       dataIndex: 'category',
       key: 'category',
     },
     {
-      title: 'Descripción',
+      title: t('transactions.description'),
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
     },
     {
-      title: 'Fecha',
+      title: t('transactions.date'),
       dataIndex: 'date',
       key: 'date',
       render: (date: string) => formatDate(date),
     },
     {
-      title: 'Acciones',
+      title: t('common.actions'),
       key: 'actions',
       render: (record: Transaction) => (
         <Space>
@@ -115,7 +117,7 @@ const DashboardPage: React.FC = () => {
         <div>
           <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Title level={2} style={{ margin: 0 }}>
-              Resumen Financiero
+              {t('dashboard.title')}
             </Title>
             <Space>
               <Button 
@@ -123,13 +125,13 @@ const DashboardPage: React.FC = () => {
                 icon={<PlusOutlined />}
                 onClick={() => router.push('/dashboard/add-transaction')}
               >
-                Agregar Movimiento
+                {t('dashboard.addTransaction')}
               </Button>
               <Button 
                 icon={<EyeOutlined />}
                 onClick={() => router.push('/dashboard/transactions')}
               >
-                Ver Todo
+                {t('dashboard.viewAll')}
               </Button>
             </Space>
           </div>
@@ -138,7 +140,7 @@ const DashboardPage: React.FC = () => {
             <Col xs={24} sm={12} lg={6}>
               <Card>
                 <Statistic
-                  title="Total Ingresos"
+                  title={t('dashboard.totalIncome')}
                   value={summary?.totalIncome || 0}
                   precision={2}
                   valueStyle={{ color: '#3f8600' }}
@@ -150,7 +152,7 @@ const DashboardPage: React.FC = () => {
             <Col xs={24} sm={12} lg={6}>
               <Card>
                 <Statistic
-                  title="Total Gastos"
+                  title={t('dashboard.totalExpenses')}
                   value={summary?.totalExpense || 0}
                   precision={2}
                   valueStyle={{ color: '#cf1322' }}
@@ -162,7 +164,7 @@ const DashboardPage: React.FC = () => {
             <Col xs={24} sm={12} lg={6}>
               <Card>
                 <Statistic
-                  title="Balance"
+                  title={t('dashboard.balance')}
                   value={summary?.balance || 0}
                   precision={2}
                   valueStyle={{ 
@@ -176,7 +178,7 @@ const DashboardPage: React.FC = () => {
             <Col xs={24} sm={12} lg={6}>
               <Card>
                 <Statistic
-                  title="Total Transacciones"
+                  title={t('dashboard.totalTransactions')}
                   value={summary?.transactionCount || 0}
                   valueStyle={{ color: '#1890ff' }}
                 />
@@ -184,7 +186,7 @@ const DashboardPage: React.FC = () => {
             </Col>
           </Row>
 
-          <Card title="Últimas Transacciones" style={{ marginBottom: '24px' }}>
+          <Card title={t('dashboard.recentTransactions')} style={{ marginBottom: '24px' }}>
             <Table
               columns={columns}
               dataSource={transactions}
@@ -197,7 +199,7 @@ const DashboardPage: React.FC = () => {
 
           <Row gutter={[16, 16]}>
             <Col xs={24} lg={12}>
-              <Card title="Acciones Rápidas">
+              <Card title={t('dashboard.quickActions')}>
                 <Space direction="vertical" style={{ width: '100%' }}>
                   <Button 
                     type="primary" 
@@ -206,7 +208,7 @@ const DashboardPage: React.FC = () => {
                     onClick={() => router.push('/dashboard/add-transaction')}
                     style={{ width: '100%' }}
                   >
-                    Agregar Ingreso
+                    {t('dashboard.addIncome')}
                   </Button>
                   <Button 
                     size="large"
@@ -214,13 +216,13 @@ const DashboardPage: React.FC = () => {
                     onClick={() => router.push('/dashboard/add-transaction?type=expense')}
                     style={{ width: '100%' }}
                   >
-                    Registrar Gasto
+                    {t('dashboard.addExpense')}
                   </Button>
                 </Space>
               </Card>
             </Col>
             <Col xs={24} lg={12}>
-              <Card title="Enlaces Útiles">
+              <Card title={t('dashboard.usefulLinks')}>
                 <Space direction="vertical" style={{ width: '100%' }}>
                   <Button 
                     size="large"
@@ -228,7 +230,7 @@ const DashboardPage: React.FC = () => {
                     onClick={() => router.push('/dashboard/transactions')}
                     style={{ width: '100%' }}
                   >
-                    Ver Historial Completo
+                    {t('dashboard.viewHistory')}
                   </Button>
                   <Button 
                     size="large"
@@ -236,7 +238,7 @@ const DashboardPage: React.FC = () => {
                     onClick={() => router.push('/dashboard/reports')}
                     style={{ width: '100%' }}
                   >
-                    Ver Reportes
+                    {t('dashboard.viewReports')}
                   </Button>
                 </Space>
               </Card>

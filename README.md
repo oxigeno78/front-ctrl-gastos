@@ -10,6 +10,7 @@ Aplicación web desarrollada con Next.js 14, React 18, TypeScript y Ant Design p
 - **Zustand** para manejo de estado global
 - **React Hook Form** + **Yup** para formularios y validación
 - **Ant Design Charts** para gráficas y reportes
+- **next-intl** para internacionalización (i18n)
 - Diseño responsive y moderno
 - Autenticación JWT con cookies seguras
 
@@ -23,7 +24,7 @@ Aplicación web desarrollada con Next.js 14, React 18, TypeScript y Ant Design p
 
 ### 1. Instalar dependencias
 ```bash
-npm install
+yarn install
 ```
 
 ### 2. Configurar variables de entorno
@@ -40,89 +41,142 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1.0.0
 
 #### Desarrollo
 ```bash
-npm run dev
+yarn dev
 ```
 
 #### Producción
 ```bash
-npm run build
-npm start
+yarn build
+yarn start
 ```
 
 ## 🏗️ Estructura del Proyecto
 
 ```
 frontend/
-├── app/                 # App Router de Next.js
-│   ├── auth/            # Páginas de autenticación
-│   │   ├── login/
-│   │   └── register/
-│   ├── dashboard/       # Páginas del dashboard
-│   │   ├── page.tsx
-│   │   ├── add-transaction/
-│   │   ├── transactions/
-│   │   └── reports/
-│   ├── layout.tsx       # Layout principal
-│   └── page.tsx         # Página de inicio
-├── components/          # Componentes reutilizables
+├── app/                      # App Router de Next.js
+│   ├── layout.tsx            # Root layout
+│   └── [locale]/             # Rutas con soporte i18n
+│       ├── layout.tsx        # Layout con NextIntlClientProvider
+│       ├── page.tsx          # Página de inicio
+│       ├── auth/             # Páginas de autenticación
+│       │   ├── login/
+│       │   ├── register/
+│       │   └── recoverypass/
+│       ├── dashboard/        # Páginas del dashboard
+│       │   ├── page.tsx
+│       │   ├── add-transaction/
+│       │   ├── categories/
+│       │   ├── profile/
+│       │   ├── transactions/
+│       │   └── reports/
+│       └── reset-password/
+├── components/               # Componentes reutilizables
+│   ├── LanguageSwitcher.tsx  # Selector de idioma
 │   ├── auth/
 │   │   └── ProtectedRoute.tsx
 │   ├── layout/
 │   │   ├── AuthLayout.tsx
 │   │   └── MainLayout.tsx
 │   └── transactions/
-├── store/              # Estado global con Zustand
+│       └── TransactionForm.tsx
+├── i18n/                     # Configuración de internacionalización
+│   ├── config.ts             # Locales disponibles (es, en)
+│   ├── request.ts            # Carga de mensajes del servidor
+│   └── routing.ts            # Navegación con soporte i18n
+├── messages/                 # Archivos de traducciones
+│   ├── es.json               # Español (por defecto)
+│   └── en.json               # Inglés
+├── middleware.ts             # Middleware de detección de idioma
+├── store/                    # Estado global con Zustand
 │   └── index.ts
-├── utils/              # Utilidades y API client
+├── utils/                    # Utilidades y API client
 │   ├── api.ts
 │   └── helpers.ts
-├── types/              # Tipos TypeScript
+├── types/                    # Tipos TypeScript
 │   └── index.ts
-├── hooks/              # Custom hooks
-├── next.config.js      # Configuración de Next.js
-├── tsconfig.json       # Configuración de TypeScript
-├── .eslintrc.json      # Configuración de ESLint
-├── env.example         # Variables de entorno de ejemplo
+├── hooks/                    # Custom hooks
+│   ├── useCategories.ts
+│   └── useInvisibleRecaptcha.ts
+├── next.config.js            # Configuración de Next.js con next-intl
+├── tsconfig.json             # Configuración de TypeScript
+├── .eslintrc.json            # Configuración de ESLint
+├── env.example               # Variables de entorno de ejemplo
 └── package.json
 ```
 
 ## 🔧 Scripts Disponibles
 
-- `npm run dev` - Servidor de desarrollo Next.js
-- `npm run build` - Construir para producción
-- `npm start` - Ejecutar versión de producción
-- `npm run lint` - Ejecutar linter
-- `npm run type-check` - Verificar tipos TypeScript
+- `yarn dev` - Servidor de desarrollo Next.js
+- `yarn build` - Construir para producción
+- `yarn start` - Ejecutar versión de producción
+- `yarn lint` - Ejecutar linter
+- `yarn type-check` - Verificar tipos TypeScript
 
 ## 🎨 Tecnologías Utilizadas
 
 - Next.js 14 (App Router)
 - React 18
 - TypeScript
-- Ant Design
+- Ant Design 5
 - Zustand
 - React Hook Form
 - Yup
 - Ant Design Charts
+- next-intl
 - Axios
 - Day.js
 - js-cookie
+
+## 🌐 Internacionalización (i18n)
+
+La aplicación soporta múltiples idiomas usando **next-intl**.
+
+### Idiomas Disponibles
+- **Español (es)** - Idioma por defecto
+- **English (en)**
+
+### Estructura de URLs
+- Español (por defecto): `/dashboard`, `/auth/login`
+- Inglés: `/en/dashboard`, `/en/auth/login`
+
+### Uso en Componentes
+```tsx
+import { useTranslations } from 'next-intl';
+
+const MyComponent = () => {
+  const t = useTranslations();
+  return <h1>{t('dashboard.title')}</h1>;
+};
+```
+
+### Agregar Nuevo Idioma
+1. Crear archivo de traducciones en `/messages/[locale].json`
+2. Agregar el locale en `/i18n/config.ts`
+3. Agregar label en `LanguageSwitcher.tsx`
+
+### Selector de Idioma
+El componente `LanguageSwitcher` está disponible en el header del dashboard para cambiar entre idiomas.
 
 ## 📊 Características del Dashboard
 
 ### Páginas Principales
 - **Dashboard** - Resumen financiero con métricas clave
 - **Agregar Transacción** - Formulario intuitivo para ingresos y gastos
+- **Categorías** - Gestión de categorías personalizadas
 - **Historial** - Tabla completa con filtros y paginación
 - **Reportes** - Gráficas interactivas y análisis visual
+- **Perfil** - Configuración de usuario
 
 ### Funcionalidades
 - **Resumen financiero** con métricas clave
 - **Formulario intuitivo** para agregar transacciones
+- **Gestión de categorías** personalizadas por usuario
 - **Historial completo** con filtros y paginación
 - **Reportes visuales** con gráficas interactivas
 - **Diseño responsive** para móviles y desktop
 - **Autenticación segura** con JWT y cookies
+- **Soporte multiidioma** con selector de idioma
 
 ## 🔐 Autenticación
 
@@ -130,7 +184,8 @@ frontend/
 1. **Registro** - Crear nueva cuenta de usuario
 2. **Login** - Iniciar sesión con credenciales
 3. **Protección de rutas** - Middleware para rutas privadas
-4. **Logout** - Cerrar sesión y limpiar estado
+4. **Recuperación de contraseña** - Envío de email para reset
+5. **Logout** - Cerrar sesión y limpiar estado
 
 ### Componentes de Autenticación
 - `AuthLayout` - Layout para páginas de auth
@@ -172,25 +227,26 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1.0.0
 
 ### TypeScript
 - Configuración estricta habilitada
-- Paths absolutos configurados
+- Paths absolutos configurados (`@/`)
 - Tipos personalizados para API
 
 ### Next.js
 - App Router habilitado
 - Configuración de imágenes
 - Variables de entorno públicas
+- Plugin next-intl para i18n
 
 ## 🚀 Despliegue
 
 ### Desarrollo Local
 ```bash
-npm run dev
+yarn dev
 ```
 
 ### Producción
 ```bash
-npm run build
-npm start
+yarn build
+yarn start
 ```
 
 ### Variables de Entorno para Producción
@@ -213,7 +269,18 @@ NEXT_PUBLIC_API_URL=https://tu-api.com/api/v1.0.0
 ### Errores de compilación
 - Verifica que todas las dependencias estén instaladas
 - Revisa la configuración de TypeScript
-- Ejecuta `npm run type-check` para ver errores específicos
+- Ejecuta `yarn type-check` para ver errores específicos
+
+### Problemas con i18n
+- Verifica que el middleware esté configurado correctamente
+- Revisa que los archivos de traducción existan en `/messages`
+- Asegúrate de usar `useTranslations()` dentro de componentes cliente
+
+### Errores de caché
+- Elimina la carpeta `.next` y reinicia el servidor
+```bash
+rm -rf .next && yarn dev
+```
 
 ### Problemas de renderizado
 - Verifica que los componentes estén correctamente importados

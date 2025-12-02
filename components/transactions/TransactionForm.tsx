@@ -12,6 +12,7 @@ import { transactionAPI, handleApiError } from '@/utils/api';
 import { useTransactionStore } from '@/store';
 import { CreateTransactionData, Transaction } from '@/types';
 import { useCategories } from '@/hooks/useCategories';
+import { useTranslations } from 'next-intl';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -62,6 +63,7 @@ interface TransactionFormProps {
 }
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialType }) => {
+    const t = useTranslations(); 
     const router = useRouter();
     const { addTransaction } = useTransactionStore();
     const [loading, setLoading] = useState(false);
@@ -101,13 +103,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
             if (isEditMode && transaction) {
                 const response = await transactionAPI.updateTransaction(transaction._id, transactionData);
                 if (response.success) {
-                    message.success('Transacción actualizada exitosamente');
+                    message.success(t('transactions.transactionUpdatedSuccessfully'));
                     router.push('/dashboard');
                 }
             } else {
                 const response = await transactionAPI.createTransaction(transactionData);
                 if (response.success) {
-                    message.success('Transacción creada exitosamente');
+                    message.success(t('transactions.transactionCreatedSuccessfully'));
                     addTransaction(response.data);
                     router.push('/dashboard');
                 }
@@ -126,12 +128,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                 {selectedType === 'income' ? (
                     <>
                         <ArrowUpOutlined style={{ color: '#52c41a', marginRight: '8px' }} />
-                        {isEditMode ? 'Editar Ingreso' : 'Agregar Ingreso'}
+                        {isEditMode ? t('transactions.editIncome') : t('transactions.addIncome')}
                     </>
                 ) : (
                     <>
                         <ArrowDownOutlined style={{ color: '#ff4d4f', marginRight: '8px' }} />
-                        {isEditMode ? 'Editar Gasto' : 'Registrar Gasto'}
+                        {isEditMode ? t('transactions.editExpense') : t('transactions.addExpense')}
                     </>
                 )}
             </Title>
@@ -144,7 +146,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                     size="large"
                 >
                     <Form.Item
-                        label="Tipo de transacción"
+                        label={t('transactions.transactionType')}
                         validateStatus={errors.type ? 'error' : ''}
                         help={errors.type?.message}
                     >
@@ -155,17 +157,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                         >
                             <Option value="income">
                                 <ArrowUpOutlined style={{ color: '#52c41a', marginRight: '8px' }} />
-                                Ingreso
+                                {t('transactions.income')}
                             </Option>
                             <Option value="expense">
                                 <ArrowDownOutlined style={{ color: '#ff4d4f', marginRight: '8px' }} />
-                                Gasto
+                                {t('transactions.expense')}
                             </Option>
                         </Select>
                     </Form.Item>
 
                     <Form.Item
-                        label="Monto"
+                        label={t('transactions.amount')}
                         validateStatus={errors.amount ? 'error' : ''}
                         help={errors.amount?.message}
                     >
@@ -185,7 +187,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                     </Form.Item>
 
                     <Form.Item
-                        label="Categoría"
+                        label={t('transactions.category')}
                         validateStatus={errors.category ? 'error' : ''}
                         help={errors.category?.message}
                     >
@@ -210,7 +212,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                     </Form.Item>
 
                     <Form.Item
-                        label="Descripción"
+                        label={t('transactions.description')}
                         validateStatus={errors.description ? 'error' : ''}
                         help={errors.description?.message}
                     >
@@ -223,7 +225,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                     </Form.Item>
 
                     <Form.Item
-                        label="Fecha"
+                        label={t('transactions.date')}
                         validateStatus={errors.date ? 'error' : ''}
                         help={errors.date?.message}
                     >
@@ -244,11 +246,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                         >
                             {isEditMode
                                 ? selectedType === 'income'
-                                    ? 'Guardar Ingreso'
-                                    : 'Guardar Gasto'
+                                    ? t('transactions.saveIncome')
+                                    : t('transactions.saveExpense')
                                 : selectedType === 'income'
-                                    ? 'Agregar Ingreso'
-                                    : 'Registrar Gasto'}
+                                    ? t('transactions.addIncome')
+                                    : t('transactions.addExpense')}
                         </Button>
                     </Form.Item>
 
@@ -257,7 +259,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                             style={{ width: '100%' }}
                             onClick={() => router.push('/dashboard')}
                         >
-                            Cancelar
+                            {t('common.cancel')}
                         </Button>
                     </Form.Item>
                 </Form>

@@ -9,6 +9,7 @@ import { categoryAPI, handleApiError } from '@/utils/api';
 import { Category } from '@/types';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import { useTranslations } from 'next-intl';
 
 const { Title } = Typography;
 
@@ -20,6 +21,7 @@ interface CategoryFormData {
 }
 
 const CategoriesPage: React.FC = () => {
+  const t = useTranslations();
   const { categories, loading, refetch } = useCategories();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -64,10 +66,10 @@ const CategoriesPage: React.FC = () => {
 
       if (editingCategory) {
         await categoryAPI.updateCategory(editingCategory._id, payload);
-        message.success('Categoría actualizada correctamente');
+        message.success(t('categories.categoryUpdatedSuccessfully'));
       } else {
         await categoryAPI.createCategory(payload);
-        message.success('Categoría creada correctamente');
+        message.success(t('categories.categoryCreatedSuccessfully'));
       }
       handleCloseModal();
       refetch();
@@ -82,7 +84,7 @@ const CategoriesPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await categoryAPI.deleteCategory(id);
-      message.success('Categoría eliminada correctamente');
+      message.success(t('categories.categoryDeletedSuccessfully'));
       refetch();
     } catch (error) {
       const apiError = handleApiError(error);
@@ -92,12 +94,12 @@ const CategoriesPage: React.FC = () => {
 
   const columns = [
     {
-      title: 'Nombre',
+      title: t('categories.name'),
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Tipo',
+      title: t('categories.transactionType'),
       dataIndex: 'transactionType',
       key: 'transactionType',
       render: (type: 'income' | 'expense') => (
@@ -107,12 +109,12 @@ const CategoriesPage: React.FC = () => {
       ),
     },
     {
-      title: 'Descripción',
+      title: t('categories.description'),
       dataIndex: 'description',
       key: 'description',
     },
     {
-      title: 'Color',
+      title: t('categories.color'),
       dataIndex: 'color',
       key: 'color',
       render: (color: string) => (
@@ -122,7 +124,7 @@ const CategoriesPage: React.FC = () => {
       ),
     },
     {
-      title: 'Acciones',
+      title: t('categories.actions'),
       key: 'actions',
       render: (_: unknown, record: Category) => (
         record.type === 'user' ? (
@@ -133,17 +135,17 @@ const CategoriesPage: React.FC = () => {
               onClick={() => handleOpenModal(record)}
             />
             <Popconfirm
-              title="¿Eliminar categoría?"
-              description="Esta acción no se puede deshacer"
+              title={t('categories.deleteCategoryConfirmTitle')}
+              description={t('categories.deleteCategoryConfirmDescription')}
               onConfirm={() => handleDelete(record._id)}
-              okText="Sí"
-              cancelText="No"
+              okText={t('common.yes')}
+              cancelText={t('common.no')}
             >
               <Button type="text" danger icon={<DeleteOutlined />} />
             </Popconfirm>
           </Space>
         ) : (
-          <Tag color="default">Sistema</Tag>
+          <Tag color="default">{t('categories.systemCategory')}</Tag>
         )
       ),
     },
@@ -154,13 +156,13 @@ const CategoriesPage: React.FC = () => {
       <MainLayout>
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-            <Title level={2} style={{ margin: 0 }}>Categorías</Title>
+            <Title level={2} style={{ margin: 0 }}>{t('categories.title')}</Title>
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleOpenModal()}
             >
-              Nueva Categoría
+              {t('categories.newCategory')}
             </Button>
           </div>
 
@@ -175,7 +177,7 @@ const CategoriesPage: React.FC = () => {
           </Card>
 
           <Modal
-            title={editingCategory ? 'Editar Categoría' : 'Nueva Categoría'}
+            title={editingCategory ? t('categories.editCategory') : t('categories.newCategory')}
             open={isModalOpen}
             onCancel={handleCloseModal}
             footer={null}
@@ -188,43 +190,43 @@ const CategoriesPage: React.FC = () => {
             >
               <Form.Item
                 name="name"
-                label="Nombre"
-                rules={[{ required: true, message: 'El nombre es requerido' }]}
+                label={t('categories.name')}
+                rules={[{ required: true, message: t('categories.nameRequired') }]}
               >
-                <Input placeholder="Ej: Alimentación, Transporte..." />
+                <Input placeholder={t('categories.namePlaceholder')} />
               </Form.Item>
 
               <Form.Item
                 name="transactionType"
-                label="Tipo de transacción"
-                rules={[{ required: true, message: 'El tipo es requerido' }]}
+                label={t('categories.transactionType')}
+                rules={[{ required: true, message: t('categories.transactionTypeRequired') }]}
               >
                 <Select>
-                  <Select.Option value="expense">Gasto</Select.Option>
-                  <Select.Option value="income">Ingreso</Select.Option>
+                  <Select.Option value="expense">{t('common.expense')}</Select.Option>
+                  <Select.Option value="income">{t('common.income')}</Select.Option>
                 </Select>
               </Form.Item>
 
               <Form.Item
                 name="description"
-                label="Descripción"
+                label={t('categories.description')}
               >
                 <Input.TextArea 
-                  placeholder="Descripción opcional de la categoría..." 
+                  placeholder={t('categories.descriptionPlaceholder')} 
                   rows={2}
                 />
               </Form.Item>
 
               <Form.Item
                 name="color"
-                label="Color"
+                label={t('categories.color')}
               >
                 <ColorPicker 
                   showText 
                   format="hex"
                   presets={[
                     {
-                      label: 'Colores sugeridos',
+                      label: t('categories.suggestedColors'),
                       colors: [
                         '#F5222D', '#FA541C', '#FA8C16', '#FAAD14', '#FADB14',
                         '#A0D911', '#52C41A', '#13C2C2', '#1890FF', '#2F54EB',
@@ -237,9 +239,9 @@ const CategoriesPage: React.FC = () => {
 
               <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
                 <Space>
-                  <Button onClick={handleCloseModal}>Cancelar</Button>
+                  <Button onClick={handleCloseModal}>{t('common.cancel')}</Button>
                   <Button type="primary" htmlType="submit" loading={submitting}>
-                    {editingCategory ? 'Actualizar' : 'Crear'}
+                    {editingCategory ? t('common.update') : t('common.create')}
                   </Button>
                 </Space>
               </Form.Item>

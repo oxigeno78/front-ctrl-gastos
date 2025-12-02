@@ -6,12 +6,12 @@ import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import AuthLayout from '@/components/layout/AuthLayout';
 import { authAPI, handleApiError } from '@/utils/api';
 import { useAuthStore } from '@/store';
 import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
+import { Link, useRouter } from '@/i18n/routing';
 
 const { Text } = Typography;
 
@@ -22,31 +22,32 @@ interface RegisterFormData {
   confirmPassword: string;
 }
 
-const registerSchema = yup.object({
-  name: yup
-    .string()
-    .required('El nombre es requerido')
-    .min(2, 'El nombre debe tener al menos 2 caracteres')
-    .max(50, 'El nombre no puede exceder 50 caracteres'),
-  email: yup
-    .string()
-    .required('El email es requerido')
-    .email('Email inválido'),
-  password: yup
-    .string()
-    .required('La contraseña es requerida')
-    .min(12, 'La contraseña debe tener al menos 12 caracteres'),
-  confirmPassword: yup
-    .string()
-    .required('Confirma tu contraseña')
-    .oneOf([yup.ref('password')], 'Las contraseñas no coinciden'),
-});
-
 const RegisterPage: React.FC = () => {
+  const t = useTranslations();
   const router = useRouter();
   const { login } = useAuthStore();
   const [loading, setLoading] = React.useState(false);
   const { executeRecaptcha } = useInvisibleRecaptcha('register');
+
+  const registerSchema = yup.object({
+    name: yup
+      .string()
+      .required(t('auth.validation.nameRequired'))
+      .min(2, t('auth.validation.nameMin'))
+      .max(50, t('auth.validation.nameMax')),
+    email: yup
+      .string()
+      .required(t('auth.validation.emailRequired'))
+      .email(t('auth.validation.emailInvalid')),
+    password: yup
+      .string()
+      .required(t('auth.validation.passwordRequired'))
+      .min(12, t('auth.validation.passwordMin')),
+    confirmPassword: yup
+      .string()
+      .required(t('auth.validation.confirmPasswordRequired'))
+      .oneOf([yup.ref('password')], t('auth.validation.passwordsMismatch')),
+  });
 
   const {
     register,
@@ -69,7 +70,7 @@ const RegisterPage: React.FC = () => {
       });
 
       if (response.success) {
-        message.success('Usuario registrado exitosamente');
+        message.success(t('auth.register.success'));
         login(response.data.user, response.data.token);
         router.push('/dashboard');
       }
@@ -82,7 +83,7 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <AuthLayout title="Registro">
+    <AuthLayout title={t('auth.register.title')}>
       <Form
         name="register"
         onFinish={handleSubmit(onSubmit)}
@@ -90,52 +91,52 @@ const RegisterPage: React.FC = () => {
         size="large"
       >
         <Form.Item
-          label="Nombre completo"
+          label={t('auth.register.name')}
           validateStatus={errors.name ? 'error' : ''}
           help={errors.name?.message}
         >
           <Input
             prefix={<UserOutlined />}
-            placeholder="Tu nombre completo"
+            placeholder={t('auth.register.namePlaceholder')}
             {...register('name')}
             onChange={(e) => setValue('name', e.target.value)}
           />
         </Form.Item>
 
         <Form.Item
-          label="Email"
+          label={t('auth.register.email')}
           validateStatus={errors.email ? 'error' : ''}
           help={errors.email?.message}
         >
           <Input
             prefix={<MailOutlined />}
-            placeholder="tu@email.com"
+            placeholder={t('auth.register.emailPlaceholder')}
             {...register('email')}
             onChange={(e) => setValue('email', e.target.value)}
           />
         </Form.Item>
 
         <Form.Item
-          label="Contraseña"
+          label={t('auth.register.password')}
           validateStatus={errors.password ? 'error' : ''}
           help={errors.password?.message}
         >
           <Input.Password
             prefix={<LockOutlined />}
-            placeholder="Mínimo 12 caracteres"
+            placeholder={t('auth.register.passwordPlaceholder')}
             {...register('password')}
             onChange={(e) => setValue('password', e.target.value)}
           />
         </Form.Item>
 
         <Form.Item
-          label="Confirmar contraseña"
+          label={t('auth.register.confirmPassword')}
           validateStatus={errors.confirmPassword ? 'error' : ''}
           help={errors.confirmPassword?.message}
         >
           <Input.Password
             prefix={<LockOutlined />}
-            placeholder="Repite tu contraseña"
+            placeholder={t('auth.register.confirmPasswordPlaceholder')}
             {...register('confirmPassword')}
             onChange={(e) => setValue('confirmPassword', e.target.value)}
           />
@@ -148,15 +149,15 @@ const RegisterPage: React.FC = () => {
             loading={loading}
             style={{ width: '100%', height: '45px' }}
           >
-            Crear cuenta
+            {t('auth.register.submit')}
           </Button>
         </Form.Item>
 
         <div style={{ textAlign: 'center' }}>
           <Text>
-            ¿Ya tienes cuenta?{' '}
+            {t('auth.register.hasAccount')}{' '}
             <Link href="/auth/login" style={{ color: '#1890ff' }}>
-              Inicia sesión
+              {t('auth.register.login')}
             </Link>
           </Text>
         </div>

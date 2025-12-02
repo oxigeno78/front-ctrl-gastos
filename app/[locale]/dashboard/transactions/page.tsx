@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Table, Tag, Input, Select, Button, Space, Typography, message, Pagination } from 'antd';
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
+import { useTranslations } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
@@ -14,6 +15,7 @@ const { Title } = Typography;
 const { Option } = Select;
 
 const TransactionsPage: React.FC = () => {
+  const t = useTranslations();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -74,18 +76,18 @@ const TransactionsPage: React.FC = () => {
 
   const columns = [
     {
-      title: 'Tipo',
+      title: t('transactions.type'),
       dataIndex: 'type',
       key: 'type',
       width: 100,
       render: (type: string) => (
         <Tag color={type === 'income' ? 'green' : 'red'}>
-          {type === 'income' ? 'Ingreso' : 'Gasto'}
+          {type === 'income' ? t('transactions.income') : t('transactions.expense')}
         </Tag>
       ),
     },
     {
-      title: 'Monto',
+      title: t('transactions.amount'),
       dataIndex: 'amount',
       key: 'amount',
       width: 120,
@@ -99,19 +101,19 @@ const TransactionsPage: React.FC = () => {
       ),
     },
     {
-      title: 'Categoría',
+      title: t('transactions.category'),
       dataIndex: 'category',
       key: 'category',
-      width: 120,
+      width: 150,
     },
     {
-      title: 'Descripción',
+      title: t('transactions.description'),
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
     },
     {
-      title: 'Fecha',
+      title: t('transactions.date'),
       dataIndex: 'date',
       key: 'date',
       width: 120,
@@ -120,7 +122,7 @@ const TransactionsPage: React.FC = () => {
         new Date(a.date).getTime() - new Date(b.date).getTime(),
     },
     {
-      title: 'Creado',
+      title: t('history.created'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 120,
@@ -133,13 +135,13 @@ const TransactionsPage: React.FC = () => {
       <MainLayout>
         <div>
           <Title level={2} style={{ marginBottom: '24px' }}>
-            Historial de Transacciones
+            {t('history.title')}
           </Title>
 
           <Card style={{ marginBottom: '16px' }}>
             <Space wrap>
               <Input
-                placeholder="Buscar por descripción..."
+                placeholder={t('history.searchPlaceholder')}
                 prefix={<SearchOutlined />}
                 style={{ width: 200 }}
                 onChange={(e) => {
@@ -153,17 +155,17 @@ const TransactionsPage: React.FC = () => {
               />
               
               <Select
-                placeholder="Filtrar por tipo"
+                placeholder={t('history.filterByType')}
                 style={{ width: 150 }}
                 allowClear
                 onChange={(value) => handleFilterChange('type', value)}
               >
-                <Option value="income">Ingresos</Option>
-                <Option value="expense">Gastos</Option>
+                <Option value="income">{t('transactions.incomes')}</Option>
+                <Option value="expense">{t('transactions.expenses')}</Option>
               </Select>
 
               <Select
-                placeholder="Filtrar por categoría"
+                placeholder={t('history.filterByCategory')}
                 style={{ width: 150 }}
                 allowClear
                 loading={categoriesLoading}
@@ -180,7 +182,7 @@ const TransactionsPage: React.FC = () => {
                 icon={<FilterOutlined />}
                 onClick={clearFilters}
               >
-                Limpiar Filtros
+                {t('history.clearFilters')}
               </Button>
             </Space>
           </Card>
@@ -203,7 +205,7 @@ const TransactionsPage: React.FC = () => {
                 showSizeChanger
                 showQuickJumper
                 showTotal={(total, range) => 
-                  `${range[0]}-${range[1]} de ${total} transacciones`
+                  t('history.paginationTotal', { start: range[0], end: range[1], total })
                 }
                 onChange={handleTableChange}
                 onShowSizeChange={handleTableChange}
