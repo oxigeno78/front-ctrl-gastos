@@ -1,10 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Form, Input, Button, Typography, message } from 'antd';
+import { LockOutlined } from '@ant-design/icons';
+import { useTranslations } from 'next-intl';
 import AuthLayout from '@/components/layout/AuthLayout';
 import { authAPI, handleApiError } from '@/utils/api';
+import { useRouter } from '@/i18n/routing';
 
 const { Text } = Typography;
 
@@ -14,6 +17,7 @@ interface ResetPasswordForm {
 }
 
 export default function ResetPasswordPage() {
+  const t = useTranslations();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -25,7 +29,7 @@ export default function ResetPasswordPage() {
 
   const onSubmit = async (values: ResetPasswordForm) => {
     if (!isParamsValid) {
-      message.error('El enlace de recuperación es inválido o ha expirado');
+      message.error(t('auth.resetPassword.invalidLink'));
       return;
     }
 
@@ -36,7 +40,7 @@ export default function ResetPasswordPage() {
         email,
         password: values.password,
       });
-      message.success('Tu contraseña ha sido actualizada correctamente');
+      message.success(t('auth.resetPassword.success'));
       router.push('/auth/login');
     } catch (error) {
       const apiError = handleApiError(error);
@@ -47,10 +51,10 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <AuthLayout title="Restablecer contraseña">
+    <AuthLayout title={t('auth.resetPassword.title')}>
       {!isParamsValid ? (
         <Text type="danger">
-          El enlace de recuperación es inválido o ha expirado. Solicita uno nuevo desde la opción "Recuperar contraseña".
+          {t('auth.resetPassword.invalidLink')}
         </Text>
       ) : (
         <Form
@@ -59,38 +63,38 @@ export default function ResetPasswordPage() {
           size="large"
           onFinish={onSubmit}
         >
-          <Form.Item label="Email">
+          <Form.Item label={t('auth.resetPassword.email')}>
             <Input value={decodeURIComponent(email)} disabled />
           </Form.Item>
 
           <Form.Item
-            label="Nueva contraseña"
+            label={t('auth.resetPassword.newPassword')}
             name="password"
             rules={[
-              { required: true, message: 'Por favor, ingresa tu nueva contraseña' },
-              { min: 12, message: 'La contraseña debe tener al menos 12 caracteres' },
+              { required: true, message: t('auth.resetPassword.newPasswordRequired') },
+              { min: 12, message: t('auth.resetPassword.newPasswordMin') },
             ]}
           >
-            <Input.Password />
+            <Input.Password prefix={<LockOutlined />} />
           </Form.Item>
 
           <Form.Item
-            label="Confirmar contraseña"
+            label={t('auth.resetPassword.confirmPassword')}
             name="confirmPassword"
             dependencies={['password']}
             rules={[
-              { required: true, message: 'Por favor, confirma tu nueva contraseña' },
+              { required: true, message: t('auth.resetPassword.confirmPasswordRequired') },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('Las contraseñas no coinciden'));
+                  return Promise.reject(new Error(t('auth.resetPassword.passwordsMismatch')));
                 },
               }),
             ]}
           >
-            <Input.Password />
+            <Input.Password prefix={<LockOutlined />} />
           </Form.Item>
 
           <Form.Item style={{ marginBottom: '16px' }}>
@@ -100,7 +104,7 @@ export default function ResetPasswordPage() {
               loading={loading}
               style={{ width: '100%', height: '45px' }}
             >
-              Guardar nueva contraseña
+              {t('auth.resetPassword.submit')}
             </Button>
           </Form.Item>
         </Form>

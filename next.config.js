@@ -1,3 +1,7 @@
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configuración de imágenes
@@ -58,16 +62,6 @@ const nextConfig = {
     ];
   },
   
-  // Configuración de redirecciones
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/dashboard',
-        permanent: false,
-      },
-    ];
-  },
 };
 
-module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);

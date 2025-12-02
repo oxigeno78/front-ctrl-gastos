@@ -6,9 +6,10 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (user: User, token: string) => void;
+  login: (user: User, token: string, language?: string) => void;
   logout: () => void;
   setUser: (user: User) => void;
+  setUserLanguage: (language: string) => void;
 }
 
 interface TransactionState {
@@ -29,19 +30,34 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
-      login: (user: User, token: string) => {
+      login: (user: User, token: string, language?: string) => {
         if (typeof window !== 'undefined') {
           localStorage.setItem('token', token);
+          // Guardar idioma del usuario si viene de la API
+          if (language) {
+            localStorage.setItem('userLanguage', language);
+          }
         }
-        set({ user, token, isAuthenticated: true });
+        // Actualizar user con el idioma si viene
+        const userWithLanguage = language ? { ...user, language } : user;
+        set({ user: userWithLanguage, token, isAuthenticated: true });
       },
       logout: () => {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token');
+          localStorage.removeItem('userLanguage');
         }
         set({ user: null, token: null, isAuthenticated: false });
       },
       setUser: (user: User) => set({ user }),
+      setUserLanguage: (language: string) => {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('userLanguage', language);
+        }
+        set((state) => ({
+          user: state.user ? { ...state.user, language } : null,
+        }));
+      },
     }),
     {
       name: 'auth-storage',

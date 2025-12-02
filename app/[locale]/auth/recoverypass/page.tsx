@@ -1,18 +1,21 @@
 'use client';
-import {useState} from 'react';
-import AuthLayout from '@/components/layout/AuthLayout';
-import { Form, Input, Button } from 'antd';
-import { authAPI, handleApiError } from '@/utils/api';
-import { message } from 'antd';
 
+import { useState } from 'react';
+import { Form, Input, Button, message } from 'antd';
+import { MailOutlined } from '@ant-design/icons';
+import { useTranslations } from 'next-intl';
+import AuthLayout from '@/components/layout/AuthLayout';
+import { authAPI, handleApiError } from '@/utils/api';
 
 export default function RecoverypassPage() {
+    const t = useTranslations();
     const [loading, setLoading] = useState(false);
+
     const onSubmit = async (values: any) => {
         setLoading(true);
         try {
             await authAPI.recoveryPassword(values);
-            message.success('Se ha enviado un correo con el enlace de recuperación');
+            message.success(t('auth.recovery.success'));
         } catch (error) {
             const apiError = handleApiError(error);
             message.error(apiError.message);
@@ -20,8 +23,9 @@ export default function RecoverypassPage() {
             setLoading(false);
         }
     };
+
     return (
-        <AuthLayout title="Recuperar contraseña">
+        <AuthLayout title={t('auth.recovery.title')}>
             <Form
                 name="recoverypass"
                 layout="vertical"
@@ -29,11 +33,14 @@ export default function RecoverypassPage() {
                 onFinish={onSubmit}
             >
                 <Form.Item
-                    label="Email"
+                    label={t('auth.recovery.email')}
                     name="email"
-                    rules={[{ required: true, message: 'Por favor, ingresa tu email' }]}
+                    rules={[{ required: true, message: t('auth.recovery.emailRequired') }]}
                 >
-                    <Input />
+                    <Input 
+                        prefix={<MailOutlined />}
+                        placeholder={t('auth.recovery.emailPlaceholder')}
+                    />
                 </Form.Item>
                 <Form.Item style={{ marginBottom: '16px' }}>
                     <Button
@@ -42,7 +49,7 @@ export default function RecoverypassPage() {
                         loading={loading}
                         style={{ width: '100%', height: '45px' }}
                     >
-                        Recuperar contraseña
+                        {t('auth.recovery.submit')}
                     </Button>
                 </Form.Item>
             </Form>
