@@ -59,17 +59,17 @@ const transactionSchema = yup.object({
 
 // Opciones de periodicidad según el backend
 const PERIODICITY_OPTIONS = [
-    { value: 0, labelKey: 'periodicityDisabled' },
+    { value: 0, labelKey: 'periodicityOne-time' },
     { value: 1, labelKey: 'periodicityDaily' },
     { value: 2, labelKey: 'periodicityWeekly' },
     { value: 3, labelKey: 'periodicityBiweekly' },
     { value: 4, labelKey: 'periodicityFortnightly' },
-    { value: 5, labelKey: 'periodicityBiMonthly' },
-    { value: 6, labelKey: 'periodicityMonthly' },
-    { value: 7, labelKey: 'periodicityBimonthly' },
-    { value: 8, labelKey: 'periodicityQuarterly' },
-    { value: 9, labelKey: 'periodicitySemiAnnual' },
-    { value: 10, labelKey: 'periodicityYearly' },
+    { value: 5, labelKey: 'periodicityMonthly' },
+    { value: 6, labelKey: 'periodicityBi-monthly' },
+    { value: 7, labelKey: 'periodicityQuarterly' },
+    { value: 8, labelKey: 'periodicitySemi-annual' },
+    { value: 9, labelKey: 'periodicityYearly' },
+    { value: 10, labelKey:'periodicityCustom' },
 ];
 
 // Categorías por defecto (fallback si la API no retorna datos)

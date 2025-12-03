@@ -123,12 +123,10 @@ const TransactionsPage: React.FC = () => {
     },
     {
       title: t('transactions.periodicity'),
-      dataIndex: 'periodicity',
-      key: 'periodicity',
-      width: 120,
-      render: (periodicity: string) => {
-        console.log(periodicity);
-        return periodicity;
+      dataIndex: 'periodicityText',
+      key: 'periodicityText',
+      render: (periodicityText: string) => {
+        return t(`transactions.periodicity${periodicityText.charAt(0).toUpperCase() + periodicityText.slice(1)}`);
       },
     },
     {
