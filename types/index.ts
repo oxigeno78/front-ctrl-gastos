@@ -30,6 +30,8 @@ export interface Transaction {
   category: string;
   description: string;
   date: string;
+  periodicity?: number; // 0=disabled, 1=daily, 2=weekly, 3=biweekly, 4=fortnightly, 5=bi-monthly, 6=monthly, 7=bimonthly, 8=quarterly, 9=semi-annual, 10=yearly
+  every?: string; // day of week (lunes-domingo) or day of month (1-31)
   createdAt: string;
   updatedAt: string;
 }
@@ -77,6 +79,8 @@ export interface CreateTransactionData {
   category: string;
   description: string;
   date?: string;
+  periodicity?: number; // 0=disabled, 1=daily, 2=weekly, 3=biweekly, 4=fortnightly, 5=bi-monthly, 6=monthly, 7=bimonthly, 8=quarterly, 9=semi-annual, 10=yearly
+  every?: string; // day of week (lunes-domingo) or day of month (1-31)
 }
 
 export interface TransactionFilters {

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Form, Input, InputNumber, Select, DatePicker, Button, message, Typography } from 'antd';
-import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { Card, Form, Input, InputNumber, Select, DatePicker, Button, message, Typography, Switch, Tooltip } from 'antd';
+import { ArrowUpOutlined, ArrowDownOutlined, SyncOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -23,6 +23,8 @@ interface TransactionFormData {
     category: string;
     description: string;
     date: dayjs.Dayjs;
+    periodicity: number;
+    every?: string;
 }
 
 const transactionSchema = yup.object({
@@ -45,7 +47,30 @@ const transactionSchema = yup.object({
     date: yup
         .mixed<dayjs.Dayjs>()
         .required('La fecha es requerida'),
+    periodicity: yup
+        .number()
+        .min(0)
+        .max(10)
+        .default(0),
+    every: yup
+        .string()
+        .optional(),
 });
+
+// Opciones de periodicidad según el backend
+const PERIODICITY_OPTIONS = [
+    { value: 0, labelKey: 'periodicityDisabled' },
+    { value: 1, labelKey: 'periodicityDaily' },
+    { value: 2, labelKey: 'periodicityWeekly' },
+    { value: 3, labelKey: 'periodicityBiweekly' },
+    { value: 4, labelKey: 'periodicityFortnightly' },
+    { value: 5, labelKey: 'periodicityBiMonthly' },
+    { value: 6, labelKey: 'periodicityMonthly' },
+    { value: 7, labelKey: 'periodicityBimonthly' },
+    { value: 8, labelKey: 'periodicityQuarterly' },
+    { value: 9, labelKey: 'periodicitySemiAnnual' },
+    { value: 10, labelKey: 'periodicityYearly' },
+];
 
 // Categorías por defecto (fallback si la API no retorna datos)
 const defaultIncomeCategories = [
@@ -84,6 +109,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
             category: transaction?.category || '',
             description: transaction?.description || '',
             date: transaction ? dayjs(transaction.date) : dayjs(),
+            periodicity: transaction?.periodicity ?? 0,
+            every: transaction?.every,
         },
     });
 
@@ -98,6 +125,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                 category: data.category,
                 description: data.description,
                 date: data.date.toISOString(),
+                periodicity: data.periodicity,
+                every: data.periodicity > 0 ? data.every : undefined,
             };
 
             if (isEditMode && transaction) {
@@ -179,7 +208,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                             precision={2}
                             value={watch('amount')}
                             formatter={(value) => {
-                                console.log(value);
+                                // console.log(value);
                                 return `$ ${value}` //.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                             }}
                             onChange={(value) => setValue('amount', typeof value === 'number' ? value : 0)}
@@ -236,6 +265,52 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                             onChange={(date) => setValue('date', date || dayjs())}
                         />
                     </Form.Item>
+
+                    <Form.Item
+                        label={
+                            <span>
+                                <SyncOutlined style={{ marginRight: 8 }} />
+                                {t('transactions.periodicity')}
+                            </span>
+                        }
+                    >
+                        <Select
+                            value={watch('periodicity')}
+                            onChange={(value) => {
+                                setValue('periodicity', value);
+                                if (value === 0) {
+                                    setValue('every', undefined);
+                                }
+                            }}
+                            style={{ width: '100%' }}
+                        >
+                            {PERIODICITY_OPTIONS.map((option) => (
+                                <Option key={option.value} value={option.value}>
+                                    {t(`transactions.${option.labelKey}`)}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    {watch('periodicity') > 1 && (
+                        <Form.Item
+                            label={
+                                <span>
+                                    {t('transactions.every')}
+                                    <Tooltip title={t('transactions.everyHelp')}>
+                                        <QuestionCircleOutlined style={{ marginLeft: 8, color: '#999' }} />
+                                    </Tooltip>
+                                </span>
+                            }
+                        >
+                            <Input
+                                style={{ width: '100%' }}
+                                placeholder={t('transactions.everyPlaceholder')}
+                                value={watch('every')}
+                                onChange={(e) => setValue('every', e.target.value || undefined)}
+                            />
+                        </Form.Item>
+                    )}
 
                     <Form.Item style={{ marginBottom: '16px' }}>
                         <Button

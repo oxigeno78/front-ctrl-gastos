@@ -17,7 +17,8 @@
     "next": "Siguiente",
     "previous": "Anterior",
     "income": "Ingreso",
-    "expense": "Gasto"
+    "expense": "Gasto",
+    "update": "Actualizar"
   },
   "auth": {
     "login": {
@@ -152,7 +153,23 @@
     "addExpense": "Agregar Gasto",
     "transactionType": "Tipo de Transacción",
     "saveIncome": "Guardar Ingreso",
-    "saveExpense": "Guardar Gasto"
+    "saveExpense": "Guardar Gasto",
+    "periodicity": "Periodicidad",
+    "periodicityDisabled": "Sin repetición",
+    "periodicityOne-time": "Una vez",
+    "periodicityDaily": "Diario",
+    "periodicityWeekly": "Semanal",
+    "periodicityBiweekly": "Quincenal",
+    "periodicityFortnightly": "Catorcena",
+    "periodicityBiMonthly": "Bimensual",
+    "periodicityMonthly": "Mensual",
+    "periodicityBimonthly": "Bimestral",
+    "periodicityQuarterly": "Trimestral",
+    "periodicitySemiAnnual": "Semestral",
+    "periodicityYearly": "Anual",
+    "every": "Repetir cada",
+    "everyPlaceholder": "Ej: lunes, martes, 15, 28...",
+    "everyHelp": "Día de la semana (lunes-domingo) o día del mes (1-31)"
   },
   "history": {
     "title": "Historial de Transacciones",
