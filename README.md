@@ -69,6 +69,8 @@ frontend/
 │       │   ├── categories/
 │       │   ├── profile/
 │       │   ├── transactions/
+│       │   │   ├── page.tsx      # Lista de transacciones
+│       │   │   └── [id]/         # Edición de transacción
 │       │   └── reports/
 │       └── reset-password/
 ├── components/               # Componentes reutilizables
