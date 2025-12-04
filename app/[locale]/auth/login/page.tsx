@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Form, Input, Button, message, Typography } from 'antd';
+import { Form, Input, Button, message, Typography, Checkbox } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -22,6 +22,7 @@ const LoginPage: React.FC = () => {
   const router = useRouter();
   const { login } = useAuthStore();
   const [loading, setLoading] = React.useState(false);
+  const [acceptedTerms, setAcceptedTerms] = React.useState(false);
   const { executeRecaptcha } = useInvisibleRecaptcha('login');
 
   const loginSchema = yup.object({
@@ -107,10 +108,23 @@ const LoginPage: React.FC = () => {
         </Form.Item>
 
         <Form.Item style={{ marginBottom: '16px' }}>
+          <Checkbox
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+          >
+            {t('auth.login.acceptTerms')}{' '}
+            <Link href="/terms" style={{ color: '#1890ff' }} target="_blank">
+              {t('auth.login.termsAndConditions')}
+            </Link>
+          </Checkbox>
+        </Form.Item>
+
+        <Form.Item style={{ marginBottom: '16px' }}>
           <Button
             type="primary"
             htmlType="submit"
             loading={loading}
+            disabled={!acceptedTerms}
             style={{ width: '100%', height: '45px' }}
           >
             {t('auth.login.submit')}

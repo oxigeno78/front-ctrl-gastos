@@ -32,7 +32,10 @@
             "register": "Register here",
             "forgotPassword": "Forgot your password?",
             "recoverPassword": "Recover your password here",
-            "success": "Login successful"
+            "success": "Login successful",
+            "acceptTerms": "I accept the",
+            "termsAndConditions": "Terms and Conditions",
+            "termsRequired": "You must accept the terms and conditions to continue"
         },
         "register": {
             "title": "Register",
@@ -255,5 +258,52 @@
     "metadata": {
         "title": "Expense Control - Personal Financial Management",
         "description": "Application to control personal income and expenses with detailed analysis and reports"
+    },
+    "terms": {
+        "title": "Terms and Conditions of Service",
+        "lastUpdated": "Last updated: December 2024",
+        "backToLogin": "Back to login",
+        "sections": {
+            "acceptance": {
+                "title": "1. Acceptance of Terms",
+                "content": "By accessing and using Expense Control, you agree to be bound by these Terms and Conditions of Service. If you do not agree with any part of these terms, you may not access the service."
+            },
+            "service": {
+                "title": "2. Service Description",
+                "content": "Expense Control is a personal financial management application that allows users to record, categorize, and analyze their income and expenses. The service includes features such as transaction recording, categorization, reports, and financial analysis."
+            },
+            "account": {
+                "title": "3. User Account",
+                "content": "To use the service, you must create an account by providing accurate and complete information. You are responsible for maintaining the confidentiality of your password and for all activities that occur under your account. You must notify us immediately of any unauthorized use of your account."
+            },
+            "privacy": {
+                "title": "4. Privacy and Personal Data",
+                "content": "We respect your privacy and are committed to protecting your personal data. The financial information you record in the application is private and will not be shared with third parties without your express consent, except when required by law."
+            },
+            "userResponsibilities": {
+                "title": "5. User Responsibilities",
+                "content": "You agree to use the service responsibly and legally. You must not attempt to access other users' accounts, interfere with the operation of the service, or use the platform for illegal or fraudulent activities."
+            },
+            "dataProtection": {
+                "title": "6. Data Protection",
+                "content": "We implement technical and organizational security measures to protect your data against unauthorized access, loss, or alteration. Your financial data is stored securely and encrypted."
+            },
+            "limitations": {
+                "title": "7. Limitation of Liability",
+                "content": "Expense Control is provided 'as is' without warranties of any kind. We are not responsible for financial decisions made based on information displayed in the application. The service is a tracking tool and does not constitute professional financial advice."
+            },
+            "modifications": {
+                "title": "8. Service Modifications",
+                "content": "We reserve the right to modify or discontinue the service at any time, with or without prior notice. We may also update these terms periodically, and continued use of the service constitutes acceptance of such changes."
+            },
+            "termination": {
+                "title": "9. Termination",
+                "content": "We may suspend or terminate your access to the service if you violate these terms. You may delete your account at any time from your profile settings. When you delete your account, all your data will be permanently deleted."
+            },
+            "contact": {
+                "title": "10. Contact",
+                "content": "If you have questions about these Terms and Conditions, you can contact us through the support channels available in the application."
+            }
+        }
     }
 }

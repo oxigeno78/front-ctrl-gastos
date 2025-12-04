@@ -32,7 +32,10 @@
       "register": "Regístrate aquí",
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "recoverPassword": "Recupera tu contraseña aquí",
-      "success": "Inicio de sesión exitoso"
+      "success": "Inicio de sesión exitoso",
+      "acceptTerms": "Acepto los",
+      "termsAndConditions": "Términos y Condiciones",
+      "termsRequired": "Debes aceptar los términos y condiciones para continuar"
     },
     "register": {
       "title": "Registro",
@@ -253,5 +256,52 @@
   "metadata": {
     "title": "Control de Gastos - Gestión Financiera Personal",
     "description": "Aplicación para controlar ingresos y gastos personales con análisis y reportes detallados"
+  },
+  "terms": {
+    "title": "Términos y Condiciones del Servicio",
+    "lastUpdated": "Última actualización: Diciembre 2024",
+    "backToLogin": "Volver al inicio de sesión",
+    "sections": {
+      "acceptance": {
+        "title": "1. Aceptación de los Términos",
+        "content": "Al acceder y utilizar Control Gastos, usted acepta estar sujeto a estos Términos y Condiciones de Servicio. Si no está de acuerdo con alguna parte de estos términos, no podrá acceder al servicio."
+      },
+      "service": {
+        "title": "2. Descripción del Servicio",
+        "content": "Control Gastos es una aplicación de gestión financiera personal que permite a los usuarios registrar, categorizar y analizar sus ingresos y gastos. El servicio incluye funcionalidades como registro de transacciones, categorización, reportes y análisis financiero."
+      },
+      "account": {
+        "title": "3. Cuenta de Usuario",
+        "content": "Para utilizar el servicio, debe crear una cuenta proporcionando información precisa y completa. Usted es responsable de mantener la confidencialidad de su contraseña y de todas las actividades que ocurran bajo su cuenta. Debe notificarnos inmediatamente sobre cualquier uso no autorizado de su cuenta."
+      },
+      "privacy": {
+        "title": "4. Privacidad y Datos Personales",
+        "content": "Respetamos su privacidad y nos comprometemos a proteger sus datos personales. La información financiera que registre en la aplicación es privada y no será compartida con terceros sin su consentimiento expreso, excepto cuando sea requerido por ley."
+      },
+      "userResponsibilities": {
+        "title": "5. Responsabilidades del Usuario",
+        "content": "Usted se compromete a utilizar el servicio de manera responsable y legal. No debe intentar acceder a cuentas de otros usuarios, interferir con el funcionamiento del servicio, ni utilizar la plataforma para actividades ilegales o fraudulentas."
+      },
+      "dataProtection": {
+        "title": "6. Protección de Datos",
+        "content": "Implementamos medidas de seguridad técnicas y organizativas para proteger sus datos contra acceso no autorizado, pérdida o alteración. Sus datos financieros se almacenan de forma segura y encriptada."
+      },
+      "limitations": {
+        "title": "7. Limitación de Responsabilidad",
+        "content": "Control Gastos se proporciona 'tal cual' sin garantías de ningún tipo. No nos hacemos responsables por decisiones financieras tomadas basándose en la información mostrada en la aplicación. El servicio es una herramienta de seguimiento y no constituye asesoría financiera profesional."
+      },
+      "modifications": {
+        "title": "8. Modificaciones del Servicio",
+        "content": "Nos reservamos el derecho de modificar o discontinuar el servicio en cualquier momento, con o sin previo aviso. También podemos actualizar estos términos periódicamente, y el uso continuado del servicio constituye la aceptación de dichos cambios."
+      },
+      "termination": {
+        "title": "9. Terminación",
+        "content": "Podemos suspender o terminar su acceso al servicio si viola estos términos. Usted puede eliminar su cuenta en cualquier momento desde la configuración de su perfil. Al eliminar su cuenta, todos sus datos serán eliminados permanentemente."
+      },
+      "contact": {
+        "title": "10. Contacto",
+        "content": "Si tiene preguntas sobre estos Términos y Condiciones, puede contactarnos a través de los canales de soporte disponibles en la aplicación."
+      }
+    }
   }
 }
