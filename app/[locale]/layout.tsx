@@ -15,6 +15,10 @@ export const metadata: Metadata = {
   keywords: ['finanzas', 'gastos', 'ingresos', 'control financiero', 'presupuesto'],
   authors: [{ name: 'Control Gastos App' }],
   robots: 'index, follow',
+  icons: {
+    icon: '/icon.png',
+    apple: '/apple-icon.png',
+  },
   openGraph: {
     title: 'Control de Gastos - Gestión Financiera Personal',
     description: 'Aplicación para controlar ingresos y gastos personales con análisis y reportes detallados',
@@ -55,7 +59,6 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <head>
-        <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#1890ff" />
       </head>
       <body>
