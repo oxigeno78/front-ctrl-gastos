@@ -28,17 +28,21 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const isConnectedRef = useRef(false);
   const hasLoadedNotifications = useRef(false);
   const { token, isAuthenticated, user } = useAuthStore();
-  const { addNotification, notifications } = useNotificationStore();
+  const { addNotification } = useNotificationStore();
 
-  // Cargar notificaciones no leídas del backend
+  // Cargar notificaciones no leídas del backend (solo cuando hay sesión válida)
   useEffect(() => {
     const loadUnreadNotifications = async () => {
-      if (!user?.id || hasLoadedNotifications.current) return;
+      if (!user?.id || !token || hasLoadedNotifications.current) return;
+      
+      hasLoadedNotifications.current = true; // Marcar antes de la petición para evitar duplicados
       
       try {
         const response = await notificationAPI.getUnread(user.id);
         if (response.success && response.data.length > 0) {
-          const existingIds = new Set(notifications.map(n => n._id || n.id));
+          // Obtener las notificaciones actuales del store directamente
+          const currentNotifications = useNotificationStore.getState().notifications;
+          const existingIds = new Set(currentNotifications.map(n => n._id || n.id));
           response.data.forEach((notification) => {
             if (notification._id && !existingIds.has(notification._id)) {
               addNotification({
@@ -55,19 +59,20 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
             }
           });
         }
-        hasLoadedNotifications.current = true;
       } catch (error: unknown) {
         const axiosError = error as { response?: { status?: number } };
         if (axiosError?.response?.status !== 404) {
           console.error('Error loading notifications:', error);
         }
+        hasLoadedNotifications.current = false; // Permitir reintentar si falla
       }
     };
 
-    if (isAuthenticated && user?.id) {
+    // Solo cargar si está autenticado Y tiene token válido
+    if (isAuthenticated && token && user?.id) {
       loadUnreadNotifications();
     }
-  }, [isAuthenticated, user?.id, notifications, addNotification]);
+  }, [isAuthenticated, token, user?.id, addNotification]);
 
   // Conectar socket (solo si está habilitado)
   useEffect(() => {
