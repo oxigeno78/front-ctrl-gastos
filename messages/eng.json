@@ -17,7 +17,8 @@
         "next": "Next",
         "previous": "Previous",
         "income": "Income",
-        "expense": "Expense"
+        "expense": "Expense",
+        "update": "Update"
     },
     "auth": {
         "login": {
@@ -152,7 +153,23 @@
         "addExpense": "Add Expense",
         "transactionType": "Transaction Type",
         "saveIncome": "Save Income",
-        "saveExpense": "Save Expense"
+        "saveExpense": "Save Expense",
+        "periodicity": "Periodicity",
+        "periodicityDisabled": "No repetition",
+        "periodicityOne-time": "One-time",
+        "periodicityDaily": "Daily",
+        "periodicityWeekly": "Weekly",
+        "periodicityBiweekly": "Biweekly",
+        "periodicityFortnightly": "Fortnightly",
+        "periodicityMonthly": "Monthly",
+        "periodicityBi-monthly": "Bimonthly",
+        "periodicityQuarterly": "Quarterly",
+        "periodicitySemi-annual": "Semi-annual",
+        "periodicityYearly": "Yearly",
+        "periodicityCustom": "Custom",
+        "every": "Repeat every",
+        "everyPlaceholder": "E.g.: monday, tuesday, 15, 28...",
+        "everyHelp": "Day of the week (monday-sunday) or day of the month (1-31)"
     },
     "history": {
         "title": "Transaction History",
@@ -204,6 +221,36 @@
         "categories": "Categories",
         "history": "History",
         "reports": "Reports"
+    },
+    "notifications": {
+        "title": "Notifications",
+        "empty": "No notifications",
+        "markAllRead": "Mark all as read",
+        "clearAll": "Clear all",
+        "type": {
+            "info": "Info",
+            "success": "Success",
+            "warning": "Warning",
+            "error": "Error"
+        },
+        "time": {
+            "justNow": "Just now",
+            "minutesAgo": "{count} min ago",
+            "hoursAgo": "{count} h ago",
+            "daysAgo": "{count} d ago"
+        },
+        "messages": {
+            "transactionCreatedTitle": "{type, select, income {Income recorded} expense {Expense recorded} other {Transaction recorded}}",
+            "transactionCreatedMessage": "A {type, select, income {income} expense {expense} other {transaction}} of ${amount} was recorded",
+            "budgetAlertTitle": "Budget alert",
+            "budgetAlertMessage": "You have used {percentage}% of your monthly budget",
+            "periodicTransactionTitle": "Periodic transaction",
+            "periodicTransactionMessage": "Automatically executed: {description}",
+            "welcomeTitle": "Welcome!",
+            "welcomeMessage": "Your account has been created successfully",
+            "transactionUpdatedTitle": "Transaction updated successfully",
+            "transactionUpdatedMessage": "A {type, select, income {income} expense {expense} other {transaction}} of ${amount} was updated"
+        }
     },
     "metadata": {
         "title": "Expense Control - Personal Financial Management",

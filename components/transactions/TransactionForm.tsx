@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Form, Input, InputNumber, Select, DatePicker, Button, message, Typography } from 'antd';
-import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { Card, Form, Input, InputNumber, Select, DatePicker, Button, message, Typography, Switch, Tooltip } from 'antd';
+import { ArrowUpOutlined, ArrowDownOutlined, SyncOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -10,20 +10,13 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { useTransactionStore } from '@/store';
-import { CreateTransactionData, Transaction } from '@/types';
+import { CreateTransactionData, Transaction, TransactionFormData, TransactionFormProps } from '@/types';
 import { useCategories } from '@/hooks/useCategories';
 import { useTranslations } from 'next-intl';
 
 const { Title } = Typography;
 const { Option } = Select;
 
-interface TransactionFormData {
-    type: 'income' | 'expense';
-    amount: number;
-    category: string;
-    description: string;
-    date: dayjs.Dayjs;
-}
 
 const transactionSchema = yup.object({
     type: yup
@@ -44,8 +37,37 @@ const transactionSchema = yup.object({
         .max(200, 'La descripción no puede exceder 200 caracteres'),
     date: yup
         .mixed<dayjs.Dayjs>()
-        .required('La fecha es requerida'),
+        .required('La fecha es requerida')
+        .test('is-dayjs', 'Fecha inválida', (value) => dayjs.isDayjs(value)),
+    periodicity: yup
+        .number()
+        .min(0)
+        .max(10)
+        .default(0),
+    every: yup
+        .string()
+        .nullable()
+        .when('periodicity', {
+            is: (val: number) => val > 1,
+            then: (schema) => schema.required('Este campo es requerido para transacciones periódicas'),
+            otherwise: (schema) => schema.nullable(),
+        }),
 });
+
+// Opciones de periodicidad según el backend
+const PERIODICITY_OPTIONS = [
+    { value: 0, labelKey: 'periodicityOne-time' },
+    { value: 1, labelKey: 'periodicityDaily' },
+    { value: 2, labelKey: 'periodicityWeekly' },
+    { value: 3, labelKey: 'periodicityBiweekly' },
+    { value: 4, labelKey: 'periodicityFortnightly' },
+    { value: 5, labelKey: 'periodicityMonthly' },
+    { value: 6, labelKey: 'periodicityBi-monthly' },
+    { value: 7, labelKey: 'periodicityQuarterly' },
+    { value: 8, labelKey: 'periodicitySemi-annual' },
+    { value: 9, labelKey: 'periodicityYearly' },
+    { value: 10, labelKey:'periodicityCustom' },
+];
 
 // Categorías por defecto (fallback si la API no retorna datos)
 const defaultIncomeCategories = [
@@ -56,11 +78,6 @@ const defaultExpenseCategories = [
     'Alimentación', 'Transporte', 'Vivienda', 'Entretenimiento', 'Salud',
     'Educación', 'Ropa', 'Tecnología', 'Servicios', 'Otros'
 ];
-
-interface TransactionFormProps {
-    transaction?: Transaction | null;
-    initialType?: 'income' | 'expense';
-}
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialType }) => {
     const t = useTranslations(); 
@@ -73,10 +90,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
 
     const {
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isValid, isDirty },
         setValue,
         watch,
     } = useForm<TransactionFormData>({
+        mode: 'onChange',
         resolver: yupResolver(transactionSchema),
         defaultValues: {
             type: transaction?.type || initialType || 'income',
@@ -84,10 +102,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
             category: transaction?.category || '',
             description: transaction?.description || '',
             date: transaction ? dayjs(transaction.date) : dayjs(),
+            periodicity: transaction?.periodicity ?? 0,
+            every: transaction?.every || undefined,
         },
     });
 
     const selectedType = watch('type');
+    
+    // Debug: ver estado del formulario
+    // console.log('Form state:', { isValid, isDirty, isEditMode, errors, values: watch() });
 
     const onSubmit = async (data: TransactionFormData) => {
         setLoading(true);
@@ -98,6 +121,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                 category: data.category,
                 description: data.description,
                 date: data.date.toISOString(),
+                periodicity: data.periodicity,
+                every: data.periodicity > 1 ? String(data.every) : undefined,
             };
 
             if (isEditMode && transaction) {
@@ -152,7 +177,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                     >
                         <Select
                             value={selectedType}
-                            onChange={(value) => setValue('type', value)}
+                            onChange={(value) => setValue('type', value, { shouldDirty: true, shouldValidate: true })}
                             style={{ width: '100%' }}
                         >
                             <Option value="income">
@@ -179,10 +204,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                             precision={2}
                             value={watch('amount')}
                             formatter={(value) => {
-                                console.log(value);
+                                // console.log(value);
                                 return `$ ${value}` //.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                             }}
-                            onChange={(value) => setValue('amount', typeof value === 'number' ? value : 0)}
+                            onChange={(value) => setValue('amount', typeof value === 'number' ? value : 0, { shouldDirty: true, shouldValidate: true })}
                         />
                     </Form.Item>
 
@@ -193,7 +218,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                     >
                         <Select
                             placeholder="Selecciona una categoría"
-                            onChange={(value) => setValue('category', value)}
+                            onChange={(value) => setValue('category', value, { shouldDirty: true, shouldValidate: true })}
                             style={{ width: '100%' }}
                             value={watch('category')}
                             loading={categoriesLoading}
@@ -219,7 +244,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                         <Input.TextArea
                             rows={3}
                             placeholder="Describe brevemente esta transacción"
-                            onChange={(e) => setValue('description', e.target.value)}
+                            onChange={(e) => setValue('description', e.target.value, { shouldDirty: true, shouldValidate: true })}
                             value={watch('description')}
                         />
                     </Form.Item>
@@ -233,15 +258,62 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                             style={{ width: '100%' }}
                             format="DD/MM/YYYY"
                             value={watch('date')}
-                            onChange={(date) => setValue('date', date || dayjs())}
+                            onChange={(date) => setValue('date', date || dayjs(), { shouldDirty: true, shouldValidate: true })}
                         />
                     </Form.Item>
+
+                    <Form.Item
+                        label={
+                            <span>
+                                <SyncOutlined style={{ marginRight: 8 }} />
+                                {t('transactions.periodicity')}
+                            </span>
+                        }
+                    >
+                        <Select
+                            value={watch('periodicity')}
+                            onChange={(value) => {
+                                setValue('periodicity', value, { shouldDirty: true, shouldValidate: true });
+                                if (value === 0) {
+                                    setValue('every', undefined, { shouldDirty: true });
+                                }
+                            }}
+                            style={{ width: '100%' }}
+                        >
+                            {PERIODICITY_OPTIONS.map((option) => (
+                                <Option key={option.value} value={option.value}>
+                                    {t(`transactions.${option.labelKey}`)}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    {watch('periodicity') > 1 && (
+                        <Form.Item
+                            label={
+                                <span>
+                                    {t('transactions.every')}
+                                    <Tooltip title={t('transactions.everyHelp')}>
+                                        <QuestionCircleOutlined style={{ marginLeft: 8, color: '#999' }} />
+                                    </Tooltip>
+                                </span>
+                            }
+                        >
+                            <Input
+                                style={{ width: '100%' }}
+                                placeholder={t('transactions.everyPlaceholder')}
+                                value={watch('every') || ''}
+                                onChange={(e) => setValue('every', e.target.value || undefined, { shouldDirty: true, shouldValidate: true })}
+                            />
+                        </Form.Item>
+                    )}
 
                     <Form.Item style={{ marginBottom: '16px' }}>
                         <Button
                             type="primary"
                             htmlType="submit"
                             loading={loading}
+                            disabled={!isValid || (isEditMode && !isDirty)}
                             style={{ width: '100%', height: '45px' }}
                         >
                             {isEditMode

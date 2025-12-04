@@ -13,6 +13,7 @@ import { useAuthStore } from '@/store';
 import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
 import { Link, useRouter } from '@/i18n/routing';
 import { locales, type Locale } from '@/i18n/config';
+import { RegisterFormData } from '@/types';
 
 const { Text } = Typography;
 
@@ -20,13 +21,6 @@ const languageLabels: Record<Locale, string> = {
   esp: 'Español',
   eng: 'English',
 };
-
-interface RegisterFormData {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
 
 const RegisterPage: React.FC = () => {
   const t = useTranslations();

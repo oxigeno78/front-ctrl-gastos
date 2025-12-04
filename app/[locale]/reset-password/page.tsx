@@ -8,13 +8,9 @@ import { useTranslations } from 'next-intl';
 import AuthLayout from '@/components/layout/AuthLayout';
 import { authAPI, handleApiError } from '@/utils/api';
 import { useRouter } from '@/i18n/routing';
+import { ResetPasswordFormData } from '@/types';
 
 const { Text } = Typography;
-
-interface ResetPasswordForm {
-  password: string;
-  confirmPassword: string;
-}
 
 export default function ResetPasswordPage() {
   const t = useTranslations();
@@ -27,7 +23,7 @@ export default function ResetPasswordPage() {
 
   const isParamsValid = useMemo(() => !!token && !!email, [token, email]);
 
-  const onSubmit = async (values: ResetPasswordForm) => {
+  const onSubmit = async (values: ResetPasswordFormData) => {
     if (!isParamsValid) {
       message.error(t('auth.resetPassword.invalidLink'));
       return;

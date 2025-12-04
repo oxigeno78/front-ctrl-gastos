@@ -92,6 +92,14 @@ const DashboardPage: React.FC = () => {
       render: (date: string) => formatDate(date),
     },
     {
+      title: t('transactions.periodicity'),
+      dataIndex: 'periodicityText',
+      key: 'periodicityText',
+      render: (periodicityText: string = '') => {
+        return t(`transactions.periodicity${periodicityText.charAt(0).toUpperCase() + periodicityText.slice(1)}`);
+      },
+    },
+    {
       title: t('common.actions'),
       key: 'actions',
       render: (record: Transaction) => (

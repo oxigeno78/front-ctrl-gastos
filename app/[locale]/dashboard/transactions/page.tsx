@@ -122,6 +122,14 @@ const TransactionsPage: React.FC = () => {
         new Date(a.date).getTime() - new Date(b.date).getTime(),
     },
     {
+      title: t('transactions.periodicity'),
+      dataIndex: 'periodicityText',
+      key: 'periodicityText',
+      render: (periodicityText: string) => {
+        return t(`transactions.periodicity${periodicityText.charAt(0).toUpperCase() + periodicityText.slice(1)}`);
+      },
+    },
+    {
       title: t('history.created'),
       dataIndex: 'createdAt',
       key: 'createdAt',
