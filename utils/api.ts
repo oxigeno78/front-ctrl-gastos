@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category, Notification } from '@/types';
 import { api as apiConfig } from '@/config/env';
+import { useAuthStore, useNotificationStore } from '@/store';
 
 const API_URL = apiConfig.url;
 
@@ -32,9 +33,18 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expirado o inválido
-      if (typeof window !== 'undefined') { localStorage.removeItem('token'); }
-      window.location.href = '/auth/login';
+      // Evitar ciclo infinito: solo redirigir si no estamos ya en login
+      const isOnLoginPage = typeof window !== 'undefined' && 
+        window.location.pathname.includes('/auth/login');
+      
+      if (!isOnLoginPage) {
+        // Limpiar stores de Zustand ANTES de redirigir
+        useAuthStore.getState().logout();
+        useNotificationStore.getState().clearNotifications();
+        
+        // Redirigir al login
+        window.location.href = '/auth/login';
+      }
     }
     return Promise.reject(error);
   }
