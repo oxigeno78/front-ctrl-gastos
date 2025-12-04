@@ -13,13 +13,9 @@ import { useAuthStore } from '@/store';
 import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
 import { Link, useRouter } from '@/i18n/routing';
 import { type Locale } from '@/i18n/config';
+import { LoginFormData } from '@/types';
 
 const { Text } = Typography;
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
 
 const LoginPage: React.FC = () => {
   const t = useTranslations();

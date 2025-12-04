@@ -3,10 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store';
-
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
+import { ProtectedRouteProps } from '@/types';
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const router = useRouter();
