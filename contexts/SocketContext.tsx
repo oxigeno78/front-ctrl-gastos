@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useRef, ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore, useNotificationStore } from '@/store';
 import { notificationAPI } from '@/utils/api';
@@ -27,8 +28,12 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const socketRef = useRef<Socket | null>(null);
   const isConnectedRef = useRef(false);
   const hasLoadedNotifications = useRef(false);
+  const pathname = usePathname();
   const { token, isAuthenticated, user } = useAuthStore();
   const { addNotification } = useNotificationStore();
+  
+  // No intentar conexiones en páginas de auth
+  const isAuthPage = pathname?.includes('/auth/');
 
   // Cargar notificaciones no leídas del backend (solo cuando hay sesión válida)
   useEffect(() => {
@@ -68,17 +73,22 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       }
     };
 
-    // Solo cargar si está autenticado Y tiene token válido
-    if (isAuthenticated && token && user?.id) {
+    // Solo cargar si está autenticado Y tiene token válido Y NO está en página de auth
+    if (isAuthenticated && token && user?.id && !isAuthPage) {
       loadUnreadNotifications();
     }
-  }, [isAuthenticated, token, user?.id, addNotification]);
+  }, [isAuthenticated, token, user?.id, addNotification, isAuthPage]);
 
   // Conectar socket (solo si está habilitado)
   useEffect(() => {
     // Solo conectar si está habilitado, autenticado y no hay conexión activa
     if (!socketConfig.enabled) {
       return; // Socket.IO deshabilitado por configuración
+    }
+
+    // No conectar si estamos en página de auth
+    if (isAuthPage) {
+      return;
     }
 
     if (isAuthenticated && token && !socketRef.current) {
@@ -142,7 +152,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         isConnectedRef.current = false;
       }
     };
-  }, [isAuthenticated, token, addNotification]);
+  }, [isAuthenticated, token, addNotification, isAuthPage]);
 
   return (
     <SocketContext.Provider value={{ 
