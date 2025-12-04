@@ -2,14 +2,10 @@
 
 import React from 'react';
 import { Layout, Typography } from 'antd';
+import { AuthLayoutProps } from '@/types';
 
 const { Content } = Layout;
 const { Title } = Typography;
-
-interface AuthLayoutProps {
-  children: React.ReactNode;
-  title: string;
-}
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title }) => {
   return (

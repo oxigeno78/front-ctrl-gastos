@@ -1,27 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, Transaction, TransactionSummary } from '@/types';
-
-interface AuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  login: (user: User, token: string, language?: string) => void;
-  logout: () => void;
-  setUser: (user: User) => void;
-  setUserLanguage: (language: string) => void;
-}
-
-interface TransactionState {
-  transactions: Transaction[];
-  summary: TransactionSummary | null;
-  isLoading: boolean;
-  setTransactions: (transactions: Transaction[]) => void;
-  setSummary: (summary: TransactionSummary) => void;
-  setLoading: (loading: boolean) => void;
-  addTransaction: (transaction: Transaction) => void;
-  clearTransactions: () => void;
-}
+import { 
+  User, 
+  Transaction, 
+  TransactionSummary,
+  Notification,
+  AuthState,
+  TransactionState,
+  NotificationState
+} from '@/types';
 
 // Store de autenticación
 export const useAuthStore = create<AuthState>()(
@@ -84,3 +71,69 @@ export const useTransactionStore = create<TransactionState>((set) => ({
     })),
   clearTransactions: () => set({ transactions: [], summary: null }),
 }));
+
+// Store de notificaciones
+export const useNotificationStore = create<NotificationState>()(
+  persist(
+    (set) => ({
+      notifications: [],
+      unreadCount: 0,
+      addNotification: (notification) => {
+        const newNotification: Notification = {
+          ...notification,
+          // Usar _id del backend como id principal, o generar uno local
+          id: notification._id || crypto.randomUUID(),
+          _id: notification._id,
+          createdAt: notification.createdAt || new Date().toISOString(),
+          read: false,
+        };
+        set((state) => {
+          // Evitar duplicados por _id
+          if (notification._id && state.notifications.some(n => n._id === notification._id)) {
+            return state;
+          }
+          return {
+            notifications: [newNotification, ...state.notifications].slice(0, 50),
+            unreadCount: state.unreadCount + 1,
+          };
+        });
+      },
+      markAsRead: (id) =>
+        set((state) => {
+          const notification = state.notifications.find((n) => n.id === id);
+          if (notification && !notification.read) {
+            return {
+              notifications: state.notifications.map((n) =>
+                n.id === id ? { ...n, read: true } : n
+              ),
+              unreadCount: Math.max(0, state.unreadCount - 1),
+            };
+          }
+          return state;
+        }),
+      markAllAsRead: () =>
+        set((state) => ({
+          notifications: state.notifications.map((n) => ({ ...n, read: true })),
+          unreadCount: 0,
+        })),
+      removeNotification: (id) =>
+        set((state) => {
+          const notification = state.notifications.find((n) => n.id === id);
+          return {
+            notifications: state.notifications.filter((n) => n.id !== id),
+            unreadCount: notification && !notification.read 
+              ? Math.max(0, state.unreadCount - 1) 
+              : state.unreadCount,
+          };
+        }),
+      clearNotifications: () => set({ notifications: [], unreadCount: 0 }),
+    }),
+    {
+      name: 'notifications-storage',
+      partialize: (state) => ({
+        notifications: state.notifications,
+        unreadCount: state.unreadCount,
+      }),
+    }
+  )
+);

@@ -27,6 +27,8 @@ const CategoriesPage: React.FC = () => {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm<CategoryFormData>();
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const handleOpenModal = (category?: Category) => {
     if (category) {
@@ -37,10 +39,13 @@ const CategoriesPage: React.FC = () => {
         description: category.description,
         color: category.color,
       });
+      setIsFormValid(true);
     } else {
       setEditingCategory(null);
       form.resetFields();
+      setIsFormValid(false);
     }
+    setHasChanges(false);
     setIsModalOpen(true);
   };
 
@@ -48,6 +53,15 @@ const CategoriesPage: React.FC = () => {
     setIsModalOpen(false);
     setEditingCategory(null);
     form.resetFields();
+    setIsFormValid(false);
+    setHasChanges(false);
+  };
+
+  const handleFormChange = () => {
+    setHasChanges(true);
+    form.validateFields({ validateOnly: true })
+      .then(() => setIsFormValid(true))
+      .catch(() => setIsFormValid(false));
   };
 
   const handleSubmit = async (values: CategoryFormData) => {
@@ -186,6 +200,7 @@ const CategoriesPage: React.FC = () => {
               form={form}
               layout="vertical"
               onFinish={handleSubmit}
+              onValuesChange={handleFormChange}
               initialValues={{ transactionType: 'expense' }}
             >
               <Form.Item
@@ -240,7 +255,12 @@ const CategoriesPage: React.FC = () => {
               <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
                 <Space>
                   <Button onClick={handleCloseModal}>{t('common.cancel')}</Button>
-                  <Button type="primary" htmlType="submit" loading={submitting}>
+                  <Button 
+                    type="primary" 
+                    htmlType="submit" 
+                    loading={submitting}
+                    disabled={!isFormValid || (!hasChanges && !!editingCategory)}
+                  >
                     {editingCategory ? t('common.update') : t('common.create')}
                   </Button>
                 </Space>

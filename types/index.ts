@@ -98,3 +98,26 @@ interface TransactionData {
   pagination: Pagination;
   summary: TransactionSummary;
 }
+
+export interface Notification {
+  id: string; // ID local (generado por el store)
+  _id?: string; // MongoDB ID del backend
+  userId?: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  // Claves de traducción (i18n)
+  titleKey?: string;
+  messageKey?: string;
+  messageParams?: Record<string, string | number>;
+  // Texto directo (fallback)
+  title?: string;
+  message?: string;
+  link?: string;
+  read: boolean;
+  deleted?: boolean;
+  createdAt: string;
+}
+
+// Re-exportar tipos organizados
+export * from './forms';
+export * from './stores';
+export * from './components';

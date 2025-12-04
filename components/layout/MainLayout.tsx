@@ -10,17 +10,16 @@ import {
   LogoutOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import NotificationBell from '@/components/notifications/NotificationBell';
 import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store';
 import { authAPI } from '@/utils/api';
 import { Link, useRouter, usePathname } from '@/i18n/routing';
 
+import { MainLayoutProps } from '@/types';
+
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
-
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const t = useTranslations();
@@ -134,16 +133,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div>
           </div>
 
-          <Dropdown
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <NotificationBell />
+            <Dropdown
             menu={{ items: userMenuItems }}
             placement="bottomRight"
             arrow
           >
             <Button type="text" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Avatar icon={<UserOutlined />} />
-              <Text>{user?.name}</Text>
-            </Button>
-          </Dropdown>
+                <Avatar icon={<UserOutlined />} />
+                <Text>{user?.name}</Text>
+              </Button>
+            </Dropdown>
+          </div>
         </Header>
 
         <Content

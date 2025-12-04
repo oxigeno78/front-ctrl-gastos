@@ -95,7 +95,7 @@ const DashboardPage: React.FC = () => {
       title: t('transactions.periodicity'),
       dataIndex: 'periodicityText',
       key: 'periodicityText',
-      render: (periodicityText: string) => {
+      render: (periodicityText: string = '') => {
         return t(`transactions.periodicity${periodicityText.charAt(0).toUpperCase() + periodicityText.slice(1)}`);
       },
     },

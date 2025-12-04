@@ -7,12 +7,15 @@ Aplicación web desarrollada con Next.js 14, React 18, TypeScript y Ant Design p
 - **Next.js 14** con App Router y SSR/ISR
 - **React 18** con TypeScript estricto
 - **Ant Design** para componentes UI
-- **Zustand** para manejo de estado global
+- **Zustand** para manejo de estado global (persistido)
 - **React Hook Form** + **Yup** para formularios y validación
 - **Ant Design Charts** para gráficas y reportes
 - **next-intl** para internacionalización (i18n)
+- **Socket.IO** para notificaciones en tiempo real (opcional)
+- **Sistema de notificaciones** con sincronización backend
 - Diseño responsive y moderno
 - Autenticación JWT con cookies seguras
+- Configuración centralizada de variables de entorno
 
 ## 📋 Requisitos Previos
 
@@ -32,9 +35,16 @@ yarn install
 cp env.example .env.local
 ```
 
-El archivo `.env.local` ya está configurado para desarrollo local:
+Edita `.env.local` con tus valores:
 ```env
+# URL de la API del backend
 NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1.0.0
+
+# Habilitar notificaciones en tiempo real via Socket.IO (true/false)
+NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS=false
+
+# Google reCAPTCHA v3 (dejar vacío para deshabilitar)
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
 ```
 
 ### 3. Ejecutar la aplicación
@@ -57,7 +67,7 @@ frontend/
 ├── app/                      # App Router de Next.js
 │   ├── layout.tsx            # Root layout
 │   └── [locale]/             # Rutas con soporte i18n
-│       ├── layout.tsx        # Layout con NextIntlClientProvider
+│       ├── layout.tsx        # Layout con providers (i18n, socket)
 │       ├── page.tsx          # Página de inicio
 │       ├── auth/             # Páginas de autenticación
 │       │   ├── login/
@@ -80,8 +90,20 @@ frontend/
 │   ├── layout/
 │   │   ├── AuthLayout.tsx
 │   │   └── MainLayout.tsx
+│   ├── notifications/
+│   │   └── NotificationBell.tsx  # Campanita de notificaciones
+│   ├── providers/
+│   │   └── ClientProviders.tsx   # Wrapper de providers client-side
 │   └── transactions/
 │       └── TransactionForm.tsx
+├── config/                   # Configuración centralizada
+│   └── env.ts                # Variables de entorno saneadas
+├── contexts/                 # Contextos de React
+│   └── SocketContext.tsx     # Conexión Socket.IO singleton
+├── hooks/                    # Custom hooks
+│   ├── useCategories.ts
+│   ├── useInvisibleRecaptcha.ts
+│   └── useNotifications.ts   # Sincronización de notificaciones
 ├── i18n/                     # Configuración de internacionalización
 │   ├── config.ts             # Locales disponibles (esp, eng)
 │   ├── request.ts            # Carga de mensajes del servidor
@@ -91,15 +113,15 @@ frontend/
 │   └── eng.json              # Inglés
 ├── middleware.ts             # Middleware de detección de idioma
 ├── store/                    # Estado global con Zustand
-│   └── index.ts
+│   └── index.ts              # Auth, Transactions, Notifications stores
+├── types/                    # Tipos TypeScript centralizados
+│   ├── index.ts              # Tipos de dominio + re-exports
+│   ├── forms.ts              # Interfaces de formularios
+│   ├── stores.ts             # Interfaces de stores Zustand
+│   └── components.ts         # Props de componentes reutilizables
 ├── utils/                    # Utilidades y API client
-│   ├── api.ts
+│   ├── api.ts                # Cliente Axios + endpoints
 │   └── helpers.ts
-├── types/                    # Tipos TypeScript
-│   └── index.ts
-├── hooks/                    # Custom hooks
-│   ├── useCategories.ts
-│   └── useInvisibleRecaptcha.ts
 ├── next.config.js            # Configuración de Next.js con next-intl
 ├── tsconfig.json             # Configuración de TypeScript
 ├── .eslintrc.json            # Configuración de ESLint
@@ -121,11 +143,12 @@ frontend/
 - React 18
 - TypeScript
 - Ant Design 5
-- Zustand
+- Zustand (con persistencia)
 - React Hook Form
 - Yup
 - Ant Design Charts
 - next-intl
+- Socket.IO Client
 - Axios
 - Day.js
 - js-cookie
@@ -159,6 +182,61 @@ const MyComponent = () => {
 
 ### Idioma del Usuario
 El idioma preferido del usuario se guarda en el perfil y se sincroniza con el backend. Al iniciar sesión o registrarse, la aplicación redirige automáticamente al locale correspondiente al idioma del usuario.
+
+## 🔔 Sistema de Notificaciones
+
+La aplicación incluye un sistema completo de notificaciones con soporte para tiempo real.
+
+### Características
+- **Campanita en el header** con contador de no leídas
+- **Dropdown** con lista de notificaciones
+- **Soporte i18n** - Títulos y mensajes traducibles
+- **Sincronización con backend** - Persistencia en MongoDB
+- **Tiempo real opcional** - Via Socket.IO (configurable)
+
+### Arquitectura
+```
+SocketContext (singleton)
+    ├── Carga notificaciones no leídas al iniciar sesión
+    ├── Conecta Socket.IO (si está habilitado)
+    └── Escucha eventos 'notification'
+            │
+            ▼
+NotificationStore (Zustand persistido)
+    ├── notifications[]
+    ├── unreadCount
+    └── addNotification, markAsRead, etc.
+            │
+            ▼
+NotificationBell (UI)
+    └── useNotifications() → Sincroniza acciones con backend
+```
+
+### Configuración
+```env
+# Habilitar notificaciones en tiempo real (requiere Socket.IO en backend)
+NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS=true
+```
+
+### API de Notificaciones
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/notifications/:userId` | Obtener no leídas |
+| PUT | `/notifications/:userId/:id` | Marcar como leída |
+| PUT | `/notifications/:userId` | Marcar todas como leídas |
+| DELETE | `/notifications/:userId/:id` | Eliminar notificación |
+
+### Uso en Componentes
+```tsx
+import { useNotifications } from '@/hooks/useNotifications';
+
+const MyComponent = () => {
+  const { markAsReadWithSync, deleteNotificationWithSync } = useNotifications();
+  
+  // Las acciones se sincronizan automáticamente con el backend
+  await markAsReadWithSync(notificationId);
+};
+```
 
 ## 📊 Características del Dashboard
 
@@ -223,9 +301,25 @@ El idioma preferido del usuario se guarda en el perfil y se sincroniza con el ba
 ## 🔧 Configuración
 
 ### Variables de Entorno
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1.0.0
+
+Todas las variables de entorno están centralizadas en `config/env.ts`:
+
+```typescript
+import { api, socket, recaptcha } from '@/config/env';
+
+api.url           // URL de la API
+socket.url        // URL del servidor Socket.IO
+socket.enabled    // true/false
+recaptcha.siteKey // Clave de reCAPTCHA
+recaptcha.enabled // true/false
 ```
+
+#### Variables disponibles
+| Variable | Descripción | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_API_URL` | URL de la API del backend | `http://localhost:5000/api/v1.0.0` |
+| `NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS` | Habilitar Socket.IO | `false` |
+| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | Clave de Google reCAPTCHA v3 | (vacío = deshabilitado) |
 
 ### TypeScript
 - Configuración estricta habilitada
@@ -254,6 +348,8 @@ yarn start
 ### Variables de Entorno para Producción
 ```env
 NEXT_PUBLIC_API_URL=https://tu-api.com/api/v1.0.0
+NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS=true
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=tu-clave-recaptcha
 ```
 
 ## 🆘 Solución de Problemas
@@ -277,6 +373,12 @@ NEXT_PUBLIC_API_URL=https://tu-api.com/api/v1.0.0
 - Verifica que el middleware esté configurado correctamente
 - Revisa que los archivos de traducción existan en `/messages`
 - Asegúrate de usar `useTranslations()` dentro de componentes cliente
+
+### Problemas con notificaciones
+- Verifica que `NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS=true` si usas Socket.IO
+- Revisa que el backend tenga Socket.IO configurado
+- Verifica que el token JWT sea válido para la conexión del socket
+- Las notificaciones se cargan al iniciar sesión aunque Socket.IO esté deshabilitado
 
 ### Errores de caché
 - Elimina la carpeta `.next` y reinicia el servidor

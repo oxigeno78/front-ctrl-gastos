@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
-import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category } from '@/types';
+import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category, Notification } from '@/types';
+import { api as apiConfig } from '@/config/env';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1.0.0';
+const API_URL = apiConfig.url;
 
 // Crear instancia de axios
 const api = axios.create({
@@ -136,6 +137,33 @@ export const categoryAPI = {
   },
   deleteCategory: async (id: string): Promise<{ success: boolean }> => {
     const response = await api.delete(`/categories/${id}`);
+    return response.data;
+  },
+};
+
+// API de notificaciones
+export const notificationAPI = {
+  // POST /:userId - Obtener notificaciones no leídas
+  getUnread: async (userId: string): Promise<{ success: boolean; data: Notification[] }> => {
+    const response = await api.post(`/notifications/${userId}`);
+    return response.data;
+  },
+
+  // PUT /:userId/:_id - Marcar una notificación como leída
+  markAsRead: async (userId: string, notificationId: string): Promise<{ success: boolean }> => {
+    const response = await api.put(`/notifications/${userId}/${notificationId}`);
+    return response.data;
+  },
+
+  // PUT /:userId - Marcar todas como leídas
+  markAllAsRead: async (userId: string): Promise<{ success: boolean }> => {
+    const response = await api.put(`/notifications/${userId}`);
+    return response.data;
+  },
+
+  // DELETE /:userId/:_id - Eliminar una notificación
+  delete: async (userId: string, notificationId: string): Promise<{ success: boolean }> => {
+    const response = await api.delete(`/notifications/${userId}/${notificationId}`);
     return response.data;
   },
 };

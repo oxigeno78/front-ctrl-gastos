@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { recaptcha as recaptchaConfig } from '@/config/env';
 
 declare global {
   interface Window {
@@ -7,8 +8,6 @@ declare global {
   }
 }
 
-const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-
 export const useInvisibleRecaptcha = (action: string) => {
   const [ready, setReady] = useState(false);
   const widgetIdRef = useRef<number | null>(null);
@@ -16,8 +15,8 @@ export const useInvisibleRecaptcha = (action: string) => {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (!RECAPTCHA_SITE_KEY) {
-      console.warn('NEXT_PUBLIC_RECAPTCHA_SITE_KEY no está definido');
+    if (!recaptchaConfig.enabled) {
+      console.warn('reCAPTCHA no está configurado (NEXT_PUBLIC_RECAPTCHA_SITE_KEY)');
       return;
     }
 
@@ -31,7 +30,7 @@ export const useInvisibleRecaptcha = (action: string) => {
     const renderWidget = () => {
       if (!window.grecaptcha || !containerRef.current || widgetIdRef.current !== null) return;
       widgetIdRef.current = window.grecaptcha.render(containerRef.current, {
-        sitekey: RECAPTCHA_SITE_KEY,
+        sitekey: recaptchaConfig.siteKey,
         size: 'invisible',
         badge: 'bottomright',
       });
@@ -70,7 +69,7 @@ export const useInvisibleRecaptcha = (action: string) => {
 
   const executeRecaptcha = async (): Promise<string> => {
     if (typeof window === 'undefined') throw new Error('reCAPTCHA no disponible en el servidor');
-    if (!RECAPTCHA_SITE_KEY) throw new Error('NEXT_PUBLIC_RECAPTCHA_SITE_KEY no está definido');
+    if (!recaptchaConfig.enabled) throw new Error('reCAPTCHA no está configurado');
     if (!ready || widgetIdRef.current === null || !window.grecaptcha) {
       throw new Error('reCAPTCHA aún no está listo, inténtalo de nuevo');
     }

@@ -220,6 +220,36 @@
     "history": "Historial",
     "reports": "Reportes"
   },
+  "notifications": {
+    "title": "Notificaciones",
+    "empty": "No tienes notificaciones",
+    "markAllRead": "Marcar todo como leído",
+    "clearAll": "Limpiar todo",
+    "type": {
+      "info": "Info",
+      "success": "Éxito",
+      "warning": "Aviso",
+      "error": "Error"
+    },
+    "time": {
+      "justNow": "Ahora mismo",
+      "minutesAgo": "Hace {count} min",
+      "hoursAgo": "Hace {count} h",
+      "daysAgo": "Hace {count} d"
+    },
+    "messages": {
+      "transactionCreatedTitle": "{type, select, income {Ingreso registrado} expense {Gasto registrado} other {Transacción registrada}}",
+      "transactionCreatedMessage": "Se registró un {type, select, income {ingreso} expense {gasto} other {movimiento}} de ${amount}",
+      "budgetAlertTitle": "Alerta de presupuesto",
+      "budgetAlertMessage": "Has usado el {percentage}% de tu presupuesto mensual",
+      "periodicTransactionTitle": "Transacción periódica",
+      "periodicTransactionMessage": "Se ejecutó automáticamente: {description}",
+      "welcomeTitle": "¡Bienvenido!",
+      "welcomeMessage": "Tu cuenta ha sido creada exitosamente",
+      "transactionUpdatedTitle": "Transacción actualizada exitosamente",
+      "transactionUpdatedMessage": "Se actualizó un {type, select, income {ingreso} expense {gasto} other {movimiento}} de ${amount}"
+    }
+  },
   "metadata": {
     "title": "Control de Gastos - Gestión Financiera Personal",
     "description": "Aplicación para controlar ingresos y gastos personales con análisis y reportes detallados"
