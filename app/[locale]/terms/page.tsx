@@ -20,13 +20,13 @@ const TermsPage: React.FC = () => {
       }}
     >
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        <Link href="/auth/login">
+        <Link href="/">
           <Button
             type="text"
             icon={<ArrowLeftOutlined />}
             style={{ color: '#fff', marginBottom: '20px' }}
           >
-            {t('backToLogin')}
+            {t('backToHome')}
           </Button>
         </Link>
 

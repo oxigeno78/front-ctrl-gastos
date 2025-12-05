@@ -52,7 +52,8 @@
       "submit": "Crear cuenta",
       "hasAccount": "¿Ya tienes cuenta?",
       "login": "Inicia sesión",
-      "success": "Usuario registrado exitosamente"
+      "success": "Usuario registrado exitosamente",
+      "redirectingToPayment": "Redirigiendo al pago..."
     },
     "validation": {
       "nameRequired": "El nombre es requerido",
@@ -118,7 +119,28 @@
     "language": "Idioma",
     "languagePreference": "Preferencia de idioma",
     "languageUpdated": "Idioma actualizado correctamente",
-    "languageUpdateError": "Error al actualizar el idioma"
+    "languageUpdateError": "Error al actualizar el idioma",
+    "subscription": {
+      "title": "Estado de Suscripción",
+      "status": "Estado",
+      "plan": "Plan",
+      "monthlyPlan": "Plan Mensual",
+      "nextBilling": "Próxima facturación",
+      "trialEnds": "Periodo de prueba termina",
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "canceled": "Cancelada",
+      "past_due": "Pago pendiente",
+      "trialing": "Periodo de prueba",
+      "trialDescription": "Estás en un periodo de prueba de 7 días. Activa tu suscripción para continuar usando todas las funcionalidades.",
+      "inactiveDescription": "No tienes una suscripción activa. Activa tu suscripción para acceder a todas las funcionalidades.",
+      "pastDueDescription": "Tu pago está pendiente. Por favor actualiza tu método de pago para continuar.",
+      "canceledDescription": "Tu suscripción ha sido cancelada. Puedes reactivarla en cualquier momento.",
+      "activateSubscription": "Activar Suscripción",
+      "manageSubscription": "Gestionar Suscripción",
+      "loading": "Cargando información de suscripción...",
+      "error": "Error al cargar el estado de la suscripción"
+    }
   },
   "dashboard": {
     "title": "Resumen Financiero",
@@ -257,10 +279,85 @@
     "title": "Control de Gastos - Gestión Financiera Personal",
     "description": "Aplicación para controlar ingresos y gastos personales con análisis y reportes detallados"
   },
+  "home": {
+    "hero": {
+      "title": "Toma el control de tus finanzas",
+      "subtitle": "Registra, categoriza y analiza tus ingresos y gastos de forma simple e intuitiva. Toma mejores decisiones financieras con reportes claros y detallados.",
+      "loginButton": "Iniciar Sesión",
+      "registerButton": "Crear Cuenta"
+    },
+    "features": {
+      "title": "Todo lo que necesitas para gestionar tu dinero",
+      "trackExpenses": {
+        "title": "Registro de Gastos",
+        "description": "Registra todos tus gastos e ingresos de forma rápida y organizada."
+      },
+      "reports": {
+        "title": "Reportes Detallados",
+        "description": "Visualiza gráficos y estadísticas de tus finanzas por categoría y período."
+      },
+      "secure": {
+        "title": "Seguro y Privado",
+        "description": "Tus datos financieros están protegidos con encriptación de nivel bancario."
+      },
+      "responsive": {
+        "title": "Acceso Multiplataforma",
+        "description": "Accede desde cualquier dispositivo: computadora, tablet o celular."
+      },
+      "realtime": {
+        "title": "Tiempo Real",
+        "description": "Sincronización instantánea de todos tus movimientos financieros."
+      },
+      "categories": {
+        "title": "Categorías Personalizadas",
+        "description": "Crea y personaliza categorías según tus necesidades específicas."
+      }
+    },
+    "pricing": {
+      "title": "Precio Simple y Accesible",
+      "subtitle": "Sin sorpresas, sin costos ocultos. Un solo plan con todo incluido.",
+      "plan": "Plan Mensual",
+      "month": "mes",
+      "description": "Acceso completo a todas las funcionalidades",
+      "features": {
+        "unlimited": "Transacciones ilimitadas",
+        "reports": "Reportes y gráficos avanzados",
+        "categories": "Categorías personalizadas ilimitadas",
+        "multidevice": "Acceso desde múltiples dispositivos",
+        "support": "Soporte técnico incluido"
+      },
+      "cta": "Comenzar Ahora"
+    },
+    "footer": {
+      "rights": "Todos los derechos reservados.",
+      "terms": "Términos y Condiciones"
+    }
+  },
+  "stripe": {
+    "checkout": {
+      "success": {
+        "title": "¡Pago Exitoso!",
+        "subtitle": "Tu suscripción ha sido activada correctamente",
+        "description": "Ahora tienes acceso completo a todas las funcionalidades de Control Gastos.",
+        "goToDashboard": "Ir al Dashboard"
+      },
+      "cancel": {
+        "title": "Pago Cancelado",
+        "subtitle": "No se ha completado el proceso de pago",
+        "description": "Puedes intentar nuevamente cuando lo desees. Tu cuenta ha sido creada pero necesitas una suscripción activa para acceder.",
+        "tryAgain": "Intentar de nuevo",
+        "backToHome": "Volver al inicio"
+      },
+      "error": {
+        "title": "Error en el Pago",
+        "description": "Hubo un problema al procesar tu pago. Por favor, intenta nuevamente."
+      }
+    }
+  },
   "terms": {
     "title": "Términos y Condiciones del Servicio",
     "lastUpdated": "Última actualización: Diciembre 2024",
-    "backToLogin": "Volver al inicio de sesión",
+    "backToHome": "Volver al inicio",
     "sections": {
       "acceptance": {
         "title": "1. Aceptación de los Términos",

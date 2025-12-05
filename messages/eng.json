@@ -52,7 +52,8 @@
             "submit": "Create account",
             "hasAccount": "Already have an account?",
             "login": "Sign in",
-            "success": "User registered successfully"
+            "success": "User registered successfully",
+            "redirectingToPayment": "Redirecting to payment..."
         },
         "validation": {
             "nameRequired": "Name is required",
@@ -118,7 +119,28 @@
         "language": "Language",
         "languagePreference": "Language preference",
         "languageUpdated": "Language updated successfully",
-        "languageUpdateError": "Error updating language"
+        "languageUpdateError": "Error updating language",
+        "subscription": {
+            "title": "Subscription Status",
+            "status": "Status",
+            "plan": "Plan",
+            "monthlyPlan": "Monthly Plan",
+            "nextBilling": "Next billing",
+            "trialEnds": "Trial period ends",
+            "active": "Active",
+            "inactive": "Inactive",
+            "canceled": "Canceled",
+            "past_due": "Past due",
+            "trialing": "Trial period",
+            "trialDescription": "You are on a 7-day trial period. Activate your subscription to continue using all features.",
+            "inactiveDescription": "You don't have an active subscription. Activate your subscription to access all features.",
+            "pastDueDescription": "Your payment is past due. Please update your payment method to continue.",
+            "canceledDescription": "Your subscription has been canceled. You can reactivate it at any time.",
+            "activateSubscription": "Activate Subscription",
+            "manageSubscription": "Manage Subscription",
+            "loading": "Loading subscription information...",
+            "error": "Error loading subscription status"
+        }
     },
     "dashboard": {
         "title": "Financial Summary",
@@ -259,10 +281,85 @@
         "title": "Expense Control - Personal Financial Management",
         "description": "Application to control personal income and expenses with detailed analysis and reports"
     },
+    "home": {
+        "hero": {
+            "title": "Take control of your finances",
+            "subtitle": "Record, categorize, and analyze your income and expenses in a simple and intuitive way. Make better financial decisions with clear and detailed reports.",
+            "loginButton": "Sign In",
+            "registerButton": "Create Account"
+        },
+        "features": {
+            "title": "Everything you need to manage your money",
+            "trackExpenses": {
+                "title": "Expense Tracking",
+                "description": "Record all your expenses and income quickly and organized."
+            },
+            "reports": {
+                "title": "Detailed Reports",
+                "description": "View charts and statistics of your finances by category and period."
+            },
+            "secure": {
+                "title": "Secure and Private",
+                "description": "Your financial data is protected with bank-level encryption."
+            },
+            "responsive": {
+                "title": "Multi-platform Access",
+                "description": "Access from any device: computer, tablet, or phone."
+            },
+            "realtime": {
+                "title": "Real Time",
+                "description": "Instant synchronization of all your financial movements."
+            },
+            "categories": {
+                "title": "Custom Categories",
+                "description": "Create and customize categories according to your specific needs."
+            }
+        },
+        "pricing": {
+            "title": "Simple and Affordable Pricing",
+            "subtitle": "No surprises, no hidden costs. One plan with everything included.",
+            "plan": "Monthly Plan",
+            "month": "month",
+            "description": "Full access to all features",
+            "features": {
+                "unlimited": "Unlimited transactions",
+                "reports": "Advanced reports and charts",
+                "categories": "Unlimited custom categories",
+                "multidevice": "Access from multiple devices",
+                "support": "Technical support included"
+            },
+            "cta": "Get Started Now"
+        },
+        "footer": {
+            "rights": "All rights reserved.",
+            "terms": "Terms and Conditions"
+        }
+    },
+    "stripe": {
+        "checkout": {
+            "success": {
+                "title": "Payment Successful!",
+                "subtitle": "Your subscription has been activated successfully",
+                "description": "You now have full access to all Expense Control features.",
+                "goToDashboard": "Go to Dashboard"
+            },
+            "cancel": {
+                "title": "Payment Canceled",
+                "subtitle": "The payment process was not completed",
+                "description": "You can try again whenever you want. Your account has been created but you need an active subscription to access.",
+                "tryAgain": "Try again",
+                "backToHome": "Back to home"
+            },
+            "error": {
+                "title": "Payment Error",
+                "description": "There was a problem processing your payment. Please try again."
+            }
+        }
+    },
     "terms": {
         "title": "Terms and Conditions of Service",
         "lastUpdated": "Last updated: December 2024",
-        "backToLogin": "Back to login",
+        "backToHome": "Back to home",
         "sections": {
             "acceptance": {
                 "title": "1. Acceptance of Terms",

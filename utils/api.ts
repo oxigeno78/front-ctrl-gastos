@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category, Notification } from '@/types';
+import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category, Notification, StripeCheckoutResponse, StripeSubscriptionStatusResponse } from '@/types';
 import { api as apiConfig } from '@/config/env';
 import { useAuthStore, useNotificationStore } from '@/store';
 
@@ -174,6 +174,19 @@ export const notificationAPI = {
   // DELETE /:userId/:_id - Eliminar una notificación
   delete: async (userId: string, notificationId: string): Promise<{ success: boolean }> => {
     const response = await api.delete(`/notifications/${userId}/${notificationId}`);
+    return response.data;
+  },
+};
+
+// API de Stripe
+export const stripeAPI = {
+  createCheckoutSession: async (userId: string): Promise<StripeCheckoutResponse> => {
+    const response = await api.post('/stripe/create-checkout-session', { userId });
+    return response.data;
+  },
+
+  getSubscriptionStatus: async (userId: string): Promise<StripeSubscriptionStatusResponse> => {
+    const response = await api.get(`/stripe/subscription-status/${userId}`);
     return response.data;
   },
 };

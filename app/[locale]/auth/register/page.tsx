@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useTranslations, useLocale } from 'next-intl';
 import AuthLayout from '@/components/layout/AuthLayout';
-import { authAPI, handleApiError } from '@/utils/api';
+import { authAPI, stripeAPI, handleApiError } from '@/utils/api';
 import { useAuthStore } from '@/store';
 import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
 import { Link, useRouter } from '@/i18n/routing';
@@ -74,8 +74,27 @@ const RegisterPage: React.FC = () => {
         message.success(t('auth.register.success'));
         const userLanguage = response.data.language || selectedLanguage;
         login(response.data.user, response.data.token, userLanguage);
-        // Redirigir al dashboard con el idioma seleccionado
-        router.replace('/dashboard', { locale: userLanguage as Locale });
+        
+        // Crear sesión de checkout de Stripe y redirigir
+        try {
+          message.loading(t('auth.register.redirectingToPayment'), 0);
+          const checkoutResponse = await stripeAPI.createCheckoutSession(response.data.user.id);
+          
+          if (checkoutResponse.success && checkoutResponse.data.url) {
+            // Redirigir a Stripe Checkout
+            window.location.href = checkoutResponse.data.url;
+          } else {
+            // Si falla, redirigir al dashboard
+            message.destroy();
+            router.replace('/dashboard', { locale: userLanguage as Locale });
+          }
+        } catch (stripeError) {
+          // Si hay error con Stripe, redirigir al dashboard de todos modos
+          message.destroy();
+          const stripeApiError = handleApiError(stripeError);
+          message.warning(stripeApiError.message);
+          router.replace('/dashboard', { locale: userLanguage as Locale });
+        }
       }
     } catch (error) {
       const apiError = handleApiError(error);

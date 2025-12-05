@@ -4,6 +4,9 @@
   "private": true,
   "author": "Ruben Bautista Mendoza",
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20.19.5"
+  },
   "keywords": [
     "expense-tracker"
   ],

@@ -117,6 +117,24 @@ export interface Notification {
   createdAt: string;
 }
 
+// Stripe Types
+export interface StripeCheckoutResponse {
+  success: boolean;
+  data: {
+    sessionId: string;
+    url: string;
+  };
+}
+
+export interface StripeSubscriptionStatusResponse {
+  success: boolean;
+  data: {
+    status: 'active' | 'inactive' | 'canceled' | 'past_due' | 'trialing';
+    subscriptionId?: string;
+    currentPeriodEnd?: string;
+  };
+}
+
 // Re-exportar tipos organizados
 export * from './forms';
 export * from './stores';
