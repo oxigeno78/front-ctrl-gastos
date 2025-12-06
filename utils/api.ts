@@ -72,16 +72,16 @@ export const authAPI = {
     const response = await api.post('/auth/reset-password', data);
     return response.data;
   },
-  changePassword: async (data: { token: string; email: string; password: string }): Promise<{ success: boolean }> => {
+  changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<{ success: boolean }> => {
     const response = await api.post('/auth/change-password', data);
     return response.data;
   },
   deleteAccount: async (): Promise<{ success: boolean }> => {
-    const response = await api.delete('/auth/delete-account');
+    const response = await api.delete('/auth/account');
     return response.data;
   },
-  updateLanguage: async (language: string, email: string): Promise<{ success: boolean }> => {
-    const response = await api.put('/auth/language', { language, email });
+  updateLanguage: async (language: string): Promise<{ success: boolean }> => {
+    const response = await api.put('/auth/language', { language });
     return response.data;
   },
 };

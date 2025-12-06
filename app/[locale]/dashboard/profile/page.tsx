@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, Descriptions, Typography, Space, Alert, Button, Modal, Input, message, Select, Tag, Spin, Row, Col } from 'antd';
-import { GlobalOutlined, CreditCardOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { GlobalOutlined, CreditCardOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useTranslations, useLocale } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -10,20 +10,15 @@ import { useAuthStore } from '@/store';
 import { useRouter } from '@/i18n/routing';
 import { authAPI, stripeAPI, handleApiError } from '@/utils/api';
 import { StripeSubscriptionStatusResponse } from '@/types';
-import { locales, type Locale } from '@/i18n/config';
+import { locales, languageLabels, type Locale } from '@/i18n/config';
 
 const { Title, Text } = Typography;
-
-const languageLabels: Record<Locale, string> = {
-  esp: 'Español',
-  eng: 'English',
-};
 
 const ProfilePage: React.FC = () => {
   const t = useTranslations();
   const locale = useLocale();
   const CONFIRM_TEXT = t('profile.deleteAccountConfirmText');
-  const { user, logout, token, setUserLanguage } = useAuthStore();
+  const { user, logout, setUserLanguage } = useAuthStore();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmValue, setConfirmValue] = useState('');
@@ -143,7 +138,7 @@ const ProfilePage: React.FC = () => {
   };
 
   const handleChangePassword = async () => {
-    if (!user || !token) {
+    if (!user) {
       message.error(t('profile.sessionError'));
       return;
     }
@@ -165,7 +160,7 @@ const ProfilePage: React.FC = () => {
 
     setIsChangingPassword(true);
     try {
-      await authAPI.changePassword({ token, email: user.email, password: newPassword });
+      await authAPI.changePassword({ currentPassword, newPassword });
       message.success(t('profile.passwordUpdated'));
       setCurrentPassword('');
       setNewPassword('');
@@ -186,14 +181,7 @@ const ProfilePage: React.FC = () => {
         setIsChangingLanguage(false);
         return;
       }
-      const email = user.email;
-      if (!email) {
-        message.error(t('profile.emailRequired'));
-        setIsChangingLanguage(false);
-        return;
-      }
-      console.log('Changing language to:', newLanguage, 'for email:', email);
-      await authAPI.updateLanguage(newLanguage, email);
+      await authAPI.updateLanguage(newLanguage);
       setUserLanguage(newLanguage);
       message.success(t('profile.languageUpdated'));
       // Cambiar el idioma de la aplicación
@@ -227,8 +215,16 @@ const ProfilePage: React.FC = () => {
             <>
               <Row gutter={[16, 16]}>
                 <Col xs={24} lg={12}>
-                  <Card>
-                    <Descriptions column={1} bordered>
+                  <Card 
+                    title={
+                      <Space>
+                        <UserOutlined />
+                        {t('profile.accountInfo')}
+                      </Space>
+                    }
+                    style={{ height: '100%' }}
+                  >
+                    <Descriptions column={1} bordered size="small">
                       <Descriptions.Item label={t('profile.name')}>
                         <Text strong>{user.name}</Text>
                       </Descriptions.Item>
@@ -327,7 +323,12 @@ const ProfilePage: React.FC = () => {
               {/* Sección de Estado de Suscripción y Preferencia de Idioma */}
               <Row gutter={[16, 16]}>
                 <Col xs={24} lg={12}>
-                  <Card title={t('profile.languagePreference')} style={{ height: '100%' }}>
+                  <Card title={
+                    <Space>
+                      <GlobalOutlined />
+                      {t('profile.languagePreference')}
+                    </Space>
+                  } style={{ height: '100%' }}>
                     <Space direction="vertical" style={{ width: '100%' }} size="middle">
                       <Text>{t('profile.language')}</Text>
                       <Select
@@ -347,7 +348,12 @@ const ProfilePage: React.FC = () => {
                 </Col>
 
                 <Col xs={24} lg={12}>
-                  <Card title={t('profile.changePassword')}>
+                  <Card title={
+                    <Space>
+                      <LockOutlined />
+                      {t('profile.changePassword')}
+                    </Space>
+                  }>
                     <Space direction="vertical" style={{ width: '100%' }} size="middle">
                       <Input.Password
                         placeholder={t('profile.currentPassword')}
@@ -380,11 +386,8 @@ const ProfilePage: React.FC = () => {
               </Row>
 
 
-              <Card style={{ borderColor: '#ff4d4f' }}>
+              <Card title={<Space style={{ color: '#ff4d4f' }}><ExclamationCircleOutlined />{t('profile.dangerZone')}</Space>} style={{ borderColor: '#ff4d4f' }}>
                 <Space direction="vertical" style={{ width: '100%' }} size="middle">
-                  <Title level={4} style={{ margin: 0, color: '#cf1322' }}>
-                    {t('profile.dangerZone')}
-                  </Title>
                   <Text>
                     {t('profile.dangerZoneDescription')}
                   </Text>

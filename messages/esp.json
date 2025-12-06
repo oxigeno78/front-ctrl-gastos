@@ -92,6 +92,7 @@
   },
   "profile": {
     "title": "Perfil de Usuario",
+    "accountInfo": "Información de la Cuenta",
     "noUserData": "No se encontraron datos de usuario",
     "noUserDataDescription": "Vuelve a iniciar sesión para ver la información de tu perfil.",
     "name": "Nombre",
@@ -194,7 +195,21 @@
     "periodicityCustom": "Personalizado",
     "every": "Repetir cada",
     "everyPlaceholder": "Ej: lunes, martes, 15, 28...",
-    "everyHelp": "Día de la semana (lunes-domingo) o día del mes (1-31)"
+    "everyHelp": "Día de la semana (lunes-domingo) o día del mes (1-31)",
+    "descriptionPlaceholder": "Descripción opcional de la transacción...",
+    "validation": {
+      "typeRequired": "El tipo es requerido",
+      "typeInvalid": "Selecciona un tipo válido",
+      "amountRequired": "El monto es requerido",
+      "amountPositive": "El monto debe ser mayor a 0",
+      "categoryRequired": "La categoría es requerida",
+      "categoryMax": "La categoría no puede exceder 50 caracteres",
+      "descriptionRequired": "La descripción es requerida",
+      "descriptionMax": "La descripción no puede exceder 200 caracteres",
+      "dateRequired": "La fecha es requerida",
+      "dateInvalid": "Fecha inválida",
+      "everyRequired": "Este campo es requerido para transacciones periódicas"
+    }
   },
   "history": {
     "title": "Historial de Transacciones",
@@ -237,7 +252,9 @@
     "namePlaceholder": "Ej: Alimentación, Transporte...",
     "transactionTypeRequired": "El tipo es requerido",
     "descriptionPlaceholder": "Descripción opcional de la categoría...",
-    "suggestedColors": "Colores sugeridos"
+    "suggestedColors": "Colores sugeridos",
+    "categoryPlaceholder": "Selecciona una categoría",
+    "loadError": "No se pudo cargar la transacción"
   },
   "navigation": {
     "dashboard": "Dashboard",

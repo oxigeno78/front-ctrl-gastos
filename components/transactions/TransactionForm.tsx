@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Form, Input, InputNumber, Select, DatePicker, Button, message, Typography, Switch, Tooltip } from 'antd';
+import { Card, Form, Input, InputNumber, Select, DatePicker, Button, message, Typography, Tooltip } from 'antd';
 import { ArrowUpOutlined, ArrowDownOutlined, SyncOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,27 +18,28 @@ const { Title } = Typography;
 const { Option } = Select;
 
 
-const transactionSchema = yup.object({
+// Schema se define dentro del componente para acceder a las traducciones
+const createTransactionSchema = (t: (key: string) => string) => yup.object({
     type: yup
         .mixed<'income' | 'expense'>()
-        .oneOf(['income', 'expense'], 'Selecciona un tipo válido')
-        .required('El tipo es requerido'),
+        .oneOf(['income', 'expense'], t('transactions.validation.typeInvalid'))
+        .required(t('transactions.validation.typeRequired')),
     amount: yup
         .number()
-        .required('El monto es requerido')
-        .positive('El monto debe ser mayor a 0'),
+        .required(t('transactions.validation.amountRequired'))
+        .positive(t('transactions.validation.amountPositive')),
     category: yup
         .string()
-        .required('La categoría es requerida')
-        .max(50, 'La categoría no puede exceder 50 caracteres'),
+        .required(t('transactions.validation.categoryRequired'))
+        .max(50, t('transactions.validation.categoryMax')),
     description: yup
         .string()
-        .required('La descripción es requerida')
-        .max(200, 'La descripción no puede exceder 200 caracteres'),
+        .required(t('transactions.validation.descriptionRequired'))
+        .max(200, t('transactions.validation.descriptionMax')),
     date: yup
         .mixed<dayjs.Dayjs>()
-        .required('La fecha es requerida')
-        .test('is-dayjs', 'Fecha inválida', (value) => dayjs.isDayjs(value)),
+        .required(t('transactions.validation.dateRequired'))
+        .test('is-dayjs', t('transactions.validation.dateInvalid'), (value) => dayjs.isDayjs(value)),
     periodicity: yup
         .number()
         .min(0)
@@ -49,7 +50,7 @@ const transactionSchema = yup.object({
         .nullable()
         .when('periodicity', {
             is: (val: number) => val > 1,
-            then: (schema) => schema.required('Este campo es requerido para transacciones periódicas'),
+            then: (schema) => schema.required(t('transactions.validation.everyRequired')),
             otherwise: (schema) => schema.nullable(),
         }),
 });
@@ -87,6 +88,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
     const { incomeCategories, expenseCategories, loading: categoriesLoading } = useCategories();
 
     const isEditMode = !!transaction;
+    const transactionSchema = createTransactionSchema(t);
 
     const {
         handleSubmit,
@@ -217,7 +219,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                         help={errors.category?.message}
                     >
                         <Select
-                            placeholder="Selecciona una categoría"
+                            placeholder={t('categories.categoryPlaceholder')}
                             onChange={(value) => setValue('category', value, { shouldDirty: true, shouldValidate: true })}
                             style={{ width: '100%' }}
                             value={watch('category')}
@@ -229,7 +231,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                                 ? (incomeCategories.length > 0 ? incomeCategories : defaultIncomeCategories.map(name => ({ _id: name, name })))
                                 : (expenseCategories.length > 0 ? expenseCategories : defaultExpenseCategories.map(name => ({ _id: name, name })))
                             ).map((category) => (
-                                <Option key={typeof category === 'string' ? category : category._id} value={typeof category === 'string' ? category : category._id}>
+                                <Option key={typeof category === 'string' ? category : category._id} value={typeof category === 'string' ? category : category.name}>
                                     {typeof category === 'string' ? category : category.name}
                                 </Option>
                             ))}
@@ -243,7 +245,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ transaction, initialT
                     >
                         <Input.TextArea
                             rows={3}
-                            placeholder="Describe brevemente esta transacción"
+                            placeholder={t('transactions.descriptionPlaceholder')}
                             onChange={(e) => setValue('description', e.target.value, { shouldDirty: true, shouldValidate: true })}
                             value={watch('description')}
                         />

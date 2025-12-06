@@ -92,6 +92,7 @@
     },
     "profile": {
         "title": "User Profile",
+        "accountInfo": "Account Information",
         "noUserData": "No user data found",
         "noUserDataDescription": "Please sign in again to view your profile information.",
         "name": "Name",
@@ -194,7 +195,21 @@
         "periodicityCustom": "Custom",
         "every": "Repeat every",
         "everyPlaceholder": "E.g.: monday, tuesday, 15, 28...",
-        "everyHelp": "Day of the week (monday-sunday) or day of the month (1-31)"
+        "everyHelp": "Day of the week (monday-sunday) or day of the month (1-31)",
+        "descriptionPlaceholder": "Description optional of the transaction...",
+        "validation": {
+            "typeRequired": "Type is required",
+            "typeInvalid": "Select a valid type",
+            "amountRequired": "Amount is required",
+            "amountPositive": "Amount must be greater than 0",
+            "categoryRequired": "Category is required",
+            "categoryMax": "Category cannot exceed 50 characters",
+            "descriptionRequired": "Description is required",
+            "descriptionMax": "Description cannot exceed 200 characters",
+            "dateRequired": "Date is required",
+            "dateInvalid": "Invalid date",
+            "everyRequired": "This field is required for recurring transactions"
+        }
     },
     "history": {
         "title": "Transaction History",
@@ -239,7 +254,9 @@
         "namePlaceholder": "ex: Food, Transport, etc...",
         "transactionTypeRequired": "Transaction type is required",
         "descriptionPlaceholder": "Description optional of the category...",
-        "suggestedColors": "Suggested Colors"
+        "suggestedColors": "Suggested Colors",
+        "categoryPlaceholder": "Select a category",
+        "loadError": "Could not load the transaction"
     },
     "navigation": {
         "dashboard": "Dashboard",

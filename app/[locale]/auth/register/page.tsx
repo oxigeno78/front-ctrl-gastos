@@ -12,15 +12,10 @@ import { authAPI, stripeAPI, handleApiError } from '@/utils/api';
 import { useAuthStore } from '@/store';
 import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
 import { Link, useRouter } from '@/i18n/routing';
-import { locales, type Locale } from '@/i18n/config';
+import { locales, languageLabels, type Locale } from '@/i18n/config';
 import { RegisterFormData } from '@/types';
 
 const { Text } = Typography;
-
-const languageLabels: Record<Locale, string> = {
-  esp: 'Español',
-  eng: 'English',
-};
 
 const RegisterPage: React.FC = () => {
   const t = useTranslations();

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Spin, Alert } from 'antd';
+import { useTranslations } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import TransactionForm from '@/components/transactions/TransactionForm';
@@ -10,6 +11,7 @@ import { transactionAPI, handleApiError } from '@/utils/api';
 import { Transaction } from '@/types';
 
 const EditTransactionPage: React.FC = () => {
+    const t = useTranslations();
     const params = useParams();
     const id = params?.id as string;
 
@@ -29,7 +31,7 @@ const EditTransactionPage: React.FC = () => {
                 if (response.success) {
                     setTransaction(response.data as Transaction);
                 } else {
-                    setError('No se pudo cargar la transacción');
+                    setError(t('transactions.loadError'));
                 }
             } catch (err) {
                 const apiError = handleApiError(err);
@@ -47,14 +49,14 @@ const EditTransactionPage: React.FC = () => {
             <MainLayout>
                 {loading && (
                     <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
-                        <Spin tip="Cargando transacción..." />
+                        <Spin tip={t('common.loading')} />
                     </div>
                 )}
 
                 {!loading && error && (
                     <Alert
                         type="error"
-                        message="Error al cargar la transacción"
+                        message={t('transactions.loadError')}
                         description={error}
                         showIcon
                     />
