@@ -22,8 +22,8 @@ const HomePage: React.FC = () => {
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (token && isAuthenticated) {
+    // Con HTTP-only cookies, solo verificamos el estado del store
+    if (isAuthenticated) {
       router.push('/dashboard');
     }
   }, [isAuthenticated, router]);

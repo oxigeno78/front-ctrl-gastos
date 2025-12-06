@@ -7,25 +7,18 @@ const API_URL = apiConfig.url;
 
 // Crear instancia de axios
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_URL, // por defecto: http://localhost:5000/api/v1.0.0
   timeout: 10000,
+  withCredentials: true, // Enviar/recibir cookies HTTP-only
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Interceptor para agregar token a las requests
+// Interceptor para requests (la cookie se envía automáticamente con withCredentials)
 api.interceptors.request.use(
-  (config) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (config) => config,
+  (error) => Promise.reject(error)
 );
 
 // Interceptor para manejar respuestas y errores
@@ -61,8 +54,14 @@ export const authAPI = {
     const response: AxiosResponse<AuthResponse> = await api.post('/auth/login', data);
     return response.data;
   },
-  logout: async (data: { email: string }): Promise<{ success: boolean }> => {
-    const response = await api.post('/auth/logout', data);
+  logout: async (): Promise<{ success: boolean }> => {
+    const response = await api.post('/auth/logout');
+    return response.data;
+  },
+
+  // Verificar sesión actual (útil para HTTP-only cookies)
+  me: async (): Promise<{ success: boolean; data: { user: { id: string; name: string; email: string; language: string; subscriptionStatus: string; subscriptionCurrentPeriodEnd: string } } }> => {
+    const response = await api.get('/auth/me');
     return response.data;
   },
   recoveryPassword: async (data: { email: string }): Promise<{ success: boolean }> => {
