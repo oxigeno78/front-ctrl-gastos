@@ -179,6 +179,9 @@ const HomePage: React.FC = () => {
             <Link href="/terms" style={{ color: 'rgba(255,255,255,0.7)' }}>
               {t('footer.terms')}
             </Link>
+            <Link href="/privacy" style={{ color: 'rgba(255,255,255,0.7)' }}>
+              {t('footer.privacy')}
+            </Link>
           </Space>
         </Space>
       </div>

@@ -332,7 +332,8 @@
         },
         "footer": {
             "rights": "All rights reserved.",
-            "terms": "Terms and Conditions"
+            "terms": "Terms and Conditions",
+            "privacy": "Privacy Notice"
         }
     },
     "stripe": {
@@ -353,6 +354,105 @@
             "error": {
                 "title": "Payment Error",
                 "description": "There was a problem processing your payment. Please try again."
+            }
+        }
+    },
+    "privacy": {
+        "title": "Privacy Notice – NizerApp",
+        "lastUpdated": "Last updated: January 2025",
+        "backToHome": "Back to home",
+        "responsible": {
+            "title": "Data Controller",
+            "value": "[Your full name / company name / Tax ID]"
+        },
+        "contact": {
+            "title": "Contact",
+            "value": "support@nizerapp.net"
+        },
+        "intro": "In accordance with the Federal Law on Protection of Personal Data Held by Private Parties (\"LFPDPPP\" - Mexico), we inform you of the following:",
+        "sections": {
+            "dataCollected": {
+                "title": "1. Personal data we collect",
+                "intro": "To use the platform, we may request:",
+                "identification": {
+                    "title": "Identification data",
+                    "name": "Name",
+                    "email": "Email address",
+                    "password": "Password (encrypted)"
+                },
+                "financial": {
+                    "title": "Non-sensitive financial data",
+                    "note": "(provided directly by the user)",
+                    "income": "Income",
+                    "expenses": "Expenses",
+                    "categories": "Financial categories",
+                    "balances": "Balances",
+                    "history": "Financial history"
+                },
+                "payment": {
+                    "title": "Payment data",
+                    "content": "Processed exclusively by Stripe; NizerApp does not store card numbers."
+                },
+                "usage": {
+                    "title": "Usage data",
+                    "ip": "IP address",
+                    "device": "Device",
+                    "behavior": "Behavior within the app",
+                    "cookies": "Cookies or similar technologies"
+                }
+            },
+            "purposes": {
+                "title": "2. Purposes of data processing",
+                "primary": {
+                    "title": "Primary purposes",
+                    "access": "Access and use of the platform",
+                    "subscriptions": "Subscription and billing management",
+                    "reports": "Generation of financial reports",
+                    "support": "Maintenance, support, and security"
+                },
+                "secondary": {
+                    "title": "Secondary purposes",
+                    "experience": "Experience improvement",
+                    "analytics": "Statistical analysis",
+                    "communications": "Informational communications"
+                },
+                "optOut": "You can opt out of secondary purposes by sending an email to: support@nizerapp.net"
+            },
+            "transfers": {
+                "title": "3. Data transfers",
+                "intro": "We may transfer data to:",
+                "stripe": "Stripe (payment processing)",
+                "hosting": "Hosting and analytics providers",
+                "authorities": "Authorities when required by law",
+                "noSale": "We do not sell or commercialize your personal data."
+            },
+            "security": {
+                "title": "4. Security measures",
+                "intro": "We apply physical, administrative, and technical measures, including:",
+                "encryption": "Password encryption",
+                "tls": "Mandatory TLS/HTTPS",
+                "accessControl": "Access control",
+                "logs": "Activity logs",
+                "isolatedDb": "Isolated databases"
+            },
+            "arco": {
+                "title": "5. ARCO Rights",
+                "intro": "You can exercise your rights:",
+                "access": "Access",
+                "rectification": "Rectification",
+                "cancellation": "Cancellation",
+                "opposition": "Opposition",
+                "howTo": "By sending an email to: support@nizerapp.net",
+                "verification": "You must include identification or equivalent means to verify your identity."
+            },
+            "cookies": {
+                "title": "6. Use of cookies",
+                "content": "We use cookies for authentication, user preferences, and analytics.",
+                "warning": "You can disable them in your browser, although the platform may not function correctly."
+            },
+            "changes": {
+                "title": "7. Changes to the Privacy Notice",
+                "content": "Any changes will be published at: https://www.nizerapp.net/privacy"
             }
         }
     },

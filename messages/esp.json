@@ -330,7 +330,8 @@
     },
     "footer": {
       "rights": "Todos los derechos reservados.",
-      "terms": "Términos y Condiciones"
+      "terms": "Términos y Condiciones",
+      "privacy": "Aviso de Privacidad"
     }
   },
   "stripe": {
@@ -354,9 +355,109 @@
       }
     }
   },
+  "privacy": {
+    "marca": "NizerApp",
+    "title": "Aviso de Privacidad",
+    "lastUpdated": "Última actualización: Diciembre 2025",
+    "backToHome": "Volver al inicio",
+    "responsible": {
+      "title": "Responsable del tratamiento",
+      "value": "[Tu nombre completo / razón social / RFC]"
+    },
+    "contact": {
+      "title": "Contacto",
+      "value": "soporte@nizerapp.net"
+    },
+    "intro": "Con fundamento en la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (\"LFPDPPP\"), hacemos de tu conocimiento lo siguiente:",
+    "sections": {
+      "dataCollected": {
+        "title": "1. Datos personales que recabamos",
+        "intro": "Para el uso de la plataforma podemos solicitar:",
+        "identification": {
+          "title": "Datos de identificación",
+          "name": "Nombre",
+          "email": "Correo electrónico",
+          "password": "Contraseña (cifrada)"
+        },
+        "financial": {
+          "title": "Datos financieros NO sensibles",
+          "note": "(proporcionados directamente por el usuario)",
+          "income": "Ingresos",
+          "expenses": "Gastos",
+          "categories": "Categorías financieras",
+          "balances": "Balances",
+          "history": "Historiales financieros"
+        },
+        "payment": {
+          "title": "Datos de pago",
+          "content": "Procesados exclusivamente por Stripe; NizerApp no almacena números de tarjeta."
+        },
+        "usage": {
+          "title": "Datos de uso",
+          "ip": "Dirección IP",
+          "device": "Dispositivo",
+          "behavior": "Comportamiento dentro de la app",
+          "cookies": "Cookies o tecnologías similares"
+        }
+      },
+      "purposes": {
+        "title": "2. Finalidades del tratamiento",
+        "primary": {
+          "title": "Finalidades primarias",
+          "access": "Acceso y uso de la plataforma",
+          "subscriptions": "Gestión de suscripciones y cobros",
+          "reports": "Generación de reportes financieros",
+          "support": "Mantenimiento, soporte y seguridad"
+        },
+        "secondary": {
+          "title": "Finalidades secundarias",
+          "experience": "Mejora de la experiencia",
+          "analytics": "Análisis estadísticos",
+          "communications": "Comunicaciones informativas"
+        },
+        "optOut": "Puedes rechazar las finalidades secundarias enviando un correo a: soporte@nizerapp.net"
+      },
+      "transfers": {
+        "title": "3. Transferencias de datos",
+        "intro": "Podemos transferir datos a:",
+        "stripe": "Stripe (procesamiento de pagos)",
+        "hosting": "Proveedores de alojamiento y análisis",
+        "authorities": "Autoridades cuando lo exijan las leyes",
+        "noSale": "No vendemos ni comercializamos tus datos personales."
+      },
+      "security": {
+        "title": "4. Medidas de seguridad",
+        "intro": "Aplicamos medidas físicas, administrativas y técnicas, incluyendo:",
+        "encryption": "Cifrado de contraseñas",
+        "tls": "TLS/HTTPS obligatorio",
+        "accessControl": "Control de acceso",
+        "logs": "Registros de actividad",
+        "isolatedDb": "Bases de datos aisladas"
+      },
+      "arco": {
+        "title": "5. Derechos ARCO",
+        "intro": "Puedes ejercer tus derechos:",
+        "access": "Acceso",
+        "rectification": "Rectificación",
+        "cancellation": "Cancelación",
+        "opposition": "Oposición",
+        "howTo": "Enviando un correo a: soporte@nizerapp.net",
+        "verification": "Debes incluir identificación o medio equivalente para verificar tu identidad."
+      },
+      "cookies": {
+        "title": "6. Uso de cookies",
+        "content": "Utilizamos cookies para autenticación, preferencias de usuario y análisis.",
+        "warning": "Puedes deshabilitarlas en tu navegador, aunque la plataforma podría no funcionar correctamente."
+      },
+      "changes": {
+        "title": "7. Cambios al Aviso de Privacidad",
+        "content": "Cualquier cambio será publicado en: https://www.nizerapp.net/privacidad"
+      }
+    }
+  },
   "terms": {
     "title": "Términos y Condiciones del Servicio",
-    "lastUpdated": "Última actualización: Diciembre 2024",
+    "lastUpdated": "Última actualización: Diciembre 2025",
     "backToHome": "Volver al inicio",
     "sections": {
       "acceptance": {
