@@ -18,7 +18,9 @@
         "previous": "Previous",
         "income": "Income",
         "expense": "Expense",
-        "update": "Update"
+        "update": "Update",
+        "startDate": "Initial Date",
+        "endDate": "Final Date"
     },
     "auth": {
         "login": {
@@ -225,7 +227,10 @@
     },
     "reports": {
         "title": "Reports & Analysis",
+        "transactionsByCategory": "Transactions by Category",
+        "balanceByCategory": "Balance by Category",
         "expensesByCategory": "Expenses by Category",
+        "incomesByCategory": "Income by Category",
         "incomeVsExpenses": "Income vs Expenses Distribution",
         "last6MonthsTrend": "Last 6 Months Trend",
         "totalIncome": "Total Income",
@@ -233,7 +238,10 @@
         "balance": "Balance",
         "noDataToShow": "No data to show",
         "transactions": "transactions",
-        "transactionsCount": "{count} transactions"
+        "transactionsCount": "{count} transactions",
+        "trend": "Trend",
+        "month": "month",
+        "months": "months"
     },
     "categories": {
         "title": "Categories",

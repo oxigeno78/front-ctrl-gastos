@@ -1,6 +1,7 @@
 'use client';
 
 import { SocketProvider } from '@/contexts/SocketContext';
+import { AntdConfigProvider } from '@/components/providers/AntdConfigProvider';
 import { ClientProvidersProps } from '@/types';
 
 /**
@@ -9,9 +10,11 @@ import { ClientProvidersProps } from '@/types';
  */
 export const ClientProviders = ({ children }: ClientProvidersProps) => {
   return (
-    <SocketProvider>
-      {children}
-    </SocketProvider>
+    <AntdConfigProvider>
+      <SocketProvider>
+        {children}
+      </SocketProvider>
+    </AntdConfigProvider>
   );
 };
 
