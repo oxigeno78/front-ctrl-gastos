@@ -8,7 +8,8 @@ import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { Transaction, TransactionFilters } from '@/types';
-import { formatCurrency, formatDate } from '@/utils/helpers';
+import { useFormatters } from '@/hooks/useFormatters';
+import { formatDate } from '@/utils/helpers';
 import { useCategories } from '@/hooks/useCategories';
 
 const { Title } = Typography;
@@ -16,6 +17,7 @@ const { Option } = Select;
 
 const TransactionsPage: React.FC = () => {
   const t = useTranslations();
+  const { formatCurrency } = useFormatters();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({

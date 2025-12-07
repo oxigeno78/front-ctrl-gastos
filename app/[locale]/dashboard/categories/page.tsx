@@ -118,7 +118,7 @@ const CategoriesPage: React.FC = () => {
       key: 'transactionType',
       render: (type: 'income' | 'expense') => (
         <Tag color={type === 'income' ? 'green' : 'red'}>
-          {type === 'income' ? 'Ingreso' : 'Gasto'}
+          {type === 'income' ? t('common.income') : t('common.expense')}
         </Tag>
       ),
     },

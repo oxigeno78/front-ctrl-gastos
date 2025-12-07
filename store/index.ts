@@ -11,27 +11,24 @@ import {
 } from '@/types';
 
 // Store de autenticación
+// Nota: El token JWT se maneja via HTTP-only cookie, no en el estado
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      token: null,
+      token: null, // Mantenido por compatibilidad, pero no se usa con HTTP-only cookies
       isAuthenticated: false,
       login: (user: User, token: string, language?: string) => {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('token', token);
-          // Guardar idioma del usuario si viene de la API
-          if (language) {
-            localStorage.setItem('userLanguage', language);
-          }
+        // El token ya no se guarda en localStorage (viene en cookie HTTP-only)
+        if (typeof window !== 'undefined' && language) {
+          localStorage.setItem('userLanguage', language);
         }
         // Actualizar user con el idioma si viene
         const userWithLanguage = language ? { ...user, language } : user;
-        set({ user: userWithLanguage, token, isAuthenticated: true });
+        set({ user: userWithLanguage, token: null, isAuthenticated: true });
       },
       logout: () => {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('token');
           localStorage.removeItem('userLanguage');
         }
         set({ user: null, token: null, isAuthenticated: false });
@@ -43,6 +40,14 @@ export const useAuthStore = create<AuthState>()(
         }
         set((state) => ({
           user: state.user ? { ...state.user, language } : null,
+        }));
+      },
+      setUserCurrency: (currency: string) => {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('userCurrency', currency);
+        }
+        set((state) => ({
+          user: state.user ? { ...state.user, currency } : null,
         }));
       },
     }),

@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Select, Typography, Spin, message } from 'antd';
-import { Column, Pie, Line, ColumnConfig } from '@ant-design/charts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 import { useTranslations } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
-import { formatCurrency, getMonthName } from '@/utils/helpers';
+import { useFormatters } from '@/hooks/useFormatters';
+import { getMonthName } from '@/utils/helpers';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
@@ -31,7 +32,9 @@ interface MonthlyStats {
 
 const ReportsPage: React.FC = () => {
   const t = useTranslations();
+  const { formatCurrency } = useFormatters();
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
+  const [trendStats, setTrendStats] = useState<Array<{ month: string; type: string; value: number; label: string; currencyValueFormatted: string }>>([]); // Datos de tendencia de 6 meses
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(dayjs().year());
   const [selectedMonth, setSelectedMonth] = useState(dayjs().month() + 1);
@@ -39,6 +42,11 @@ const ReportsPage: React.FC = () => {
   useEffect(() => {
     loadMonthlyStats();
   }, [selectedYear, selectedMonth]);
+
+  // Cargar datos de tendencia de los últimos 6 meses
+  useEffect(() => {
+    loadTrendStats();
+  }, []);
 
   const loadMonthlyStats = async () => {
     setLoading(true);
@@ -53,12 +61,79 @@ const ReportsPage: React.FC = () => {
     }
   };
 
+  const loadTrendStats = async () => {
+    try {
+      const currentDate = dayjs();
+      // Calcular fecha de inicio (hace 6 meses) y fin (hoy)
+      const startDate = currentDate.subtract(5, 'month').startOf('month').format('YYYY-MM-DD');
+      const endDate = currentDate.endOf('month').format('YYYY-MM-DD');
+      const monthlyTotals: Record<string, { income: number; expense: number }> = {};
+
+      // Transformar a formato para la gráfica
+      const trendData: Array<{ month: string; type: string; value: number; label: string; currencyValueFormatted: string }> = [];
+
+      // Una sola llamada a la API con rango de fechas
+      const response = await transactionAPI.getTransactions({
+        startDate,
+        endDate,
+        limit: 1000, // Obtener todas las transacciones del período
+      });
+
+      // Agrupar transacciones por mes y tipo
+
+      // Inicializar los 6 meses con valores en 0
+      for (let i = 5; i >= 0; i--) {
+        const monthKey = currentDate.subtract(i, 'month').format('MMM YYYY');
+        monthlyTotals[monthKey] = { income: 0, expense: 0 };
+      }
+
+      // Sumar transacciones por mes
+      response.data?.transactions?.forEach((transaction: any) => {
+        const transactionDate = dayjs(transaction.date);
+        const monthKey = transactionDate.format('MMM YYYY');
+
+        if (monthlyTotals[monthKey]) {
+          if (transaction.type === 'income') {
+            monthlyTotals[monthKey].income += Number(transaction.amount) || 0;
+          } else {
+            monthlyTotals[monthKey].expense += Number(transaction.amount) || 0;
+          }
+        }
+      });
+
+      // Mantener orden cronológico
+      for (let i = 5; i >= 0; i--) {
+        const monthKey = currentDate.subtract(i, 'month').format('MMM YYYY');
+        const totals = monthlyTotals[monthKey];
+
+        trendData.push({
+          month: monthKey,
+          type: 'income',
+          value: totals.income,
+          label: t('transactions.incomes'),
+          currencyValueFormatted: formatCurrency(totals.income)
+        });
+        trendData.push({
+          month: monthKey,
+          type: 'expense',
+          value: totals.expense,
+          label: t('transactions.expenses'),
+          currencyValueFormatted: formatCurrency(totals.expense)
+        });
+      }
+
+      setTrendStats(trendData);
+    } catch (error) {
+      console.error('Error loading trend stats:', error);
+    }
+  };
+
   // Preparar datos para gráfica de barras por categoría
   const getCategoryData = () => {
     if (!monthlyStats?.stats) return [];
-    
+
     const categoryData: any[] = [];
-    
+
     monthlyStats.stats.forEach(stat => {
       stat.categories.forEach(cat => {
         categoryData.push({
@@ -66,11 +141,11 @@ const ReportsPage: React.FC = () => {
           type: stat._id === 'income' ? t('transactions.incomes') : t('transactions.expenses'),
           amount: Number(cat.total) || 0,
           count: Number(cat.count) || 0,
-          color: cat.color || '#44769dff',
+          color: cat.color,
         });
       });
     });
-    
+
     //console.log('[<ReportsPage|getCategoryData>categoryData] ', categoryData);
     return categoryData;
   };
@@ -86,100 +161,81 @@ const ReportsPage: React.FC = () => {
     }));
   };
 
-  // Preparar datos para gráfica de líneas (tendencia mensual)
-  const getTrendData = () => {
-    // Para esta demo, generamos datos de los últimos 6 meses
-    const months = [];
-    const currentDate = dayjs();
-
-    if(monthlyStats?.stats){
-      for (let i = 5; i >= 0; i--) {
-        const date = currentDate.subtract(i, 'month');
-        const currentMonth = date.month() + 1;
-        const income = monthlyStats.month == currentMonth ? monthlyStats.stats.find(s => s._id === 'income')?.total || 0 : 0;
-        const expense = monthlyStats.month == currentMonth ? monthlyStats.stats.find(s => s._id === 'expense')?.total || 0 : 0;
-        months.push({
-          month: date.format('MMM YYYY'),
-          monthNumber: currentMonth,
-          year: date.year(),
-          income,
-          expense
-        });
-      }
-    }
-    return months;
-  };
+  // Los datos de tendencia ahora vienen del estado trendStats
 
   const categoryData = getCategoryData();
   const pieData = getPieData();
-  const trendData = getTrendData();
   const totalPie = pieData.reduce((sum: number, d: any) => sum + (Number(d.value) || 0), 0);
 
-  // Crear mapa de colores por categoría
-  const categoryColorMap: Record<string, string> = {};
-  categoryData.forEach(d => {
-    if (d.category && d.color) {
-      categoryColorMap[d.category] = d.color;
-    }
-  });
+  // Colores para el pie chart
+  const PIE_COLORS = ['#52c41a', '#ff4d4f'];
 
-  const columnConfig: ColumnConfig = {
-    data: categoryData,
-    xField: 'type',
-    yField: 'amount',
-    colorField: 'category',
-    color: (datum: any) => categoryColorMap[datum.category] || '#1890ff',
-    label: {
-      formatter: (datum: any) => formatCurrency(datum)
-    },
-    tooltip: {
-      formatter: (datum: any) => {
-        return {
-          name: datum.category,
-          value: `${formatCurrency(Number(datum.amount) || 0)} (${Number(datum.count) || 0} transacciones)`,
-        }
+  // Preparar datos para el gráfico de líneas (formato que Recharts espera)
+  const getTrendChartData = () => {
+    const dataByMonth: Record<string, { month: string; income: number; expense: number }> = {};
+    
+    trendStats.forEach(item => {
+      if (!dataByMonth[item.month]) {
+        dataByMonth[item.month] = { month: item.month, income: 0, expense: 0 };
       }
-    },
-    legend: false
+      if (item.type === 'income') {
+        dataByMonth[item.month].income = item.value;
+      } else {
+        dataByMonth[item.month].expense = item.value;
+      }
+    });
+
+    return Object.values(dataByMonth);
   };
 
-  const pieConfig = {
-    data: pieData,
-    angleField: 'value',
-    colorField: 'type',
-    radius: 0.8,
-    color: ['#52c41a', '#ff4d4f'],
-    label: {
-      text: (datum: any) => {
-        const percent = Number.isFinite(datum.value) ? (datum.value / totalPie * 100).toFixed(1) : '0.0';
-        return `${datum.type}: ${percent}%`;
-      },
-    },
-    tooltip: {
-      formatter: (datum: any) => ({
-        name: datum.type,
-        value: `${formatCurrency(Number(datum.value) || 0)} (${Number(datum.count) || 0} transacciones)`,
-      })
-    },
-    legend: false,
+  const trendChartData = getTrendChartData();
+
+  // Tooltip personalizado para el gráfico de barras
+  const CategoryTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
+          <p style={{ margin: 0, fontWeight: 'bold' }}>{data.category}</p>
+          <p style={{ margin: 0 }}>{formatCurrency(data.amount)}</p>
+          <p style={{ margin: 0, color: '#666' }}>{data.count} {t('reports.transactions')}</p>
+        </div>
+      );
+    }
+    return null;
   };
 
-  const lineConfig = {
-    data: trendData,
-    xField: 'month',
-    yField: 'income',
-    seriesField: 'type',
-    color: ['#52c41a', '#ff4d4f'],
-    point: {
-      size: 4,
-      shape: 'circle',
-    },
-    tooltip: {
-      formatter: (datum: any) => ({
-        name: datum.type === 'income' ? t('transactions.incomes') : t('transactions.expenses'),
-        value: formatCurrency(datum.value),
-      }),
-    },
+  // Tooltip personalizado para el pie chart
+  const PieTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      const percent = totalPie > 0 ? ((data.value / totalPie) * 100).toFixed(2) : '0.00';
+      return (
+        <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
+          <p style={{ margin: 0, fontWeight: 'bold' }}>{data.type}</p>
+          <p style={{ margin: 0 }}>{formatCurrency(data.value)} ({percent}%)</p>
+          <p style={{ margin: 0, color: '#666' }}>{data.count} {t('reports.transactions')}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Tooltip personalizado para el gráfico de líneas
+  const TrendTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
+          <p style={{ margin: 0, fontWeight: 'bold' }}>{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ margin: 0, color: entry.color }}>
+              {entry.name === 'income' ? t('transactions.incomes') : t('transactions.expenses')}: {formatCurrency(entry.value)}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -226,7 +282,18 @@ const ReportsPage: React.FC = () => {
               <Col xs={24} lg={12}>
                 <Card title={`${t('reports.expensesByCategory')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
                   {categoryData.length > 0 ? (
-                    <Column {...columnConfig} height={300} />
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={categoryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                        <XAxis dataKey="category" />
+                        <YAxis tickFormatter={(v) => formatCurrency(v)} />
+                        <Tooltip content={<CategoryTooltip />} />
+                        <Bar dataKey="amount" fill="#1890ff">
+                          {categoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color || '#1890ff'} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
                   ) : (
                     <div style={{ textAlign: 'center', padding: '50px' }}>
                       {t('reports.noDataToShow')}
@@ -238,7 +305,24 @@ const ReportsPage: React.FC = () => {
               <Col xs={24} lg={12}>
                 <Card title={`${t('reports.incomeVsExpenses')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
                   {totalPie > 0 ? (
-                    <Pie {...pieConfig} height={300} />
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={pieData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ payload, percent }: any) => `${payload.type}: ${((percent || 0) * 100).toFixed(1)}%`}
+                          outerRadius={100}
+                          dataKey="value"
+                        >
+                          {pieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<PieTooltip />} />
+                      </PieChart>
+                    </ResponsiveContainer>
                   ) : (
                     <div style={{ textAlign: 'center', padding: '50px' }}>
                       {t('reports.noDataToShow')}
@@ -249,7 +333,17 @@ const ReportsPage: React.FC = () => {
 
               <Col xs={24}>
                 <Card title={t('reports.last6MonthsTrend')}>
-                  <Line {...lineConfig} height={300} />
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={trendChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis tickFormatter={(v) => formatCurrency(v)} />
+                      <Tooltip content={<TrendTooltip />} />
+                      <Legend formatter={(value) => value === 'income' ? t('transactions.incomes') : t('transactions.expenses')} />
+                      <Line type="monotone" dataKey="income" stroke="#52c41a" strokeWidth={2} dot={{ r: 4 }} />
+                      <Line type="monotone" dataKey="expense" stroke="#ff4d4f" strokeWidth={2} dot={{ r: 4 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </Card>
               </Col>
             </Row>
@@ -306,3 +400,4 @@ const ReportsPage: React.FC = () => {
 };
 
 export default ReportsPage;
+

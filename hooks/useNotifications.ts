@@ -63,7 +63,7 @@ export const useNotifications = () => {
       await Promise.all(
         notifications
           .filter(n => n._id) // Solo las que tienen _id del backend
-          .map(n => notificationAPI.delete(user.id, n.id))
+          .map(n => notificationAPI.delete(user.id, n._id!))
       );
     } catch (error) {
       console.error('Error clearing notifications:', error);

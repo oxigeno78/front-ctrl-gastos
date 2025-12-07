@@ -29,7 +29,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const isConnectedRef = useRef(false);
   const hasLoadedNotifications = useRef(false);
   const pathname = usePathname();
-  const { token, isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const { addNotification } = useNotificationStore();
   
   // No intentar conexiones en páginas de auth
@@ -38,7 +38,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   // Cargar notificaciones no leídas del backend (solo cuando hay sesión válida)
   useEffect(() => {
     const loadUnreadNotifications = async () => {
-      if (!user?.id || !token || hasLoadedNotifications.current) return;
+      if (!user?.id || hasLoadedNotifications.current) return;
       
       hasLoadedNotifications.current = true; // Marcar antes de la petición para evitar duplicados
       
@@ -73,11 +73,11 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       }
     };
 
-    // Solo cargar si está autenticado Y tiene token válido Y NO está en página de auth
-    if (isAuthenticated && token && user?.id && !isAuthPage) {
+    // Solo cargar si está autenticado Y NO está en página de auth
+    if (isAuthenticated && user?.id && !isAuthPage) {
       loadUnreadNotifications();
     }
-  }, [isAuthenticated, token, user?.id, addNotification, isAuthPage]);
+  }, [isAuthenticated, user?.id, addNotification, isAuthPage]);
 
   // Conectar socket (solo si está habilitado)
   useEffect(() => {
@@ -91,11 +91,15 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       return;
     }
 
-    if (isAuthenticated && token && !socketRef.current) {
+    if (isAuthenticated && user?.id && !socketRef.current) {
       console.log('🔌 Initializing socket connection...');
       
+      // Con HTTP-only cookies, el socket se autentica via cookie
+      // El userId se envía para que el backend pueda asociar la conexión al usuario
+      // La validación real se hace con la cookie HTTP-only en el backend
       socketRef.current = io(socketConfig.url, {
-        auth: { token },
+        withCredentials: true, // Enviar cookies HTTP-only
+        auth: { userId: user.id }, // Identificador del usuario (la cookie valida la sesión)
         transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionAttempts: 5,
@@ -152,7 +156,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         isConnectedRef.current = false;
       }
     };
-  }, [isAuthenticated, token, addNotification, isAuthPage]);
+  }, [isAuthenticated, user?.id, addNotification, isAuthPage]);
 
   return (
     <SocketContext.Provider value={{ 

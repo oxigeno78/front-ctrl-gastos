@@ -3,6 +3,7 @@ export interface User {
   name: string;
   email: string;
   language?: string;
+  currency?: string;
 }
 
 export interface Category {
@@ -115,6 +116,24 @@ export interface Notification {
   read: boolean;
   deleted?: boolean;
   createdAt: string;
+}
+
+// Stripe Types
+export interface StripeCheckoutResponse {
+  success: boolean;
+  data: {
+    sessionId: string;
+    url: string;
+  };
+}
+
+export interface StripeSubscriptionStatusResponse {
+  success: boolean;
+  data: {
+    status: 'active' | 'inactive' | 'canceled' | 'past_due' | 'trialing';
+    subscriptionId?: string;
+    currentPeriodEnd?: string;
+  };
 }
 
 // Re-exportar tipos organizados

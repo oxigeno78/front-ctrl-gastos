@@ -32,7 +32,10 @@
             "register": "Register here",
             "forgotPassword": "Forgot your password?",
             "recoverPassword": "Recover your password here",
-            "success": "Login successful"
+            "success": "Login successful",
+            "acceptTerms": "I accept the",
+            "termsAndConditions": "Terms and Conditions",
+            "termsRequired": "You must accept the terms and conditions to continue"
         },
         "register": {
             "title": "Register",
@@ -49,7 +52,8 @@
             "submit": "Create account",
             "hasAccount": "Already have an account?",
             "login": "Sign in",
-            "success": "User registered successfully"
+            "success": "User registered successfully",
+            "redirectingToPayment": "Redirecting to payment..."
         },
         "validation": {
             "nameRequired": "Name is required",
@@ -88,6 +92,7 @@
     },
     "profile": {
         "title": "User Profile",
+        "accountInfo": "Account Information",
         "noUserData": "No user data found",
         "noUserDataDescription": "Please sign in again to view your profile information.",
         "name": "Name",
@@ -113,9 +118,33 @@
         "deleteAccountConfirmButton": "Yes, delete my account",
         "accountDeleted": "Your account has been deleted successfully.",
         "language": "Language",
-        "languagePreference": "Language preference",
+        "languagePreference": "Regional preferences",
         "languageUpdated": "Language updated successfully",
-        "languageUpdateError": "Error updating language"
+        "languageUpdateError": "Error updating language",
+        "currency": "Currency",
+        "currencyUpdated": "Currency updated successfully",
+        "currencyUpdateError": "Error updating currency",
+        "subscription": {
+            "title": "Subscription Status",
+            "status": "Status",
+            "plan": "Plan",
+            "monthlyPlan": "Monthly Plan",
+            "nextBilling": "Next billing",
+            "trialEnds": "Trial period ends",
+            "active": "Active",
+            "inactive": "Inactive",
+            "canceled": "Canceled",
+            "past_due": "Past due",
+            "trialing": "Trial period",
+            "trialDescription": "You are on a 7-day trial period. Activate your subscription to continue using all features.",
+            "inactiveDescription": "You don't have an active subscription. Activate your subscription to access all features.",
+            "pastDueDescription": "Your payment is past due. Please update your payment method to continue.",
+            "canceledDescription": "Your subscription has been canceled. You can reactivate it at any time.",
+            "activateSubscription": "Activate Subscription",
+            "manageSubscription": "Manage Subscription",
+            "loading": "Loading subscription information...",
+            "error": "Error loading subscription status"
+        }
     },
     "dashboard": {
         "title": "Financial Summary",
@@ -169,7 +198,21 @@
         "periodicityCustom": "Custom",
         "every": "Repeat every",
         "everyPlaceholder": "E.g.: monday, tuesday, 15, 28...",
-        "everyHelp": "Day of the week (monday-sunday) or day of the month (1-31)"
+        "everyHelp": "Day of the week (monday-sunday) or day of the month (1-31)",
+        "descriptionPlaceholder": "Description optional of the transaction...",
+        "validation": {
+            "typeRequired": "Type is required",
+            "typeInvalid": "Select a valid type",
+            "amountRequired": "Amount is required",
+            "amountPositive": "Amount must be greater than 0",
+            "categoryRequired": "Category is required",
+            "categoryMax": "Category cannot exceed 50 characters",
+            "descriptionRequired": "Description is required",
+            "descriptionMax": "Description cannot exceed 200 characters",
+            "dateRequired": "Date is required",
+            "dateInvalid": "Invalid date",
+            "everyRequired": "This field is required for recurring transactions"
+        }
     },
     "history": {
         "title": "Transaction History",
@@ -189,6 +232,7 @@
         "totalExpenses": "Total Expenses",
         "balance": "Balance",
         "noDataToShow": "No data to show",
+        "transactions": "transactions",
         "transactionsCount": "{count} transactions"
     },
     "categories": {
@@ -214,7 +258,9 @@
         "namePlaceholder": "ex: Food, Transport, etc...",
         "transactionTypeRequired": "Transaction type is required",
         "descriptionPlaceholder": "Description optional of the category...",
-        "suggestedColors": "Suggested Colors"
+        "suggestedColors": "Suggested Colors",
+        "categoryPlaceholder": "Select a category",
+        "loadError": "Could not load the transaction"
     },
     "navigation": {
         "dashboard": "Dashboard",
@@ -255,5 +301,227 @@
     "metadata": {
         "title": "Expense Control - Personal Financial Management",
         "description": "Application to control personal income and expenses with detailed analysis and reports"
+    },
+    "home": {
+        "hero": {
+            "title": "Take control of your finances",
+            "subtitle": "Record, categorize, and analyze your income and expenses in a simple and intuitive way. Make better financial decisions with clear and detailed reports.",
+            "loginButton": "Sign In",
+            "registerButton": "Create Account"
+        },
+        "features": {
+            "title": "Everything you need to manage your money",
+            "trackExpenses": {
+                "title": "Expense Tracking",
+                "description": "Record all your expenses and income quickly and organized."
+            },
+            "reports": {
+                "title": "Detailed Reports",
+                "description": "View charts and statistics of your finances by category and period."
+            },
+            "secure": {
+                "title": "Secure and Private",
+                "description": "Your financial data is protected with bank-level encryption."
+            },
+            "responsive": {
+                "title": "Multi-platform Access",
+                "description": "Access from any device: computer, tablet, or phone."
+            },
+            "realtime": {
+                "title": "Real Time",
+                "description": "Instant synchronization of all your financial movements."
+            },
+            "categories": {
+                "title": "Custom Categories",
+                "description": "Create and customize categories according to your specific needs."
+            }
+        },
+        "pricing": {
+            "title": "Simple and Affordable Pricing",
+            "subtitle": "No surprises, no hidden costs. One plan with everything included.",
+            "plan": "Monthly Plan",
+            "month": "month",
+            "description": "Full access to all features",
+            "features": {
+                "unlimited": "Unlimited transactions",
+                "reports": "Advanced reports and charts",
+                "categories": "Unlimited custom categories",
+                "multidevice": "Access from multiple devices",
+                "support": "Technical support included"
+            },
+            "cta": "Get Started Now"
+        },
+        "footer": {
+            "rights": "All rights reserved.",
+            "terms": "Terms and Conditions",
+            "privacy": "Privacy Notice"
+        }
+    },
+    "stripe": {
+        "checkout": {
+            "success": {
+                "title": "Payment Successful!",
+                "subtitle": "Your subscription has been activated successfully",
+                "description": "You now have full access to all Expense Control features.",
+                "goToDashboard": "Go to Dashboard"
+            },
+            "cancel": {
+                "title": "Payment Canceled",
+                "subtitle": "The payment process was not completed",
+                "description": "You can try again whenever you want. Your account has been created but you need an active subscription to access.",
+                "tryAgain": "Try again",
+                "backToHome": "Back to home"
+            },
+            "error": {
+                "title": "Payment Error",
+                "description": "There was a problem processing your payment. Please try again."
+            }
+        }
+    },
+    "privacy": {
+        "title": "Privacy Notice – NizerApp",
+        "lastUpdated": "Last updated: January 2025",
+        "backToHome": "Back to home",
+        "responsible": {
+            "title": "Data Controller",
+            "value": "[Your full name / company name / Tax ID]"
+        },
+        "contact": {
+            "title": "Contact",
+            "value": "support@nizerapp.net"
+        },
+        "intro": "In accordance with the Federal Law on Protection of Personal Data Held by Private Parties (\"LFPDPPP\" - Mexico), we inform you of the following:",
+        "sections": {
+            "dataCollected": {
+                "title": "1. Personal data we collect",
+                "intro": "To use the platform, we may request:",
+                "identification": {
+                    "title": "Identification data",
+                    "name": "Name",
+                    "email": "Email address",
+                    "password": "Password (encrypted)"
+                },
+                "financial": {
+                    "title": "Non-sensitive financial data",
+                    "note": "(provided directly by the user)",
+                    "income": "Income",
+                    "expenses": "Expenses",
+                    "categories": "Financial categories",
+                    "balances": "Balances",
+                    "history": "Financial history"
+                },
+                "payment": {
+                    "title": "Payment data",
+                    "content": "Processed exclusively by Stripe; NizerApp does not store card numbers."
+                },
+                "usage": {
+                    "title": "Usage data",
+                    "ip": "IP address",
+                    "device": "Device",
+                    "behavior": "Behavior within the app",
+                    "cookies": "Cookies or similar technologies"
+                }
+            },
+            "purposes": {
+                "title": "2. Purposes of data processing",
+                "primary": {
+                    "title": "Primary purposes",
+                    "access": "Access and use of the platform",
+                    "subscriptions": "Subscription and billing management",
+                    "reports": "Generation of financial reports",
+                    "support": "Maintenance, support, and security"
+                },
+                "secondary": {
+                    "title": "Secondary purposes",
+                    "experience": "Experience improvement",
+                    "analytics": "Statistical analysis",
+                    "communications": "Informational communications"
+                },
+                "optOut": "You can opt out of secondary purposes by sending an email to: support@nizerapp.net"
+            },
+            "transfers": {
+                "title": "3. Data transfers",
+                "intro": "We may transfer data to:",
+                "stripe": "Stripe (payment processing)",
+                "hosting": "Hosting and analytics providers",
+                "authorities": "Authorities when required by law",
+                "noSale": "We do not sell or commercialize your personal data."
+            },
+            "security": {
+                "title": "4. Security measures",
+                "intro": "We apply physical, administrative, and technical measures, including:",
+                "encryption": "Password encryption",
+                "tls": "Mandatory TLS/HTTPS",
+                "accessControl": "Access control",
+                "logs": "Activity logs",
+                "isolatedDb": "Isolated databases"
+            },
+            "arco": {
+                "title": "5. ARCO Rights",
+                "intro": "You can exercise your rights:",
+                "access": "Access",
+                "rectification": "Rectification",
+                "cancellation": "Cancellation",
+                "opposition": "Opposition",
+                "howTo": "By sending an email to: support@nizerapp.net",
+                "verification": "You must include identification or equivalent means to verify your identity."
+            },
+            "cookies": {
+                "title": "6. Use of cookies",
+                "content": "We use cookies for authentication, user preferences, and analytics.",
+                "warning": "You can disable them in your browser, although the platform may not function correctly."
+            },
+            "changes": {
+                "title": "7. Changes to the Privacy Notice",
+                "content": "Any changes will be published at: https://www.nizerapp.net/privacy"
+            }
+        }
+    },
+    "terms": {
+        "title": "Terms and Conditions of Service",
+        "lastUpdated": "Last updated: December 2024",
+        "backToHome": "Back to home",
+        "sections": {
+            "acceptance": {
+                "title": "1. Acceptance of Terms",
+                "content": "By accessing and using Expense Control, you agree to be bound by these Terms and Conditions of Service. If you do not agree with any part of these terms, you may not access the service."
+            },
+            "service": {
+                "title": "2. Service Description",
+                "content": "Expense Control is a personal financial management application that allows users to record, categorize, and analyze their income and expenses. The service includes features such as transaction recording, categorization, reports, and financial analysis."
+            },
+            "account": {
+                "title": "3. User Account",
+                "content": "To use the service, you must create an account by providing accurate and complete information. You are responsible for maintaining the confidentiality of your password and for all activities that occur under your account. You must notify us immediately of any unauthorized use of your account."
+            },
+            "privacy": {
+                "title": "4. Privacy and Personal Data",
+                "content": "We respect your privacy and are committed to protecting your personal data. The financial information you record in the application is private and will not be shared with third parties without your express consent, except when required by law."
+            },
+            "userResponsibilities": {
+                "title": "5. User Responsibilities",
+                "content": "You agree to use the service responsibly and legally. You must not attempt to access other users' accounts, interfere with the operation of the service, or use the platform for illegal or fraudulent activities."
+            },
+            "dataProtection": {
+                "title": "6. Data Protection",
+                "content": "We implement technical and organizational security measures to protect your data against unauthorized access, loss, or alteration. Your financial data is stored securely and encrypted."
+            },
+            "limitations": {
+                "title": "7. Limitation of Liability",
+                "content": "Expense Control is provided 'as is' without warranties of any kind. We are not responsible for financial decisions made based on information displayed in the application. The service is a tracking tool and does not constitute professional financial advice."
+            },
+            "modifications": {
+                "title": "8. Service Modifications",
+                "content": "We reserve the right to modify or discontinue the service at any time, with or without prior notice. We may also update these terms periodically, and continued use of the service constitutes acceptance of such changes."
+            },
+            "termination": {
+                "title": "9. Termination",
+                "content": "We may suspend or terminate your access to the service if you violate these terms. You may delete your account at any time from your profile settings. When you delete your account, all your data will be permanently deleted."
+            },
+            "contact": {
+                "title": "10. Contact",
+                "content": "If you have questions about these Terms and Conditions, you can contact us through the support channels available in the application."
+            }
+        }
     }
 }
