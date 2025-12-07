@@ -1,17 +1,12 @@
 'use client';
 
-import { createContext, useContext, useEffect, useRef, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore, useNotificationStore } from '@/store';
 import { notificationAPI } from '@/utils/api';
-import { Notification } from '@/types';
+import { Notification, SocketContextType, SocketProviderProps } from '@/types';
 import { socket as socketConfig } from '@/config/env';
-
-interface SocketContextType {
-  socket: Socket | null;
-  isConnected: boolean;
-}
 
 const SocketContext = createContext<SocketContextType>({
   socket: null,
@@ -19,10 +14,6 @@ const SocketContext = createContext<SocketContextType>({
 });
 
 export const useSocket = () => useContext(SocketContext);
-
-interface SocketProviderProps {
-  children: ReactNode;
-}
 
 export const SocketProvider = ({ children }: SocketProviderProps) => {
   const socketRef = useRef<Socket | null>(null);
@@ -92,7 +83,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     }
 
     if (isAuthenticated && user?.id && !socketRef.current) {
-      console.log('🔌 Initializing socket connection...');
+      // console.log('🔌 Initializing socket connection...');
       
       // Con HTTP-only cookies, el socket se autentica via cookie
       // El userId se envía para que el backend pueda asociar la conexión al usuario
@@ -107,12 +98,12 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       });
 
       socketRef.current.on('connect', () => {
-        console.log('🔔 Socket connected for notifications');
+        // console.log('🔔 Socket connected for notifications');
         isConnectedRef.current = true;
       });
 
       socketRef.current.on('notification', (notification: Notification) => {
-        console.log('📬 New notification:', notification);
+        // console.log('📬 New notification:', notification);
         
         addNotification({
           _id: notification._id,
@@ -132,15 +123,14 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         isConnectedRef.current = false;
       });
 
-      socketRef.current.on('disconnect', (reason) => {
-        console.log('🔌 Socket disconnected:', reason);
+      socketRef.current.on('disconnect', () => {
         isConnectedRef.current = false;
       });
     }
 
     // Desconectar si el usuario cierra sesión
     if (!isAuthenticated && socketRef.current) {
-      console.log('🔌 Disconnecting socket (user logged out)');
+      // console.log('🔌 Disconnecting socket (user logged out)');
       socketRef.current.disconnect();
       socketRef.current = null;
       isConnectedRef.current = false;
@@ -150,7 +140,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     // Cleanup al desmontar el provider (refresh de página)
     return () => {
       if (socketRef.current) {
-        console.log('🔌 Cleaning up socket connection');
+        // console.log('🔌 Cleaning up socket connection');
         socketRef.current.disconnect();
         socketRef.current = null;
         isConnectedRef.current = false;

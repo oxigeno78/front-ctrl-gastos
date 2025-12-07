@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from 'axios';
-import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category, Notification, StripeCheckoutResponse, StripeSubscriptionStatusResponse } from '@/types';
+import axios, { AxiosResponse, AxiosError } from 'axios';
+import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category, Notification, StripeCheckoutResponse, StripeSubscriptionStatusResponse, TransactionResponse, MonthlyStatsResponse } from '@/types';
 import { api as apiConfig } from '@/config/env';
 import { useAuthStore, useNotificationStore } from '@/store';
 
@@ -108,18 +108,18 @@ export const transactionAPI = {
     return response.data;
   },
 
-  getTransactionById: async (id: string): Promise<{ success: boolean; data: any }> => {
-    const response = await api.get(`/transactions/${id}`);
+  getTransactionById: async (id: string): Promise<TransactionResponse> => {
+    const response: AxiosResponse<TransactionResponse> = await api.get(`/transactions/${id}`);
     return response.data;
   },
 
-  createTransaction: async (data: CreateTransactionData): Promise<{ success: boolean; data: any }> => {
-    const response = await api.post('/transactions', data);
+  createTransaction: async (data: CreateTransactionData): Promise<TransactionResponse> => {
+    const response: AxiosResponse<TransactionResponse> = await api.post('/transactions', data);
     return response.data;
   },
 
-  updateTransaction: async (id: string, data: CreateTransactionData): Promise<{ success: boolean; data: any }> => {
-    const response = await api.put(`/transactions/${id}`, data);
+  updateTransaction: async (id: string, data: CreateTransactionData): Promise<TransactionResponse> => {
+    const response: AxiosResponse<TransactionResponse> = await api.put(`/transactions/${id}`, data);
     return response.data;
   },
 
@@ -128,8 +128,8 @@ export const transactionAPI = {
     return response.data;
   },
 
-  getMonthlyStats: async (startDate: string, endDate: string): Promise<any> => {
-    const response = await api.get(`/transactions/stats/monthly?startDate=${startDate}&endDate=${endDate}`);
+  getMonthlyStats: async (startDate: string, endDate: string): Promise<MonthlyStatsResponse> => {
+    const response: AxiosResponse<MonthlyStatsResponse> = await api.get(`/transactions/stats/monthly?startDate=${startDate}&endDate=${endDate}`);
     return response.data;
   },
 };
@@ -195,14 +195,21 @@ export const stripeAPI = {
 };
 
 // Función para manejar errores de la API
-export const handleApiError = (error: any): ApiError => {
-  if (error.response?.data) {
-    return error.response.data;
+export const handleApiError = (error: unknown): ApiError => {
+  if (error instanceof AxiosError && error.response?.data) {
+    return error.response.data as ApiError;
+  }
+
+  if (error instanceof Error) {
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 
   return {
     success: false,
-    message: error.message || 'Error de conexión',
+    message: 'Error de conexión',
   };
 };
 

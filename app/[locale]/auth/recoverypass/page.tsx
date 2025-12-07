@@ -6,12 +6,13 @@ import { MailOutlined } from '@ant-design/icons';
 import { useTranslations } from 'next-intl';
 import AuthLayout from '@/components/layout/AuthLayout';
 import { authAPI, handleApiError } from '@/utils/api';
+import { RecoveryPasswordForm } from '@/types';
 
 export default function RecoverypassPage() {
     const t = useTranslations();
     const [loading, setLoading] = useState(false);
 
-    const onSubmit = async (values: any) => {
+    const onSubmit = async (values: RecoveryPasswordForm) => {
         setLoading(true);
         try {
             await authAPI.recoveryPassword(values);

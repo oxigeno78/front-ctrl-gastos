@@ -4,6 +4,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/i18n/config';
 import { ClientProviders } from '@/components/providers/ClientProviders';
+import { LocaleLayoutProps } from '@/types';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -33,11 +34,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
 };
-
-interface LocaleLayoutProps {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-}
 
 export default async function LocaleLayout({
   children,

@@ -32,3 +32,14 @@ export interface TransactionFormProps {
 export interface ClientProvidersProps {
   children: ReactNode;
 }
+
+// Provider de Ant Design
+export interface AntdConfigProviderProps {
+  children: ReactNode;
+}
+
+// Layout con locale
+export interface LocaleLayoutProps {
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+}

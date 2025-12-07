@@ -118,6 +118,17 @@ export interface Notification {
   createdAt: string;
 }
 
+// Transaction API Response Types
+export interface TransactionResponse {
+  success: boolean;
+  data: Transaction;
+}
+
+// Recovery Password Form
+export interface RecoveryPasswordForm {
+  email: string;
+}
+
 // Stripe Types
 export interface StripeCheckoutResponse {
   success: boolean;
@@ -140,3 +151,5 @@ export interface StripeSubscriptionStatusResponse {
 export * from './forms';
 export * from './stores';
 export * from './components';
+export * from './reports';
+export * from './contexts';
