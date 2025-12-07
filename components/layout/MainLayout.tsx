@@ -51,7 +51,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   ];
 
   const handleLogout = async () => {
-    user && await authAPI.logout({email: user.email});
+    try {
+      await authAPI.logout(); // La cookie identifica al usuario
+    } catch {
+      // Continuar con logout local aunque falle el backend
+    }
     logout();
     router.push('/auth/login');
   };

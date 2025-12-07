@@ -32,7 +32,10 @@
       "register": "Regístrate aquí",
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "recoverPassword": "Recupera tu contraseña aquí",
-      "success": "Inicio de sesión exitoso"
+      "success": "Inicio de sesión exitoso",
+      "acceptTerms": "Acepto los",
+      "termsAndConditions": "Términos y Condiciones",
+      "termsRequired": "Debes aceptar los términos y condiciones para continuar"
     },
     "register": {
       "title": "Registro",
@@ -49,7 +52,8 @@
       "submit": "Crear cuenta",
       "hasAccount": "¿Ya tienes cuenta?",
       "login": "Inicia sesión",
-      "success": "Usuario registrado exitosamente"
+      "success": "Usuario registrado exitosamente",
+      "redirectingToPayment": "Redirigiendo al pago..."
     },
     "validation": {
       "nameRequired": "El nombre es requerido",
@@ -88,6 +92,7 @@
   },
   "profile": {
     "title": "Perfil de Usuario",
+    "accountInfo": "Información de la Cuenta",
     "noUserData": "No se encontraron datos de usuario",
     "noUserDataDescription": "Vuelve a iniciar sesión para ver la información de tu perfil.",
     "name": "Nombre",
@@ -113,9 +118,33 @@
     "deleteAccountConfirmButton": "Sí, eliminar mi cuenta",
     "accountDeleted": "Tu cuenta ha sido eliminada correctamente.",
     "language": "Idioma",
-    "languagePreference": "Preferencia de idioma",
+    "languagePreference": "Preferencias regionales",
     "languageUpdated": "Idioma actualizado correctamente",
-    "languageUpdateError": "Error al actualizar el idioma"
+    "languageUpdateError": "Error al actualizar el idioma",
+    "currency": "Moneda",
+    "currencyUpdated": "Moneda actualizada correctamente",
+    "currencyUpdateError": "Error al actualizar la moneda",
+    "subscription": {
+      "title": "Estado de Suscripción",
+      "status": "Estado",
+      "plan": "Plan",
+      "monthlyPlan": "Plan Mensual",
+      "nextBilling": "Próxima facturación",
+      "trialEnds": "Periodo de prueba termina",
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "canceled": "Cancelada",
+      "past_due": "Pago pendiente",
+      "trialing": "Periodo de prueba",
+      "trialDescription": "Estás en un periodo de prueba de 7 días. Activa tu suscripción para continuar usando todas las funcionalidades.",
+      "inactiveDescription": "No tienes una suscripción activa. Activa tu suscripción para acceder a todas las funcionalidades.",
+      "pastDueDescription": "Tu pago está pendiente. Por favor actualiza tu método de pago para continuar.",
+      "canceledDescription": "Tu suscripción ha sido cancelada. Puedes reactivarla en cualquier momento.",
+      "activateSubscription": "Activar Suscripción",
+      "manageSubscription": "Gestionar Suscripción",
+      "loading": "Cargando información de suscripción...",
+      "error": "Error al cargar el estado de la suscripción"
+    }
   },
   "dashboard": {
     "title": "Resumen Financiero",
@@ -169,7 +198,21 @@
     "periodicityCustom": "Personalizado",
     "every": "Repetir cada",
     "everyPlaceholder": "Ej: lunes, martes, 15, 28...",
-    "everyHelp": "Día de la semana (lunes-domingo) o día del mes (1-31)"
+    "everyHelp": "Día de la semana (lunes-domingo) o día del mes (1-31)",
+    "descriptionPlaceholder": "Descripción opcional de la transacción...",
+    "validation": {
+      "typeRequired": "El tipo es requerido",
+      "typeInvalid": "Selecciona un tipo válido",
+      "amountRequired": "El monto es requerido",
+      "amountPositive": "El monto debe ser mayor a 0",
+      "categoryRequired": "La categoría es requerida",
+      "categoryMax": "La categoría no puede exceder 50 caracteres",
+      "descriptionRequired": "La descripción es requerida",
+      "descriptionMax": "La descripción no puede exceder 200 caracteres",
+      "dateRequired": "La fecha es requerida",
+      "dateInvalid": "Fecha inválida",
+      "everyRequired": "Este campo es requerido para transacciones periódicas"
+    }
   },
   "history": {
     "title": "Historial de Transacciones",
@@ -189,6 +232,7 @@
     "totalExpenses": "Total Gastos",
     "balance": "Balance",
     "noDataToShow": "No hay datos para mostrar",
+    "transactions": "transacciones",
     "transactionsCount": "{count} transacciones"
   },
   "categories": {
@@ -212,7 +256,9 @@
     "namePlaceholder": "Ej: Alimentación, Transporte...",
     "transactionTypeRequired": "El tipo es requerido",
     "descriptionPlaceholder": "Descripción opcional de la categoría...",
-    "suggestedColors": "Colores sugeridos"
+    "suggestedColors": "Colores sugeridos",
+    "categoryPlaceholder": "Selecciona una categoría",
+    "loadError": "No se pudo cargar la transacción"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -253,5 +299,228 @@
   "metadata": {
     "title": "Control de Gastos - Gestión Financiera Personal",
     "description": "Aplicación para controlar ingresos y gastos personales con análisis y reportes detallados"
+  },
+  "home": {
+    "hero": {
+      "title": "Toma el control de tus finanzas",
+      "subtitle": "Registra, categoriza y analiza tus ingresos y gastos de forma simple e intuitiva. Toma mejores decisiones financieras con reportes claros y detallados.",
+      "loginButton": "Iniciar Sesión",
+      "registerButton": "Crear Cuenta"
+    },
+    "features": {
+      "title": "Todo lo que necesitas para gestionar tu dinero",
+      "trackExpenses": {
+        "title": "Registro de Gastos",
+        "description": "Registra todos tus gastos e ingresos de forma rápida y organizada."
+      },
+      "reports": {
+        "title": "Reportes Detallados",
+        "description": "Visualiza gráficos y estadísticas de tus finanzas por categoría y período."
+      },
+      "secure": {
+        "title": "Seguro y Privado",
+        "description": "Tus datos financieros están protegidos con encriptación de nivel bancario."
+      },
+      "responsive": {
+        "title": "Acceso Multiplataforma",
+        "description": "Accede desde cualquier dispositivo: computadora, tablet o celular."
+      },
+      "realtime": {
+        "title": "Tiempo Real",
+        "description": "Sincronización instantánea de todos tus movimientos financieros."
+      },
+      "categories": {
+        "title": "Categorías Personalizadas",
+        "description": "Crea y personaliza categorías según tus necesidades específicas."
+      }
+    },
+    "pricing": {
+      "title": "Precio Simple y Accesible",
+      "subtitle": "Sin sorpresas, sin costos ocultos. Un solo plan con todo incluido.",
+      "plan": "Plan Mensual",
+      "month": "mes",
+      "description": "Acceso completo a todas las funcionalidades",
+      "features": {
+        "unlimited": "Transacciones ilimitadas",
+        "reports": "Reportes y gráficos avanzados",
+        "categories": "Categorías personalizadas ilimitadas",
+        "multidevice": "Acceso desde múltiples dispositivos",
+        "support": "Soporte técnico incluido"
+      },
+      "cta": "Comenzar Ahora"
+    },
+    "footer": {
+      "rights": "Todos los derechos reservados.",
+      "terms": "Términos y Condiciones",
+      "privacy": "Aviso de Privacidad"
+    }
+  },
+  "stripe": {
+    "checkout": {
+      "success": {
+        "title": "¡Pago Exitoso!",
+        "subtitle": "Tu suscripción ha sido activada correctamente",
+        "description": "Ahora tienes acceso completo a todas las funcionalidades de Control Gastos.",
+        "goToDashboard": "Ir al Dashboard"
+      },
+      "cancel": {
+        "title": "Pago Cancelado",
+        "subtitle": "No se ha completado el proceso de pago",
+        "description": "Puedes intentar nuevamente cuando lo desees. Tu cuenta ha sido creada pero necesitas una suscripción activa para acceder.",
+        "tryAgain": "Intentar de nuevo",
+        "backToHome": "Volver al inicio"
+      },
+      "error": {
+        "title": "Error en el Pago",
+        "description": "Hubo un problema al procesar tu pago. Por favor, intenta nuevamente."
+      }
+    }
+  },
+  "privacy": {
+    "marca": "NizerApp",
+    "title": "Aviso de Privacidad",
+    "lastUpdated": "Última actualización: Diciembre 2025",
+    "backToHome": "Volver al inicio",
+    "responsible": {
+      "title": "Responsable del tratamiento",
+      "value": "[Tu nombre completo / razón social / RFC]"
+    },
+    "contact": {
+      "title": "Contacto",
+      "value": "soporte@nizerapp.net"
+    },
+    "intro": "Con fundamento en la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (\"LFPDPPP\"), hacemos de tu conocimiento lo siguiente:",
+    "sections": {
+      "dataCollected": {
+        "title": "1. Datos personales que recabamos",
+        "intro": "Para el uso de la plataforma podemos solicitar:",
+        "identification": {
+          "title": "Datos de identificación",
+          "name": "Nombre",
+          "email": "Correo electrónico",
+          "password": "Contraseña (cifrada)"
+        },
+        "financial": {
+          "title": "Datos financieros NO sensibles",
+          "note": "(proporcionados directamente por el usuario)",
+          "income": "Ingresos",
+          "expenses": "Gastos",
+          "categories": "Categorías financieras",
+          "balances": "Balances",
+          "history": "Historiales financieros"
+        },
+        "payment": {
+          "title": "Datos de pago",
+          "content": "Procesados exclusivamente por Stripe; NizerApp no almacena números de tarjeta."
+        },
+        "usage": {
+          "title": "Datos de uso",
+          "ip": "Dirección IP",
+          "device": "Dispositivo",
+          "behavior": "Comportamiento dentro de la app",
+          "cookies": "Cookies o tecnologías similares"
+        }
+      },
+      "purposes": {
+        "title": "2. Finalidades del tratamiento",
+        "primary": {
+          "title": "Finalidades primarias",
+          "access": "Acceso y uso de la plataforma",
+          "subscriptions": "Gestión de suscripciones y cobros",
+          "reports": "Generación de reportes financieros",
+          "support": "Mantenimiento, soporte y seguridad"
+        },
+        "secondary": {
+          "title": "Finalidades secundarias",
+          "experience": "Mejora de la experiencia",
+          "analytics": "Análisis estadísticos",
+          "communications": "Comunicaciones informativas"
+        },
+        "optOut": "Puedes rechazar las finalidades secundarias enviando un correo a: soporte@nizerapp.net"
+      },
+      "transfers": {
+        "title": "3. Transferencias de datos",
+        "intro": "Podemos transferir datos a:",
+        "stripe": "Stripe (procesamiento de pagos)",
+        "hosting": "Proveedores de alojamiento y análisis",
+        "authorities": "Autoridades cuando lo exijan las leyes",
+        "noSale": "No vendemos ni comercializamos tus datos personales."
+      },
+      "security": {
+        "title": "4. Medidas de seguridad",
+        "intro": "Aplicamos medidas físicas, administrativas y técnicas, incluyendo:",
+        "encryption": "Cifrado de contraseñas",
+        "tls": "TLS/HTTPS obligatorio",
+        "accessControl": "Control de acceso",
+        "logs": "Registros de actividad",
+        "isolatedDb": "Bases de datos aisladas"
+      },
+      "arco": {
+        "title": "5. Derechos ARCO",
+        "intro": "Puedes ejercer tus derechos:",
+        "access": "Acceso",
+        "rectification": "Rectificación",
+        "cancellation": "Cancelación",
+        "opposition": "Oposición",
+        "howTo": "Enviando un correo a: soporte@nizerapp.net",
+        "verification": "Debes incluir identificación o medio equivalente para verificar tu identidad."
+      },
+      "cookies": {
+        "title": "6. Uso de cookies",
+        "content": "Utilizamos cookies para autenticación, preferencias de usuario y análisis.",
+        "warning": "Puedes deshabilitarlas en tu navegador, aunque la plataforma podría no funcionar correctamente."
+      },
+      "changes": {
+        "title": "7. Cambios al Aviso de Privacidad",
+        "content": "Cualquier cambio será publicado en: https://www.nizerapp.net/privacidad"
+      }
+    }
+  },
+  "terms": {
+    "title": "Términos y Condiciones del Servicio",
+    "lastUpdated": "Última actualización: Diciembre 2025",
+    "backToHome": "Volver al inicio",
+    "sections": {
+      "acceptance": {
+        "title": "1. Aceptación de los Términos",
+        "content": "Al acceder y utilizar Control Gastos, usted acepta estar sujeto a estos Términos y Condiciones de Servicio. Si no está de acuerdo con alguna parte de estos términos, no podrá acceder al servicio."
+      },
+      "service": {
+        "title": "2. Descripción del Servicio",
+        "content": "Control Gastos es una aplicación de gestión financiera personal que permite a los usuarios registrar, categorizar y analizar sus ingresos y gastos. El servicio incluye funcionalidades como registro de transacciones, categorización, reportes y análisis financiero."
+      },
+      "account": {
+        "title": "3. Cuenta de Usuario",
+        "content": "Para utilizar el servicio, debe crear una cuenta proporcionando información precisa y completa. Usted es responsable de mantener la confidencialidad de su contraseña y de todas las actividades que ocurran bajo su cuenta. Debe notificarnos inmediatamente sobre cualquier uso no autorizado de su cuenta."
+      },
+      "privacy": {
+        "title": "4. Privacidad y Datos Personales",
+        "content": "Respetamos su privacidad y nos comprometemos a proteger sus datos personales. La información financiera que registre en la aplicación es privada y no será compartida con terceros sin su consentimiento expreso, excepto cuando sea requerido por ley."
+      },
+      "userResponsibilities": {
+        "title": "5. Responsabilidades del Usuario",
+        "content": "Usted se compromete a utilizar el servicio de manera responsable y legal. No debe intentar acceder a cuentas de otros usuarios, interferir con el funcionamiento del servicio, ni utilizar la plataforma para actividades ilegales o fraudulentas."
+      },
+      "dataProtection": {
+        "title": "6. Protección de Datos",
+        "content": "Implementamos medidas de seguridad técnicas y organizativas para proteger sus datos contra acceso no autorizado, pérdida o alteración. Sus datos financieros se almacenan de forma segura y encriptada."
+      },
+      "limitations": {
+        "title": "7. Limitación de Responsabilidad",
+        "content": "Control Gastos se proporciona 'tal cual' sin garantías de ningún tipo. No nos hacemos responsables por decisiones financieras tomadas basándose en la información mostrada en la aplicación. El servicio es una herramienta de seguimiento y no constituye asesoría financiera profesional."
+      },
+      "modifications": {
+        "title": "8. Modificaciones del Servicio",
+        "content": "Nos reservamos el derecho de modificar o discontinuar el servicio en cualquier momento, con o sin previo aviso. También podemos actualizar estos términos periódicamente, y el uso continuado del servicio constituye la aceptación de dichos cambios."
+      },
+      "termination": {
+        "title": "9. Terminación",
+        "content": "Podemos suspender o terminar su acceso al servicio si viola estos términos. Usted puede eliminar su cuenta en cualquier momento desde la configuración de su perfil. Al eliminar su cuenta, todos sus datos serán eliminados permanentemente."
+      },
+      "contact": {
+        "title": "10. Contacto",
+        "content": "Si tiene preguntas sobre estos Términos y Condiciones, puede contactarnos a través de los canales de soporte disponibles en la aplicación."
+      }
+    }
   }
 }

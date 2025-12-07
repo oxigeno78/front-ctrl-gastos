@@ -5,12 +5,7 @@ import { Select } from 'antd';
 import { GlobalOutlined } from '@ant-design/icons';
 import { useLocale } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/routing';
-import { locales, type Locale } from '@/i18n/config';
-
-const languageLabels: Record<Locale, string> = {
-  esp: 'Español',
-  eng: 'English',
-};
+import { locales, languageLabels, type Locale } from '@/i18n/config';
 
 const LanguageSwitcher: React.FC = () => {
   const locale = useLocale();

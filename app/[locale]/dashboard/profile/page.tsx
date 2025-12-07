@@ -1,28 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Card, Descriptions, Typography, Space, Alert, Button, Modal, Input, message, Select } from 'antd';
-import { GlobalOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Card, Descriptions, Typography, Space, Alert, Button, Modal, Input, message, Select, Tag, Spin, Row, Col } from 'antd';
+import { GlobalOutlined, CreditCardOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, UserOutlined, LockOutlined, DollarOutlined } from '@ant-design/icons';
 import { useTranslations, useLocale } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useAuthStore } from '@/store';
 import { useRouter } from '@/i18n/routing';
-import { authAPI, handleApiError } from '@/utils/api';
-import { locales, type Locale } from '@/i18n/config';
+import { authAPI, stripeAPI, handleApiError } from '@/utils/api';
+import { StripeSubscriptionStatusResponse } from '@/types';
+import { locales, languageLabels, availableCurrencies, localeToCurrency, type Locale } from '@/i18n/config';
 
 const { Title, Text } = Typography;
-
-const languageLabels: Record<Locale, string> = {
-  esp: 'Español',
-  eng: 'English',
-};
 
 const ProfilePage: React.FC = () => {
   const t = useTranslations();
   const locale = useLocale();
   const CONFIRM_TEXT = t('profile.deleteAccountConfirmText');
-  const { user, logout, token, setUserLanguage } = useAuthStore();
+  const { user, logout, setUserLanguage, setUserCurrency } = useAuthStore();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmValue, setConfirmValue] = useState('');
@@ -32,6 +28,88 @@ const ProfilePage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
+  const [isChangingCurrency, setIsChangingCurrency] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<StripeSubscriptionStatusResponse['data'] | null>(null);
+  const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
+  const [subscriptionError, setSubscriptionError] = useState(false);
+  const [isActivatingSubscription, setIsActivatingSubscription] = useState(false);
+
+  useEffect(() => {
+    const loadSubscriptionStatus = async () => {
+      if (!user?.id) return;
+
+      setIsLoadingSubscription(true);
+      setSubscriptionError(false);
+      try {
+        const response = await stripeAPI.getSubscriptionStatus(user.id);
+        if (response.success) {
+          setSubscriptionStatus(response.data);
+        }
+      } catch (error) {
+        console.error('Error loading subscription status:', error);
+        setSubscriptionError(true);
+      } finally {
+        setIsLoadingSubscription(false);
+      }
+    };
+
+    loadSubscriptionStatus();
+  }, [user?.id]);
+
+  const handleActivateSubscription = async () => {
+    if (!user?.id) return;
+
+    setIsActivatingSubscription(true);
+    try {
+      const response = await stripeAPI.createCheckoutSession(user.id);
+      if (response.success && response.data.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (error) {
+      const apiError = handleApiError(error);
+      message.error(apiError.message);
+    } finally {
+      setIsActivatingSubscription(false);
+    }
+  };
+
+  const getStatusTag = (status: string | null | undefined) => {
+    const validStatuses = ['active', 'trialing', 'past_due', 'canceled', 'inactive'];
+    const safeStatus = status && validStatuses.includes(status) ? status : 'inactive';
+
+    const statusConfig: Record<string, { color: string; icon: React.ReactNode }> = {
+      active: { color: 'success', icon: <CheckCircleOutlined /> },
+      trialing: { color: 'processing', icon: <ClockCircleOutlined /> },
+      past_due: { color: 'warning', icon: <ExclamationCircleOutlined /> },
+      canceled: { color: 'error', icon: <CloseCircleOutlined /> },
+      inactive: { color: 'default', icon: <CloseCircleOutlined /> },
+    };
+    const config = statusConfig[safeStatus];
+    return (
+      <Tag color={config.color} icon={config.icon}>
+        {t(`profile.subscription.${safeStatus}`)}
+      </Tag>
+    );
+  };
+
+  const getStatusDescription = (status: string) => {
+    const descriptions: Record<string, string> = {
+      trialing: t('profile.subscription.trialDescription'),
+      inactive: t('profile.subscription.inactiveDescription'),
+      past_due: t('profile.subscription.pastDueDescription'),
+      canceled: t('profile.subscription.canceledDescription'),
+    };
+    return descriptions[status] || null;
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString(locale === 'esp' ? 'es-ES' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
 
   const openModal = () => {
     setConfirmValue('');
@@ -61,7 +139,7 @@ const ProfilePage: React.FC = () => {
   };
 
   const handleChangePassword = async () => {
-    if (!user || !token) {
+    if (!user) {
       message.error(t('profile.sessionError'));
       return;
     }
@@ -83,7 +161,7 @@ const ProfilePage: React.FC = () => {
 
     setIsChangingPassword(true);
     try {
-      await authAPI.changePassword({ token, email: user.email, password: newPassword });
+      await authAPI.changePassword({ currentPassword, newPassword });
       message.success(t('profile.passwordUpdated'));
       setCurrentPassword('');
       setNewPassword('');
@@ -104,14 +182,7 @@ const ProfilePage: React.FC = () => {
         setIsChangingLanguage(false);
         return;
       }
-      const email = user.email;
-      if (!email) {
-        message.error(t('profile.emailRequired'));
-        setIsChangingLanguage(false);
-        return;
-      }
-      console.log('Changing language to:', newLanguage, 'for email:', email);
-      await authAPI.updateLanguage(newLanguage, email);
+      await authAPI.updateLanguage(newLanguage);
       setUserLanguage(newLanguage);
       message.success(t('profile.languageUpdated'));
       // Cambiar el idioma de la aplicación
@@ -121,6 +192,25 @@ const ProfilePage: React.FC = () => {
       message.error(apiError.message || t('profile.languageUpdateError'));
     } finally {
       setIsChangingLanguage(false);
+    }
+  };
+
+  const handleChangeCurrency = async (newCurrency: string) => {
+    setIsChangingCurrency(true);
+    try {
+      if (!user) {
+        message.error(t('profile.sessionError'));
+        setIsChangingCurrency(false);
+        return;
+      }
+      await authAPI.updateCurrency(newCurrency);
+      setUserCurrency(newCurrency);
+      message.success(t('profile.currencyUpdated'));
+    } catch (error: any) {
+      const apiError = handleApiError(error);
+      message.error(apiError.message || t('profile.currencyUpdateError'));
+    } finally {
+      setIsChangingCurrency(false);
     }
   };
 
@@ -143,73 +233,198 @@ const ProfilePage: React.FC = () => {
 
           {user && (
             <>
-              <Card>
-                <Descriptions column={1} bordered>
-                  <Descriptions.Item label={t('profile.name')}>
-                    <Text strong>{user.name}</Text>
-                  </Descriptions.Item>
-                  <Descriptions.Item label={t('profile.email')}>
-                    <Text>{user.email}</Text>
-                  </Descriptions.Item>
-                  <Descriptions.Item label={t('profile.userId')}>
-                    <Text type="secondary">{user.id}</Text>
-                  </Descriptions.Item>
-                </Descriptions>
-              </Card>
-
-              <Card title={t('profile.languagePreference')}>
-                <Space direction="vertical" style={{ width: '100%' }} size="middle">
-                  <Text>{t('profile.language')}</Text>
-                  <Select
-                    value={user.language || locale}
-                    onChange={handleChangeLanguage}
-                    style={{ width: 200 }}
-                    suffixIcon={<GlobalOutlined />}
-                    loading={isChangingLanguage}
-                    disabled={isChangingLanguage}
-                    options={locales.map((loc) => ({
-                      value: loc,
-                      label: languageLabels[loc],
-                    }))}
-                  />
-                </Space>
-              </Card>
-
-              <Card title={t('profile.changePassword')}>
-                <Space direction="vertical" style={{ width: '100%' }} size="middle">
-                  <Input.Password
-                    placeholder={t('profile.currentPassword')}
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    disabled={isChangingPassword}
-                  />
-                  <Input.Password
-                    placeholder={t('profile.newPassword')}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    disabled={isChangingPassword}
-                  />
-                  <Input.Password
-                    placeholder={t('profile.confirmNewPassword')}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    disabled={isChangingPassword}
-                  />
-                  <Button
-                    type="primary"
-                    onClick={handleChangePassword}
-                    loading={isChangingPassword}
+              <Row gutter={[16, 16]}>
+                <Col xs={24} lg={12}>
+                  <Card 
+                    title={
+                      <Space>
+                        <UserOutlined />
+                        {t('profile.accountInfo')}
+                      </Space>
+                    }
+                    style={{ height: '100%' }}
                   >
-                    {t('profile.updatePassword')}
-                  </Button>
-                </Space>
-              </Card>
+                    <Descriptions column={1} bordered size="small">
+                      <Descriptions.Item label={t('profile.name')}>
+                        <Text strong>{user.name}</Text>
+                      </Descriptions.Item>
+                      <Descriptions.Item label={t('profile.email')}>
+                        <Text>{user.email}</Text>
+                      </Descriptions.Item>
+                      <Descriptions.Item label={t('profile.userId')}>
+                        <Text type="secondary">{user.id}</Text>
+                      </Descriptions.Item>
+                    </Descriptions>
+                  </Card>
+                </Col>
+                <Col xs={24} lg={12}>
+                  <Card title={
+                    <Space>
+                      <CreditCardOutlined />
+                      {t('profile.subscription.title')}
+                    </Space>
+                  }
+                    style={{ height: '100%' }} >
+                    {isLoadingSubscription ? (
+                      <div style={{ textAlign: 'center', padding: '20px' }}>
+                        <Spin />
+                        <Text style={{ display: 'block', marginTop: '10px' }}>
+                          {t('profile.subscription.loading')}
+                        </Text>
+                      </div>
+                    ) : subscriptionError ? (
+                      <Alert
+                        type="error"
+                        message={t('profile.subscription.error')}
+                        showIcon
+                      />
+                    ) : subscriptionStatus ? (
+                      <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                        <Descriptions column={1} bordered size="small">
+                          <Descriptions.Item label={t('profile.subscription.status')}>
+                            {getStatusTag(subscriptionStatus.status)}
+                          </Descriptions.Item>
+                          <Descriptions.Item label={t('profile.subscription.plan')}>
+                            <Text>{t('profile.subscription.monthlyPlan')}</Text>
+                          </Descriptions.Item>
+                          {subscriptionStatus.status === 'active' && subscriptionStatus.currentPeriodEnd && (
+                            <Descriptions.Item label={t('profile.subscription.nextBilling')}>
+                              <Text>{formatDate(subscriptionStatus.currentPeriodEnd)}</Text>
+                            </Descriptions.Item>
+                          )}
+                          {subscriptionStatus.status === 'trialing' && subscriptionStatus.currentPeriodEnd && (
+                            <Descriptions.Item label={t('profile.subscription.trialEnds')}>
+                              <Text type="warning">{formatDate(subscriptionStatus.currentPeriodEnd)}</Text>
+                            </Descriptions.Item>
+                          )}
+                        </Descriptions>
 
-              <Card style={{ borderColor: '#ff4d4f' }}>
+                        {getStatusDescription(subscriptionStatus.status) && (
+                          <Alert
+                            type={subscriptionStatus.status === 'trialing' ? 'info' : 'warning'}
+                            message={getStatusDescription(subscriptionStatus.status)}
+                            showIcon
+                          />
+                        )}
+
+                        {subscriptionStatus.status !== 'active' && (
+                          <Button
+                            type="primary"
+                            icon={<CreditCardOutlined />}
+                            onClick={handleActivateSubscription}
+                            loading={isActivatingSubscription}
+                            size="large"
+                          >
+                            {t('profile.subscription.activateSubscription')}
+                          </Button>
+                        )}
+                      </Space>
+                    ) : (
+                      <Alert
+                        type="info"
+                        message={t('profile.subscription.inactiveDescription')}
+                        showIcon
+                        action={
+                          <Button
+                            type="primary"
+                            size="small"
+                            onClick={handleActivateSubscription}
+                            loading={isActivatingSubscription}
+                          >
+                            {t('profile.subscription.activateSubscription')}
+                          </Button>
+                        }
+                      />
+                    )}
+                  </Card>
+                </Col>
+              </Row>
+
+              {/* Sección de Estado de Suscripción y Preferencia de Idioma */}
+              <Row gutter={[16, 16]}>
+                <Col xs={24} lg={12}>
+                  <Card title={
+                    <Space>
+                      <GlobalOutlined />
+                      {t('profile.languagePreference')}
+                    </Space>
+                  } style={{ height: '100%' }}>
+                    <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                      <div>
+                        <Text>{t('profile.language')}</Text>
+                        <Select
+                          value={user.language || locale}
+                          onChange={handleChangeLanguage}
+                          style={{ width: '100%', maxWidth: 250, marginTop: 8 }}
+                          suffixIcon={<GlobalOutlined />}
+                          loading={isChangingLanguage}
+                          disabled={isChangingLanguage}
+                          options={locales.map((loc) => ({
+                            value: loc,
+                            label: languageLabels[loc],
+                          }))}
+                        />
+                      </div>
+                      <div>
+                        <Text>{t('profile.currency')}</Text>
+                        <Select
+                          value={user.currency || localeToCurrency[locale as Locale] || 'MXN'}
+                          onChange={handleChangeCurrency}
+                          style={{ width: '100%', maxWidth: 250, marginTop: 8 }}
+                          suffixIcon={<DollarOutlined />}
+                          loading={isChangingCurrency}
+                          disabled={isChangingCurrency}
+                          options={availableCurrencies.map((curr) => ({
+                            value: curr.value,
+                            label: curr.label,
+                          }))}
+                        />
+                      </div>
+                    </Space>
+                  </Card>
+                </Col>
+
+                <Col xs={24} lg={12}>
+                  <Card title={
+                    <Space>
+                      <LockOutlined />
+                      {t('profile.changePassword')}
+                    </Space>
+                  }>
+                    <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                      <Input.Password
+                        placeholder={t('profile.currentPassword')}
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        disabled={isChangingPassword}
+                      />
+                      <Input.Password
+                        placeholder={t('profile.newPassword')}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        disabled={isChangingPassword}
+                      />
+                      <Input.Password
+                        placeholder={t('profile.confirmNewPassword')}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        disabled={isChangingPassword}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={handleChangePassword}
+                        loading={isChangingPassword}
+                      >
+                        {t('profile.updatePassword')}
+                      </Button>
+                    </Space>
+                  </Card>
+                </Col>
+              </Row>
+
+
+              <Card title={<Space style={{ color: '#ff4d4f' }}><ExclamationCircleOutlined />{t('profile.dangerZone')}</Space>} style={{ borderColor: '#ff4d4f' }}>
                 <Space direction="vertical" style={{ width: '100%' }} size="middle">
-                  <Title level={4} style={{ margin: 0, color: '#cf1322' }}>
-                    {t('profile.dangerZone')}
-                  </Title>
                   <Text>
                     {t('profile.dangerZoneDescription')}
                   </Text>

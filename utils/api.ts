@@ -1,30 +1,24 @@
 import axios, { AxiosResponse } from 'axios';
-import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category, Notification } from '@/types';
+import { AuthResponse, TransactionsResponse, CreateTransactionData, TransactionFilters, ApiError, CategoriesResponse, Category, Notification, StripeCheckoutResponse, StripeSubscriptionStatusResponse } from '@/types';
 import { api as apiConfig } from '@/config/env';
+import { useAuthStore, useNotificationStore } from '@/store';
 
 const API_URL = apiConfig.url;
 
 // Crear instancia de axios
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_URL, // por defecto: http://localhost:5000/api/v1.0.0
   timeout: 10000,
+  withCredentials: true, // Enviar/recibir cookies HTTP-only
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Interceptor para agregar token a las requests
+// Interceptor para requests (la cookie se envía automáticamente con withCredentials)
 api.interceptors.request.use(
-  (config) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (config) => config,
+  (error) => Promise.reject(error)
 );
 
 // Interceptor para manejar respuestas y errores
@@ -32,9 +26,18 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expirado o inválido
-      if (typeof window !== 'undefined') { localStorage.removeItem('token'); }
-      window.location.href = '/auth/login';
+      // Evitar ciclo infinito: solo redirigir si no estamos ya en login
+      const isOnLoginPage = typeof window !== 'undefined' && 
+        window.location.pathname.includes('/auth/login');
+      
+      if (!isOnLoginPage) {
+        // Limpiar stores de Zustand ANTES de redirigir
+        useAuthStore.getState().logout();
+        useNotificationStore.getState().clearNotifications();
+        
+        // Redirigir al login
+        window.location.href = '/auth/login';
+      }
     }
     return Promise.reject(error);
   }
@@ -51,8 +54,14 @@ export const authAPI = {
     const response: AxiosResponse<AuthResponse> = await api.post('/auth/login', data);
     return response.data;
   },
-  logout: async (data: { email: string }): Promise<{ success: boolean }> => {
-    const response = await api.post('/auth/logout', data);
+  logout: async (): Promise<{ success: boolean }> => {
+    const response = await api.post('/auth/logout');
+    return response.data;
+  },
+
+  // Verificar sesión actual (útil para HTTP-only cookies)
+  me: async (): Promise<{ success: boolean; data: { user: { id: string; name: string; email: string; language: string; subscriptionStatus: string; subscriptionCurrentPeriodEnd: string } } }> => {
+    const response = await api.get('/auth/me');
     return response.data;
   },
   recoveryPassword: async (data: { email: string }): Promise<{ success: boolean }> => {
@@ -63,16 +72,20 @@ export const authAPI = {
     const response = await api.post('/auth/reset-password', data);
     return response.data;
   },
-  changePassword: async (data: { token: string; email: string; password: string }): Promise<{ success: boolean }> => {
+  changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<{ success: boolean }> => {
     const response = await api.post('/auth/change-password', data);
     return response.data;
   },
   deleteAccount: async (): Promise<{ success: boolean }> => {
-    const response = await api.delete('/auth/delete-account');
+    const response = await api.delete('/auth/account');
     return response.data;
   },
-  updateLanguage: async (language: string, email: string): Promise<{ success: boolean }> => {
-    const response = await api.put('/auth/language', { language, email });
+  updateLanguage: async (language: string): Promise<{ success: boolean }> => {
+    const response = await api.put('/auth/language', { language });
+    return response.data;
+  },
+  updateCurrency: async (currency: string): Promise<{ success: boolean }> => {
+    const response = await api.put('/auth/currency', { currency });
     return response.data;
   },
 };
@@ -164,6 +177,19 @@ export const notificationAPI = {
   // DELETE /:userId/:_id - Eliminar una notificación
   delete: async (userId: string, notificationId: string): Promise<{ success: boolean }> => {
     const response = await api.delete(`/notifications/${userId}/${notificationId}`);
+    return response.data;
+  },
+};
+
+// API de Stripe
+export const stripeAPI = {
+  createCheckoutSession: async (userId: string): Promise<StripeCheckoutResponse> => {
+    const response = await api.post('/stripe/create-checkout-session', { userId });
+    return response.data;
+  },
+
+  getSubscriptionStatus: async (userId: string): Promise<StripeSubscriptionStatusResponse> => {
+    const response = await api.get(`/stripe/subscription-status/${userId}`);
     return response.data;
   },
 };

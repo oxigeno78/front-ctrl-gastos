@@ -13,6 +13,7 @@ export interface AuthState {
   logout: () => void;
   setUser: (user: User) => void;
   setUserLanguage: (language: string) => void;
+  setUserCurrency: (currency: string) => void;
 }
 
 // Store de transacciones
