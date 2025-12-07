@@ -95,8 +95,11 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       console.log('🔌 Initializing socket connection...');
       
       // Con HTTP-only cookies, el socket se autentica via cookie
+      // El userId se envía para que el backend pueda asociar la conexión al usuario
+      // La validación real se hace con la cookie HTTP-only en el backend
       socketRef.current = io(socketConfig.url, {
         withCredentials: true, // Enviar cookies HTTP-only
+        auth: { userId: user.id }, // Identificador del usuario (la cookie valida la sesión)
         transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionAttempts: 5,

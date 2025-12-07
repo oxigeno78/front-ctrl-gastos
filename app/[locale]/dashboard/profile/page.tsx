@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, Descriptions, Typography, Space, Alert, Button, Modal, Input, message, Select, Tag, Spin, Row, Col } from 'antd';
-import { GlobalOutlined, CreditCardOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, UserOutlined, LockOutlined } from '@ant-design/icons';
+import { GlobalOutlined, CreditCardOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, UserOutlined, LockOutlined, DollarOutlined } from '@ant-design/icons';
 import { useTranslations, useLocale } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -10,7 +10,7 @@ import { useAuthStore } from '@/store';
 import { useRouter } from '@/i18n/routing';
 import { authAPI, stripeAPI, handleApiError } from '@/utils/api';
 import { StripeSubscriptionStatusResponse } from '@/types';
-import { locales, languageLabels, type Locale } from '@/i18n/config';
+import { locales, languageLabels, availableCurrencies, localeToCurrency, type Locale } from '@/i18n/config';
 
 const { Title, Text } = Typography;
 
@@ -18,7 +18,7 @@ const ProfilePage: React.FC = () => {
   const t = useTranslations();
   const locale = useLocale();
   const CONFIRM_TEXT = t('profile.deleteAccountConfirmText');
-  const { user, logout, setUserLanguage } = useAuthStore();
+  const { user, logout, setUserLanguage, setUserCurrency } = useAuthStore();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmValue, setConfirmValue] = useState('');
@@ -28,6 +28,7 @@ const ProfilePage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
+  const [isChangingCurrency, setIsChangingCurrency] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<StripeSubscriptionStatusResponse['data'] | null>(null);
   const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
   const [subscriptionError, setSubscriptionError] = useState(false);
@@ -194,6 +195,25 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  const handleChangeCurrency = async (newCurrency: string) => {
+    setIsChangingCurrency(true);
+    try {
+      if (!user) {
+        message.error(t('profile.sessionError'));
+        setIsChangingCurrency(false);
+        return;
+      }
+      await authAPI.updateCurrency(newCurrency);
+      setUserCurrency(newCurrency);
+      message.success(t('profile.currencyUpdated'));
+    } catch (error: any) {
+      const apiError = handleApiError(error);
+      message.error(apiError.message || t('profile.currencyUpdateError'));
+    } finally {
+      setIsChangingCurrency(false);
+    }
+  };
+
   return (
     <ProtectedRoute>
       <MainLayout>
@@ -330,19 +350,36 @@ const ProfilePage: React.FC = () => {
                     </Space>
                   } style={{ height: '100%' }}>
                     <Space direction="vertical" style={{ width: '100%' }} size="middle">
-                      <Text>{t('profile.language')}</Text>
-                      <Select
-                        value={user.language || locale}
-                        onChange={handleChangeLanguage}
-                        style={{ width: '100%', maxWidth: 200 }}
-                        suffixIcon={<GlobalOutlined />}
-                        loading={isChangingLanguage}
-                        disabled={isChangingLanguage}
-                        options={locales.map((loc) => ({
-                          value: loc,
-                          label: languageLabels[loc],
-                        }))}
-                      />
+                      <div>
+                        <Text>{t('profile.language')}</Text>
+                        <Select
+                          value={user.language || locale}
+                          onChange={handleChangeLanguage}
+                          style={{ width: '100%', maxWidth: 250, marginTop: 8 }}
+                          suffixIcon={<GlobalOutlined />}
+                          loading={isChangingLanguage}
+                          disabled={isChangingLanguage}
+                          options={locales.map((loc) => ({
+                            value: loc,
+                            label: languageLabels[loc],
+                          }))}
+                        />
+                      </div>
+                      <div>
+                        <Text>{t('profile.currency')}</Text>
+                        <Select
+                          value={user.currency || localeToCurrency[locale as Locale] || 'MXN'}
+                          onChange={handleChangeCurrency}
+                          style={{ width: '100%', maxWidth: 250, marginTop: 8 }}
+                          suffixIcon={<DollarOutlined />}
+                          loading={isChangingCurrency}
+                          disabled={isChangingCurrency}
+                          options={availableCurrencies.map((curr) => ({
+                            value: curr.value,
+                            label: curr.label,
+                          }))}
+                        />
+                      </div>
                     </Space>
                   </Card>
                 </Col>

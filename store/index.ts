@@ -42,6 +42,14 @@ export const useAuthStore = create<AuthState>()(
           user: state.user ? { ...state.user, language } : null,
         }));
       },
+      setUserCurrency: (currency: string) => {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('userCurrency', currency);
+        }
+        set((state) => ({
+          user: state.user ? { ...state.user, currency } : null,
+        }));
+      },
     }),
     {
       name: 'auth-storage',

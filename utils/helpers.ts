@@ -1,13 +1,5 @@
 import dayjs from 'dayjs';
 
-// Formatear moneda
-export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-  }).format(amount);
-};
-
 // Formatear fecha
 export const formatDate = (date: string | Date): string => {
   return dayjs(date).format('DD/MM/YYYY');

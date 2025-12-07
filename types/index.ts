@@ -3,6 +3,7 @@ export interface User {
   name: string;
   email: string;
   language?: string;
+  currency?: string;
 }
 
 export interface Category {

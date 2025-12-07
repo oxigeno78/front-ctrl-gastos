@@ -84,6 +84,10 @@ export const authAPI = {
     const response = await api.put('/auth/language', { language });
     return response.data;
   },
+  updateCurrency: async (currency: string): Promise<{ success: boolean }> => {
+    const response = await api.put('/auth/currency', { currency });
+    return response.data;
+  },
 };
 
 // API de transacciones

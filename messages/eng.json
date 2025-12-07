@@ -118,9 +118,12 @@
         "deleteAccountConfirmButton": "Yes, delete my account",
         "accountDeleted": "Your account has been deleted successfully.",
         "language": "Language",
-        "languagePreference": "Language preference",
+        "languagePreference": "Regional preferences",
         "languageUpdated": "Language updated successfully",
         "languageUpdateError": "Error updating language",
+        "currency": "Currency",
+        "currencyUpdated": "Currency updated successfully",
+        "currencyUpdateError": "Error updating currency",
         "subscription": {
             "title": "Subscription Status",
             "status": "Status",
@@ -229,6 +232,7 @@
         "totalExpenses": "Total Expenses",
         "balance": "Balance",
         "noDataToShow": "No data to show",
+        "transactions": "transactions",
         "transactionsCount": "{count} transactions"
     },
     "categories": {

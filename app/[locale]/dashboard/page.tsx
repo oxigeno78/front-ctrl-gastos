@@ -16,7 +16,8 @@ import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { useTransactionStore } from '@/store';
-import { formatCurrency, formatDate } from '@/utils/helpers';
+import { useFormatters } from '@/hooks/useFormatters';
+import { formatDate } from '@/utils/helpers';
 import { Transaction } from '@/types';
 import { useRouter } from '@/i18n/routing';
 
@@ -25,6 +26,7 @@ const { Title } = Typography;
 const DashboardPage: React.FC = () => {
   const t = useTranslations();
   const router = useRouter();
+  const { formatCurrency } = useFormatters();
   const { transactions, summary, setTransactions, setSummary, setLoading } = useTransactionStore();
   const [loading, setLoadingState] = useState(true);
 
