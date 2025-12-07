@@ -10,7 +10,7 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { useTransactionStore } from '@/store';
-import { CreateTransactionData, Transaction, TransactionFormData, TransactionFormProps } from '@/types';
+import { CreateTransactionData, TransactionFormData, TransactionFormProps } from '@/types';
 import { useCategories } from '@/hooks/useCategories';
 import { useTranslations } from 'next-intl';
 

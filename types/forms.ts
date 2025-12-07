@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import type { Color } from 'antd/es/color-picker';
 
 /**
  * Interfaces de formularios reutilizables
@@ -15,12 +16,20 @@ export interface TransactionFormData {
   every?: string | null;
 }
 
-// Formulario de categorías
+// Formulario de categorías (para API)
 export interface CategoryFormData {
   name: string;
   transactionType: 'income' | 'expense';
   description?: string;
   color?: string;
+}
+
+// Formulario de categorías (para UI con ColorPicker)
+export interface CategoryFormDataUI {
+  name: string;
+  transactionType: 'income' | 'expense';
+  description?: string;
+  color?: string | Color;
 }
 
 // Formulario de login
