@@ -8,70 +8,32 @@ import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { useFormatters } from '@/hooks/useFormatters';
+import {
+  MonthlyStats,
+  StatGroup,
+  CategoryChartData,
+  BalanceCategoryData,
+  PieChartData,
+  TrendChartData,
+  RechartsTooltipProps,
+  CategoryStat,
+} from '@/types';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
-
-interface CategoryStat {
-  category: string;
-  total: number;
-  count: number;
-  color?: string;
-}
-
-interface StatGroup {
-  _id: string;
-  categories: CategoryStat[];
-  total: number;
-  count: number;
-}
-
-interface MonthlyStats {
-  month: number;
-  year: number;
-  stats: StatGroup[];
-}
-
-interface CategoryData {
-  category: string;
-  amount: number;
-  count: number;
-  color?: string;
-}
-
-interface BalanceCategoryData {
-  category: string;
-  income: number;
-  expense: number;
-  count: number;
-  color?: string;
-}
-
-interface PieData {
-  type: string;
-  value: number;
-  count: number;
-  [key: string]: string | number;
-}
-
-interface TrendData {
-  month: string;
-  income: number;
-  expense: number;
-}
 
 const ReportsPage: React.FC = () => {
   const t = useTranslations();
   const { formatCurrency } = useFormatters();
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
-  const [trendData, setTrendData] = useState<TrendData[]>([]);
+  const [trendData, setTrendChartData] = useState<TrendChartData[]>([]);
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState(dayjs().subtract(2, 'month').startOf('month'));
   const [endDate, setEndDate] = useState(dayjs().endOf('month'));
 
   useEffect(() => {
     loadMonthlyStats();
-    loadTrendData();
+    loadTrendChartData();
   }, [startDate, endDate]);
 
   const loadMonthlyStats = async () => {
@@ -90,7 +52,7 @@ const ReportsPage: React.FC = () => {
     }
   };
 
-  const loadTrendData = async () => {
+  const loadTrendChartData = async () => {
     try {
       const response = await transactionAPI.getTransactions({
         startDate: startDate.format('YYYY-MM-DD'),
@@ -99,7 +61,7 @@ const ReportsPage: React.FC = () => {
       });
 
       const monthsCount = getMonthsCount();
-      const dataByMonth: Record<string, TrendData> = {};
+      const dataByMonth: Record<string, TrendChartData> = {};
 
       // Inicializar todos los meses en el rango con valores en 0
       for (let i = monthsCount - 1; i >= 0; i--) {
@@ -108,7 +70,7 @@ const ReportsPage: React.FC = () => {
       }
 
       // Agrupar transacciones por mes
-      response.data?.transactions?.forEach((transaction: any) => {
+      response.data?.transactions?.forEach((transaction) => {
         const transactionDate = dayjs(transaction.date);
         const monthKey = transactionDate.format('MMM YYYY');
 
@@ -122,7 +84,7 @@ const ReportsPage: React.FC = () => {
         }
       });
 
-      setTrendData(Object.values(dataByMonth));
+      setTrendChartData(Object.values(dataByMonth));
     } catch (error) {
       console.error('Error loading trend data:', error);
     }
@@ -134,7 +96,7 @@ const ReportsPage: React.FC = () => {
   };
 
   // Preparar datos para gráfica de barras - todas las transacciones agrupadas por categoría
-  const getCategoryData = (): CategoryData[] => {
+  const getCategoryChartData = (): CategoryChartData[] => {
     if (!monthlyStats?.stats) return [];
 
     const categoryMap: Record<string, { amount: number; count: number; color?: string }> = {};
@@ -163,7 +125,7 @@ const ReportsPage: React.FC = () => {
   };
 
   // Preparar datos para gráfica de balance por categoría (ingresos positivos, gastos negativos)
-  const getBalanceByCategoryData = (): BalanceCategoryData[] => {
+  const getBalanceByCategoryChartData = (): BalanceCategoryData[] => {
     if (!monthlyStats?.stats) return [];
 
     const categoryMap: Record<string, { income: number; expense: number; count: number; color?: string }> = {};
@@ -197,7 +159,7 @@ const ReportsPage: React.FC = () => {
   };
 
   // Preparar datos para gráfica circular
-  const getPieData = (): PieData[] => {
+  const getPieChartData = (): PieChartData[] => {
     if (!monthlyStats?.stats) return [];
 
     return monthlyStats.stats.map((stat: StatGroup) => ({
@@ -207,9 +169,9 @@ const ReportsPage: React.FC = () => {
     }));
   };
 
-  const categoryData = getCategoryData();
-  const balanceByCategoryData = getBalanceByCategoryData();
-  const pieData = getPieData();
+  const categoryData = getCategoryChartData();
+  const balanceByCategoryChartData = getBalanceByCategoryChartData();
+  const pieData = getPieChartData();
   const totalPie = pieData.reduce((sum, d) => sum + d.value, 0);
 
   // Colores para el pie chart
@@ -218,7 +180,7 @@ const ReportsPage: React.FC = () => {
   const monthsCount = getMonthsCount();
 
   // Tooltip personalizado para el gráfico de barras
-  const CategoryTooltip = ({ active, payload }: any) => {
+  const CategoryTooltip = ({ active, payload }: RechartsTooltipProps<CategoryChartData>) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -233,7 +195,7 @@ const ReportsPage: React.FC = () => {
   };
 
   // Tooltip personalizado para el pie chart
-  const PieTooltip = ({ active, payload }: any) => {
+  const PieTooltip = ({ active, payload }: RechartsTooltipProps<PieChartData>) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const percent = totalPie > 0 ? ((data.value / totalPie) * 100).toFixed(2) : '0.00';
@@ -249,12 +211,12 @@ const ReportsPage: React.FC = () => {
   };
 
   // Tooltip personalizado para el gráfico de líneas
-  const TrendTooltip = ({ active, payload, label }: any) => {
+  const TrendTooltip = ({ active, payload, label }: RechartsTooltipProps<TrendChartData>) => {
     if (active && payload && payload.length) {
       return (
         <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
           <p style={{ margin: 0, fontWeight: 'bold' }}>{label}</p>
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry, index) => (
             <p key={index} style={{ margin: 0, color: entry.color }}>
               {entry.name === 'income' ? t('transactions.incomes') : t('transactions.expenses')}: {formatCurrency(entry.value)}
             </p>
@@ -266,9 +228,9 @@ const ReportsPage: React.FC = () => {
   };
 
   // Tooltip personalizado para el gráfico de balance por categoría
-  const BalanceTooltip = ({ active, payload }: any) => {
+  const BalanceTooltip = ({ active, payload }: RechartsTooltipProps<BalanceCategoryData>) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload as BalanceCategoryData;
+      const data = payload[0].payload;
       return (
         <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
           <p style={{ margin: 0, fontWeight: 'bold' }}>{data.category}</p>
@@ -344,20 +306,20 @@ const ReportsPage: React.FC = () => {
 
               <Col xs={24} lg={12}>
                 <Card title={`${t('reports.balanceByCategory')} - ${startDate.format('DD/MM/YYYY')} - ${endDate.format('DD/MM/YYYY')}`}>
-                  {balanceByCategoryData.length > 0 ? (
+                  {balanceByCategoryChartData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={balanceByCategoryData} margin={{ left: 20}}>
+                      <BarChart data={balanceByCategoryChartData} margin={{ left: 20}}>
                         <XAxis dataKey="category" />
                         <YAxis tickFormatter={(v) => formatCurrency(v)} />
                         <Tooltip content={<BalanceTooltip />} />
                         <ReferenceLine y={0} stroke="#666" />
                         <Bar dataKey="income" name="income" stackId="balance">
-                          {balanceByCategoryData.map((entry, index) => (
+                          {balanceByCategoryChartData.map((entry, index) => (
                             <Cell key={`cell-income-${index}`} fill={entry.color || '#52c41a'} />
                           ))}
                         </Bar>
                         <Bar dataKey="expense" name="expense" stackId="balance">
-                          {balanceByCategoryData.map((entry, index) => (
+                          {balanceByCategoryChartData.map((entry, index) => (
                             <Cell key={`cell-expense-${index}`} fill={entry.color || '#ff4d4f'} opacity={0.6} />
                           ))}
                         </Bar>
@@ -381,7 +343,7 @@ const ReportsPage: React.FC = () => {
                           cx="50%"
                           cy="50%"
                           labelLine={false}
-                          label={({ payload, percent }: any) => `${payload.type}: ${((percent || 0) * 100).toFixed(1)}%`}
+                          label={({ payload, percent }) => payload ? `${(payload as PieChartData).type}: ${((percent || 0) * 100).toFixed(1)}%` : ''}
                           outerRadius={100}
                           dataKey="value"
                         >

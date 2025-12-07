@@ -129,7 +129,7 @@ const ProfilePage: React.FC = () => {
       message.success(t('profile.accountDeleted'));
       logout();
       router.push('/auth/login');
-    } catch (error: any) {
+    } catch (error) {
       const apiError = handleApiError(error);
       message.error(apiError.message);
     } finally {
@@ -166,7 +166,7 @@ const ProfilePage: React.FC = () => {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (error: any) {
+    } catch (error) {
       const apiError = handleApiError(error);
       message.error(apiError.message);
     } finally {
@@ -187,7 +187,7 @@ const ProfilePage: React.FC = () => {
       message.success(t('profile.languageUpdated'));
       // Cambiar el idioma de la aplicación
       router.replace('/dashboard/profile', { locale: newLanguage as Locale });
-    } catch (error: any) {
+    } catch (error) {
       const apiError = handleApiError(error);
       message.error(apiError.message || t('profile.languageUpdateError'));
     } finally {
@@ -206,7 +206,7 @@ const ProfilePage: React.FC = () => {
       await authAPI.updateCurrency(newCurrency);
       setUserCurrency(newCurrency);
       message.success(t('profile.currencyUpdated'));
-    } catch (error: any) {
+    } catch (error) {
       const apiError = handleApiError(error);
       message.error(apiError.message || t('profile.currencyUpdateError'));
     } finally {

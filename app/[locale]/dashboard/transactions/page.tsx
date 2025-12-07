@@ -61,7 +61,7 @@ const TransactionsPage: React.FC = () => {
     });
   };
 
-  const handleFilterChange = (key: keyof TransactionFilters, value: any) => {
+  const handleFilterChange = (key: keyof TransactionFilters, value: string | number | undefined) => {
     setFilters({
       ...filters,
       [key]: value,

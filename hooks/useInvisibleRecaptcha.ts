@@ -1,9 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { recaptcha as recaptchaConfig } from '@/config/env';
 
+interface ReCaptchaV2 {
+  render: (container: HTMLElement, options: {
+    sitekey: string;
+    size: 'invisible' | 'compact' | 'normal';
+    badge?: 'bottomright' | 'bottomleft' | 'inline';
+  }) => number;
+  execute: (widgetId: number, options?: { action?: string }) => Promise<string>;
+  ready: (callback: () => void) => void;
+  reset: (widgetId?: number) => void;
+}
+
 declare global {
   interface Window {
-    grecaptcha?: any;
+    grecaptcha?: ReCaptchaV2;
     onInvisibleRecaptchaLoad?: () => void;
   }
 }
@@ -74,9 +85,14 @@ export const useInvisibleRecaptcha = (action: string) => {
       throw new Error('reCAPTCHA aún no está listo, inténtalo de nuevo');
     }
 
+    const grecaptcha = window.grecaptcha;
+    if (!grecaptcha) {
+      throw new Error('reCAPTCHA no está disponible');
+    }
+
     return new Promise<string>((resolve, reject) => {
       try {
-        window.grecaptcha.execute(widgetIdRef.current as number, { action }).then((token: string) => {
+        grecaptcha.execute(widgetIdRef.current as number, { action }).then((token: string) => {
           if (!token) {
             reject(new Error('No se obtuvo token de reCAPTCHA'));
           } else {

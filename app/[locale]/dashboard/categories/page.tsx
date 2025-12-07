@@ -2,23 +2,16 @@
 
 import React, { useState } from 'react';
 import { Card, Table, Button, Modal, Form, Input, Select, Space, Tag, message, Popconfirm, Typography, ColorPicker } from 'antd';
-import type { Color } from 'antd/es/color-picker';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useCategories } from '@/hooks/useCategories';
 import { categoryAPI, handleApiError } from '@/utils/api';
-import { Category } from '@/types';
+import { Category, CategoryFormDataUI } from '@/types';
+import type { Color } from 'antd/es/color-picker';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useTranslations } from 'next-intl';
 
 const { Title } = Typography;
-
-interface CategoryFormData {
-  name: string;
-  transactionType: 'income' | 'expense';
-  description?: string;
-  color?: string | Color;
-}
 
 const CategoriesPage: React.FC = () => {
   const t = useTranslations();
@@ -26,7 +19,7 @@ const CategoriesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [form] = Form.useForm<CategoryFormData>();
+  const [form] = Form.useForm<CategoryFormDataUI>();
   const [isFormValid, setIsFormValid] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -64,7 +57,7 @@ const CategoriesPage: React.FC = () => {
       .catch(() => setIsFormValid(false));
   };
 
-  const handleSubmit = async (values: CategoryFormData) => {
+  const handleSubmit = async (values: CategoryFormDataUI) => {
     setSubmitting(true);
     try {
       const colorValue = typeof values.color === 'object' 
