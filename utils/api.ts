@@ -128,8 +128,8 @@ export const transactionAPI = {
     return response.data;
   },
 
-  getMonthlyStats: async (year: number, month: number): Promise<any> => {
-    const response = await api.get(`/transactions/stats/monthly?year=${year}&month=${month}`);
+  getMonthlyStats: async (startDate: string, endDate: string): Promise<any> => {
+    const response = await api.get(`/transactions/stats/monthly?startDate=${startDate}&endDate=${endDate}`);
     return response.data;
   },
 };

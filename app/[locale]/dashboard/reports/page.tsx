@@ -1,57 +1,86 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Card, Row, Col, Select, Typography, Spin, message } from 'antd';
+import { Card, Row, Col, DatePicker, Typography, Spin, message } from 'antd';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, ReferenceLine } from 'recharts';
 import { useTranslations } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { transactionAPI, handleApiError } from '@/utils/api';
 import { useFormatters } from '@/hooks/useFormatters';
-import { getMonthName } from '@/utils/helpers';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
-const { Option } = Select;
+
+interface CategoryStat {
+  category: string;
+  total: number;
+  count: number;
+  color?: string;
+}
+
+interface StatGroup {
+  _id: string;
+  categories: CategoryStat[];
+  total: number;
+  count: number;
+}
 
 interface MonthlyStats {
   month: number;
   year: number;
-  stats: Array<{
-    _id: string;
-    categories: Array<{
-      category: string;
-      total: number;
-      count: number;
-      color?: string;
-    }>;
-    total: number;
-    count: number;
-  }>;
+  stats: StatGroup[];
+}
+
+interface CategoryData {
+  category: string;
+  amount: number;
+  count: number;
+  color?: string;
+}
+
+interface BalanceCategoryData {
+  category: string;
+  income: number;
+  expense: number;
+  count: number;
+  color?: string;
+}
+
+interface PieData {
+  type: string;
+  value: number;
+  count: number;
+  [key: string]: string | number;
+}
+
+interface TrendData {
+  month: string;
+  income: number;
+  expense: number;
 }
 
 const ReportsPage: React.FC = () => {
   const t = useTranslations();
   const { formatCurrency } = useFormatters();
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
-  const [trendStats, setTrendStats] = useState<Array<{ month: string; type: string; value: number; label: string; currencyValueFormatted: string }>>([]); // Datos de tendencia de 6 meses
+  const [trendData, setTrendData] = useState<TrendData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedYear, setSelectedYear] = useState(dayjs().year());
-  const [selectedMonth, setSelectedMonth] = useState(dayjs().month() + 1);
+  const [startDate, setStartDate] = useState(dayjs().subtract(2, 'month').startOf('month'));
+  const [endDate, setEndDate] = useState(dayjs().endOf('month'));
 
   useEffect(() => {
     loadMonthlyStats();
-  }, [selectedYear, selectedMonth]);
-
-  // Cargar datos de tendencia de los últimos 6 meses
-  useEffect(() => {
-    loadTrendStats();
-  }, []);
+    loadTrendData();
+  }, [startDate, endDate]);
 
   const loadMonthlyStats = async () => {
     setLoading(true);
     try {
-      const response = await transactionAPI.getMonthlyStats(selectedYear, selectedMonth);
+      const response = await transactionAPI.getMonthlyStats(
+        startDate.format('YYYY-MM-DD'),
+        endDate.format('YYYY-MM-DD')
+      );
       setMonthlyStats(response.data);
     } catch (error) {
       const apiError = handleApiError(error);
@@ -61,92 +90,66 @@ const ReportsPage: React.FC = () => {
     }
   };
 
-  const loadTrendStats = async () => {
+  const loadTrendData = async () => {
     try {
-      const currentDate = dayjs();
-      // Calcular fecha de inicio (hace 6 meses) y fin (hoy)
-      const startDate = currentDate.subtract(5, 'month').startOf('month').format('YYYY-MM-DD');
-      const endDate = currentDate.endOf('month').format('YYYY-MM-DD');
-      const monthlyTotals: Record<string, { income: number; expense: number }> = {};
-
-      // Transformar a formato para la gráfica
-      const trendData: Array<{ month: string; type: string; value: number; label: string; currencyValueFormatted: string }> = [];
-
-      // Una sola llamada a la API con rango de fechas
       const response = await transactionAPI.getTransactions({
-        startDate,
-        endDate,
-        limit: 1000, // Obtener todas las transacciones del período
+        startDate: startDate.format('YYYY-MM-DD'),
+        endDate: endDate.format('YYYY-MM-DD'),
+        limit: 10000,
       });
 
-      // Agrupar transacciones por mes y tipo
+      const monthsCount = getMonthsCount();
+      const dataByMonth: Record<string, TrendData> = {};
 
-      // Inicializar los 6 meses con valores en 0
-      for (let i = 5; i >= 0; i--) {
-        const monthKey = currentDate.subtract(i, 'month').format('MMM YYYY');
-        monthlyTotals[monthKey] = { income: 0, expense: 0 };
+      // Inicializar todos los meses en el rango con valores en 0
+      for (let i = monthsCount - 1; i >= 0; i--) {
+        const monthKey = endDate.subtract(i, 'month').format('MMM YYYY');
+        dataByMonth[monthKey] = { month: monthKey, income: 0, expense: 0 };
       }
 
-      // Sumar transacciones por mes
+      // Agrupar transacciones por mes
       response.data?.transactions?.forEach((transaction: any) => {
         const transactionDate = dayjs(transaction.date);
         const monthKey = transactionDate.format('MMM YYYY');
 
-        if (monthlyTotals[monthKey]) {
+        if (dataByMonth[monthKey]) {
+          const amount = Number(transaction.amount) || 0;
           if (transaction.type === 'income') {
-            monthlyTotals[monthKey].income += Number(transaction.amount) || 0;
+            dataByMonth[monthKey].income += amount;
           } else {
-            monthlyTotals[monthKey].expense += Number(transaction.amount) || 0;
+            dataByMonth[monthKey].expense += amount;
           }
         }
       });
 
-      // Mantener orden cronológico
-      for (let i = 5; i >= 0; i--) {
-        const monthKey = currentDate.subtract(i, 'month').format('MMM YYYY');
-        const totals = monthlyTotals[monthKey];
-
-        trendData.push({
-          month: monthKey,
-          type: 'income',
-          value: totals.income,
-          label: t('transactions.incomes'),
-          currencyValueFormatted: formatCurrency(totals.income)
-        });
-        trendData.push({
-          month: monthKey,
-          type: 'expense',
-          value: totals.expense,
-          label: t('transactions.expenses'),
-          currencyValueFormatted: formatCurrency(totals.expense)
-        });
-      }
-
-      setTrendStats(trendData);
+      setTrendData(Object.values(dataByMonth));
     } catch (error) {
-      console.error('Error loading trend stats:', error);
+      console.error('Error loading trend data:', error);
     }
   };
 
+  // Calcular cantidad de meses en el rango seleccionado
+  const getMonthsCount = () => {
+    return endDate.diff(startDate, 'month') + 1;
+  };
+
   // Preparar datos para gráfica de barras - todas las transacciones agrupadas por categoría
-  const getCategoryData = () => {
+  const getCategoryData = (): CategoryData[] => {
     if (!monthlyStats?.stats) return [];
 
-    // Agrupar por nombre de categoría (sin importar tipo income/expense)
     const categoryMap: Record<string, { amount: number; count: number; color?: string }> = {};
 
-    monthlyStats.stats.forEach(stat => {
-      stat.categories.forEach(cat => {
+    monthlyStats.stats.forEach((stat: StatGroup) => {
+      stat.categories.forEach((cat: CategoryStat) => {
         const name = cat.category;
+        const total = Number(cat.total) || 0;
+        const count = Number(cat.count) || 0;
+
         if (categoryMap[name]) {
-          categoryMap[name].amount += Number(cat.total) || 0;
-          categoryMap[name].count += Number(cat.count) || 0;
+          categoryMap[name].amount += total;
+          categoryMap[name].count += count;
         } else {
-          categoryMap[name] = {
-            amount: Number(cat.total) || 0,
-            count: Number(cat.count) || 0,
-            color: cat.color,
-          };
+          categoryMap[name] = { amount: total, count, color: cat.color };
         }
       });
     });
@@ -160,23 +163,26 @@ const ReportsPage: React.FC = () => {
   };
 
   // Preparar datos para gráfica de balance por categoría (ingresos positivos, gastos negativos)
-  const getBalanceByCategoryData = () => {
+  const getBalanceByCategoryData = (): BalanceCategoryData[] => {
     if (!monthlyStats?.stats) return [];
 
-    // Agrupar por categoría separando ingresos y gastos
-    const categoryMap: Record<string, { income: number; expense: number; color?: string }> = {};
+    const categoryMap: Record<string, { income: number; expense: number; count: number; color?: string }> = {};
 
-    monthlyStats.stats.forEach(stat => {
+    monthlyStats.stats.forEach((stat: StatGroup) => {
       const isIncome = stat._id === 'income';
-      stat.categories.forEach(cat => {
+      stat.categories.forEach((cat: CategoryStat) => {
         const name = cat.category;
+        const total = Number(cat.total) || 0;
+        const count = Number(cat.count) || 0;
+
         if (!categoryMap[name]) {
-          categoryMap[name] = { income: 0, expense: 0, color: cat.color };
+          categoryMap[name] = { income: 0, expense: 0, count: 0, color: cat.color };
         }
+        categoryMap[name].count += count;
         if (isIncome) {
-          categoryMap[name].income += Number(cat.total) || 0;
+          categoryMap[name].income += total;
         } else {
-          categoryMap[name].expense += Number(cat.total) || 0;
+          categoryMap[name].expense += total;
         }
       });
     });
@@ -184,51 +190,32 @@ const ReportsPage: React.FC = () => {
     return Object.entries(categoryMap).map(([category, data]) => ({
       category,
       income: data.income,
-      expense: -data.expense, // Negativo para mostrar hacia abajo
+      expense: -data.expense,
+      count: data.count,
       color: data.color,
     }));
   };
 
   // Preparar datos para gráfica circular
-  const getPieData = () => {
+  const getPieData = (): PieData[] => {
     if (!monthlyStats?.stats) return [];
 
-    return monthlyStats.stats.map(stat => ({
+    return monthlyStats.stats.map((stat: StatGroup) => ({
       type: stat._id === 'income' ? t('transactions.incomes') : t('transactions.expenses'),
       value: Number(stat.total) || 0,
       count: Number(stat.count) || 0,
     }));
   };
 
-  // Los datos de tendencia ahora vienen del estado trendStats
-
   const categoryData = getCategoryData();
   const balanceByCategoryData = getBalanceByCategoryData();
   const pieData = getPieData();
-  const totalPie = pieData.reduce((sum: number, d: any) => sum + (Number(d.value) || 0), 0);
+  const totalPie = pieData.reduce((sum, d) => sum + d.value, 0);
 
   // Colores para el pie chart
   const PIE_COLORS = ['#52c41a', '#ff4d4f'];
 
-  // Preparar datos para el gráfico de líneas (formato que Recharts espera)
-  const getTrendChartData = () => {
-    const dataByMonth: Record<string, { month: string; income: number; expense: number }> = {};
-    
-    trendStats.forEach(item => {
-      if (!dataByMonth[item.month]) {
-        dataByMonth[item.month] = { month: item.month, income: 0, expense: 0 };
-      }
-      if (item.type === 'income') {
-        dataByMonth[item.month].income = item.value;
-      } else {
-        dataByMonth[item.month].expense = item.value;
-      }
-    });
-
-    return Object.values(dataByMonth);
-  };
-
-  const trendChartData = getTrendChartData();
+  const monthsCount = getMonthsCount();
 
   // Tooltip personalizado para el gráfico de barras
   const CategoryTooltip = ({ active, payload }: any) => {
@@ -281,7 +268,7 @@ const ReportsPage: React.FC = () => {
   // Tooltip personalizado para el gráfico de balance por categoría
   const BalanceTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload;
+      const data = payload[0].payload as BalanceCategoryData;
       return (
         <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
           <p style={{ margin: 0, fontWeight: 'bold' }}>{data.category}</p>
@@ -295,9 +282,7 @@ const ReportsPage: React.FC = () => {
               {t('transactions.expenses')}: {formatCurrency(Math.abs(data.expense))}
             </p>
           )}
-          <p style={{ margin: 0, fontWeight: 'bold', marginTop: '4px' }}>
-            {t('reports.balance')}: {formatCurrency(data.income + data.expense)}
-          </p>
+          <p style={{ margin: 0, color: '#666' }}>{data.count} {t('reports.transactions')}</p>
         </div>
       );
     }
@@ -313,40 +298,29 @@ const ReportsPage: React.FC = () => {
               {t('reports.title')}
             </Title>
 
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <Select
-                value={selectedYear}
-                onChange={setSelectedYear}
-                style={{ width: 120 }}
-              >
-                {Array.from({ length: 5 }, (_, i) => {
-                  const year = dayjs().year() - i;
-                  return (
-                    <Option key={year} value={year}>
-                      {year}
-                    </Option>
-                  );
-                })}
-              </Select>
-
-              <Select
-                value={selectedMonth}
-                onChange={setSelectedMonth}
-                style={{ width: 150 }}
-              >
-                {Array.from({ length: 12 }, (_, i) => (
-                  <Option key={i + 1} value={i + 1}>
-                    {getMonthName(i + 1)}
-                  </Option>
-                ))}
-              </Select>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <DatePicker
+                value={startDate}
+                onChange={(date) => date && setStartDate(date)}
+                format="YYYY-MM-DD"
+                placeholder={t('common.startDate')}
+                allowClear={false}
+              />
+              <span>-</span>
+              <DatePicker
+                value={endDate}
+                onChange={(date) => date && setEndDate(date)}
+                format="YYYY-MM-DD"
+                placeholder={t('common.endDate')}
+                allowClear={false}
+              />
             </div>
           </div>
 
           <Spin spinning={loading}>
             <Row gutter={[16, 16]}>
               <Col xs={24} lg={12}>
-                <Card title={`${t('reports.transactionsByCategory')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
+                <Card title={`${t('reports.transactionsByCategory')} - ${startDate.format('DD/MM/YYYY')} - ${endDate.format('DD/MM/YYYY')}`}>
                   {categoryData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
                       <BarChart data={categoryData} margin={{ left: 20 }}>
@@ -369,17 +343,24 @@ const ReportsPage: React.FC = () => {
               </Col>
 
               <Col xs={24} lg={12}>
-                <Card title={`${t('reports.balanceByCategory')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
+                <Card title={`${t('reports.balanceByCategory')} - ${startDate.format('DD/MM/YYYY')} - ${endDate.format('DD/MM/YYYY')}`}>
                   {balanceByCategoryData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
                       <BarChart data={balanceByCategoryData} margin={{ left: 20}}>
                         <XAxis dataKey="category" />
                         <YAxis tickFormatter={(v) => formatCurrency(v)} />
                         <Tooltip content={<BalanceTooltip />} />
-                        <Legend formatter={(value) => value === 'income' ? t('transactions.incomes') : t('transactions.expenses')} />
                         <ReferenceLine y={0} stroke="#666" />
-                        <Bar dataKey="income" fill="#52c41a" name="income" stackId="balance" />
-                        <Bar dataKey="expense" fill="#ff4d4f" name="expense" stackId="balance" />
+                        <Bar dataKey="income" name="income" stackId="balance">
+                          {balanceByCategoryData.map((entry, index) => (
+                            <Cell key={`cell-income-${index}`} fill={entry.color || '#52c41a'} />
+                          ))}
+                        </Bar>
+                        <Bar dataKey="expense" name="expense" stackId="balance">
+                          {balanceByCategoryData.map((entry, index) => (
+                            <Cell key={`cell-expense-${index}`} fill={entry.color || '#ff4d4f'} opacity={0.6} />
+                          ))}
+                        </Bar>
                       </BarChart>
                     </ResponsiveContainer>
                   ) : (
@@ -391,7 +372,7 @@ const ReportsPage: React.FC = () => {
               </Col>
 
               <Col xs={24} lg={12}>
-                <Card title={`${t('reports.incomeVsExpenses')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
+                <Card title={`${t('reports.incomeVsExpenses')} - ${startDate.format('DD/MM/YYYY')} - ${endDate.format('DD/MM/YYYY')}`}>
                   {totalPie > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
                       <PieChart>
@@ -420,9 +401,9 @@ const ReportsPage: React.FC = () => {
               </Col>
 
               <Col xs={24} lg={12}>
-                <Card title={t('reports.last6MonthsTrend')}>
+                <Card title={`${t('reports.trend')} - ${monthsCount} ${monthsCount === 1 ? t('reports.month') : t('reports.months')}`}>
                   <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={trendChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <LineChart data={trendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
                       <YAxis tickFormatter={(v) => formatCurrency(v)} />

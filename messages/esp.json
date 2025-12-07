@@ -18,7 +18,9 @@
     "previous": "Anterior",
     "income": "Ingreso",
     "expense": "Gasto",
-    "update": "Actualizar"
+    "update": "Actualizar",
+    "startDate": "Fecha Inicial",
+    "endDate": "Fecha Final"
   },
   "auth": {
     "login": {
@@ -236,7 +238,10 @@
     "balance": "Balance",
     "noDataToShow": "No hay datos para mostrar",
     "transactions": "transacciones",
-    "transactionsCount": "{count} transacciones"
+    "transactionsCount": "{count} transacciones",
+    "trend": "Tendencia",
+    "month": "mes",
+    "months": "meses"
   },
   "categories": {
     "title": "Categorías",
