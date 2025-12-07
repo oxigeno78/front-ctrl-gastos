@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Select, Typography, Spin, message } from 'antd';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, ReferenceLine } from 'recharts';
 import { useTranslations } from 'next-intl';
 import MainLayout from '@/components/layout/MainLayout';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -128,26 +128,65 @@ const ReportsPage: React.FC = () => {
     }
   };
 
-  // Preparar datos para gráfica de barras por categoría
+  // Preparar datos para gráfica de barras - todas las transacciones agrupadas por categoría
   const getCategoryData = () => {
     if (!monthlyStats?.stats) return [];
 
-    const categoryData: any[] = [];
+    // Agrupar por nombre de categoría (sin importar tipo income/expense)
+    const categoryMap: Record<string, { amount: number; count: number; color?: string }> = {};
 
     monthlyStats.stats.forEach(stat => {
       stat.categories.forEach(cat => {
-        categoryData.push({
-          category: cat.category,
-          type: stat._id === 'income' ? t('transactions.incomes') : t('transactions.expenses'),
-          amount: Number(cat.total) || 0,
-          count: Number(cat.count) || 0,
-          color: cat.color,
-        });
+        const name = cat.category;
+        if (categoryMap[name]) {
+          categoryMap[name].amount += Number(cat.total) || 0;
+          categoryMap[name].count += Number(cat.count) || 0;
+        } else {
+          categoryMap[name] = {
+            amount: Number(cat.total) || 0,
+            count: Number(cat.count) || 0,
+            color: cat.color,
+          };
+        }
       });
     });
 
-    //console.log('[<ReportsPage|getCategoryData>categoryData] ', categoryData);
-    return categoryData;
+    return Object.entries(categoryMap).map(([category, data]) => ({
+      category,
+      amount: data.amount,
+      count: data.count,
+      color: data.color,
+    }));
+  };
+
+  // Preparar datos para gráfica de balance por categoría (ingresos positivos, gastos negativos)
+  const getBalanceByCategoryData = () => {
+    if (!monthlyStats?.stats) return [];
+
+    // Agrupar por categoría separando ingresos y gastos
+    const categoryMap: Record<string, { income: number; expense: number; color?: string }> = {};
+
+    monthlyStats.stats.forEach(stat => {
+      const isIncome = stat._id === 'income';
+      stat.categories.forEach(cat => {
+        const name = cat.category;
+        if (!categoryMap[name]) {
+          categoryMap[name] = { income: 0, expense: 0, color: cat.color };
+        }
+        if (isIncome) {
+          categoryMap[name].income += Number(cat.total) || 0;
+        } else {
+          categoryMap[name].expense += Number(cat.total) || 0;
+        }
+      });
+    });
+
+    return Object.entries(categoryMap).map(([category, data]) => ({
+      category,
+      income: data.income,
+      expense: -data.expense, // Negativo para mostrar hacia abajo
+      color: data.color,
+    }));
   };
 
   // Preparar datos para gráfica circular
@@ -164,6 +203,7 @@ const ReportsPage: React.FC = () => {
   // Los datos de tendencia ahora vienen del estado trendStats
 
   const categoryData = getCategoryData();
+  const balanceByCategoryData = getBalanceByCategoryData();
   const pieData = getPieData();
   const totalPie = pieData.reduce((sum: number, d: any) => sum + (Number(d.value) || 0), 0);
 
@@ -238,6 +278,32 @@ const ReportsPage: React.FC = () => {
     return null;
   };
 
+  // Tooltip personalizado para el gráfico de balance por categoría
+  const BalanceTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
+          <p style={{ margin: 0, fontWeight: 'bold' }}>{data.category}</p>
+          {data.income > 0 && (
+            <p style={{ margin: 0, color: '#52c41a' }}>
+              {t('transactions.incomes')}: {formatCurrency(data.income)}
+            </p>
+          )}
+          {data.expense < 0 && (
+            <p style={{ margin: 0, color: '#ff4d4f' }}>
+              {t('transactions.expenses')}: {formatCurrency(Math.abs(data.expense))}
+            </p>
+          )}
+          <p style={{ margin: 0, fontWeight: 'bold', marginTop: '4px' }}>
+            {t('reports.balance')}: {formatCurrency(data.income + data.expense)}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <ProtectedRoute>
       <MainLayout>
@@ -280,10 +346,10 @@ const ReportsPage: React.FC = () => {
           <Spin spinning={loading}>
             <Row gutter={[16, 16]}>
               <Col xs={24} lg={12}>
-                <Card title={`${t('reports.expensesByCategory')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
+                <Card title={`${t('reports.transactionsByCategory')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
                   {categoryData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={categoryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <BarChart data={categoryData} margin={{ left: 20 }}>
                         <XAxis dataKey="category" />
                         <YAxis tickFormatter={(v) => formatCurrency(v)} />
                         <Tooltip content={<CategoryTooltip />} />
@@ -292,6 +358,28 @@ const ReportsPage: React.FC = () => {
                             <Cell key={`cell-${index}`} fill={entry.color || '#1890ff'} />
                           ))}
                         </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: '50px' }}>
+                      {t('reports.noDataToShow')}
+                    </div>
+                  )}
+                </Card>
+              </Col>
+
+              <Col xs={24} lg={12}>
+                <Card title={`${t('reports.balanceByCategory')} - ${getMonthName(selectedMonth)} ${selectedYear}`}>
+                  {balanceByCategoryData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={balanceByCategoryData} margin={{ left: 20}}>
+                        <XAxis dataKey="category" />
+                        <YAxis tickFormatter={(v) => formatCurrency(v)} />
+                        <Tooltip content={<BalanceTooltip />} />
+                        <Legend formatter={(value) => value === 'income' ? t('transactions.incomes') : t('transactions.expenses')} />
+                        <ReferenceLine y={0} stroke="#666" />
+                        <Bar dataKey="income" fill="#52c41a" name="income" stackId="balance" />
+                        <Bar dataKey="expense" fill="#ff4d4f" name="expense" stackId="balance" />
                       </BarChart>
                     </ResponsiveContainer>
                   ) : (
@@ -331,7 +419,7 @@ const ReportsPage: React.FC = () => {
                 </Card>
               </Col>
 
-              <Col xs={24}>
+              <Col xs={24} lg={12}>
                 <Card title={t('reports.last6MonthsTrend')}>
                   <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={trendChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>

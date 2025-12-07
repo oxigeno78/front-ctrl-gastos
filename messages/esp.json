@@ -225,7 +225,10 @@
   },
   "reports": {
     "title": "Reportes y Análisis",
+    "transactionsByCategory": "Transacciones por Categoría",
+    "balanceByCategory": "Balance por Categoría",
     "expensesByCategory": "Gastos por Categoría",
+    "incomesByCategory": "Ingresos por Categoría",
     "incomeVsExpenses": "Distribución Ingresos vs Gastos",
     "last6MonthsTrend": "Tendencia de los Últimos 6 Meses",
     "totalIncome": "Total Ingresos",
