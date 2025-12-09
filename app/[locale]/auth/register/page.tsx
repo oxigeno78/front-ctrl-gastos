@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Form, Input, Button, message, Typography, Select, Modal } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined, GlobalOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import { Form, Input, Button, message, Typography, Modal } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -12,7 +12,7 @@ import { authAPI, stripeAPI, handleApiError } from '@/utils/api';
 import { useAuthStore } from '@/store';
 import { useInvisibleRecaptcha } from '@/hooks/useInvisibleRecaptcha';
 import { Link, useRouter } from '@/i18n/routing';
-import { locales, languageLabels, type Locale } from '@/i18n/config';
+import { type Locale } from '@/i18n/config';
 import { RegisterFormData } from '@/types';
 
 const { Text } = Typography;
@@ -23,7 +23,6 @@ const RegisterPage: React.FC = () => {
   const router = useRouter();
   const { login } = useAuthStore();
   const [loading, setLoading] = React.useState(false);
-  const [selectedLanguage, setSelectedLanguage] = React.useState<string>(locale);
   const [showVerificationModal, setShowVerificationModal] = React.useState(false);
   const [registrationData, setRegistrationData] = React.useState<{ user: any; token: string; language: string } | null>(null);
   const { executeRecaptcha } = useInvisibleRecaptcha('register');
@@ -63,12 +62,12 @@ const RegisterPage: React.FC = () => {
         name: data.name,
         email: data.email,
         password: data.password,
-        language: selectedLanguage,
+        language: locale,
         recaptchaToken,
       });
 
       if (response.success) {
-        const userLanguage = response.data.language || selectedLanguage;
+        const userLanguage = response.data.language || locale;
         setRegistrationData({
           user: response.data.user,
           token: response.data.token,
@@ -167,20 +166,6 @@ const RegisterPage: React.FC = () => {
             placeholder={t('auth.register.confirmPasswordPlaceholder')}
             {...register('confirmPassword')}
             onChange={(e) => setValue('confirmPassword', e.target.value)}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label={t('auth.register.language')}
-        >
-          <Select
-            value={selectedLanguage}
-            onChange={(value) => setSelectedLanguage(value)}
-            suffixIcon={<GlobalOutlined />}
-            options={locales.map((loc) => ({
-              value: loc,
-              label: languageLabels[loc],
-            }))}
           />
         </Form.Item>
 

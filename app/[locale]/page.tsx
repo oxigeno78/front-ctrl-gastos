@@ -10,6 +10,7 @@ import {
   MobileOutlined,
   ThunderboltOutlined,
 } from '@ant-design/icons';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store';
 import { Link, useRouter } from '@/i18n/routing';
@@ -170,8 +171,11 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <div style={{ background: '#1a1a2e', padding: '40px 20px', textAlign: 'center' }}>
-        <Space direction="vertical" size="small">
+      <div style={{ background: '#1a1a2e', padding: '40px 20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+          <LanguageSwitcher />
+        </div>
+        <Space direction="vertical" size="small" style={{ width: '100%', textAlign: 'center' }}>
           <Text style={{ color: 'rgba(255,255,255,0.7)' }}>
             © {new Date().getFullYear()} Control Gastos. {t('footer.rights')}
           </Text>
