@@ -55,7 +55,15 @@
       "hasAccount": "¿Ya tienes cuenta?",
       "login": "Inicia sesión",
       "success": "Usuario registrado exitosamente",
-      "redirectingToPayment": "Redirigiendo al pago..."
+      "redirectingToPayment": "Redirigiendo al pago...",
+      "verificationModal": {
+        "title": "¡Registro Exitoso!",
+        "subtitle": "Hemos enviado un correo de verificación",
+        "description": "Para completar tu registro, por favor verifica tu correo electrónico haciendo clic en el enlace que te enviamos.",
+        "warning": "Importante: Tienes 7 días para confirmar tu correo. Si no lo confirmas en este plazo, tu cuenta será eliminada automáticamente.",
+        "checkEmail": "Revisa tu bandeja de entrada y carpeta de spam.",
+        "continueButton": "Continuar"
+      }
     },
     "validation": {
       "nameRequired": "El nombre es requerido",
