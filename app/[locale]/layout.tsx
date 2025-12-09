@@ -57,7 +57,7 @@ export default async function LocaleLayout({
       <head>
         <meta name="theme-color" content="#1890ff" />
       </head>
-      <body>
+      <body style={{ margin: 0, padding: 0 }}>
         <NextIntlClientProvider messages={messages}>
           <ClientProviders>
             {children}
