@@ -55,7 +55,15 @@
             "hasAccount": "Already have an account?",
             "login": "Sign in",
             "success": "User registered successfully",
-            "redirectingToPayment": "Redirecting to payment..."
+            "redirectingToPayment": "Redirecting to payment...",
+            "verificationModal": {
+                "title": "Registration Successful!",
+                "subtitle": "We have sent a verification email",
+                "description": "To complete your registration, please verify your email by clicking the link we sent you.",
+                "warning": "Important: You have 7 days to confirm your email. If you don't confirm it within this period, your account will be automatically deleted.",
+                "checkEmail": "Check your inbox and spam folder.",
+                "continueButton": "Continue"
+            }
         },
         "validation": {
             "nameRequired": "Name is required",
