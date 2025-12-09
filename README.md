@@ -487,3 +487,13 @@ rm -rf .next && yarn dev
 - Verifica que los componentes estén correctamente importados
 - Revisa la configuración de Next.js
 - Asegúrate de que los hooks estén siendo usados correctamente
+
+
+## 📄 Licencia
+
+Todos los derechos reservados.
+Este proyecto es software propietario y confidencial.
+
+**UNLICENSED** - No se permite el uso, copia, modificación o distribución sin autorización expresa del autor.
+
+© 2025 NizerApp / Ruben Bautista Mendoza
