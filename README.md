@@ -1,486 +1,114 @@
-# Frontend - Control de Gastos
+# 💰 NizerApp - Control de Gastos Personal
 
-Aplicación web desarrollada con Next.js 14, React 18, TypeScript y Ant Design para el sistema de control de gastos personal.
+> Toma el control de tus finanzas personales con una aplicación moderna, intuitiva y segura.
 
-## 🚀 Características
+[![Demo](https://img.shields.io/badge/🌐_Demo-nizerapp.net-blue?style=for-the-badge)](https://www.nizerapp.net)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)](https://react.dev/)
 
-- **Next.js 14** con App Router y SSR/ISR
-- **React 18** con TypeScript estricto
-- **Ant Design** para componentes UI
-- **Zustand** para manejo de estado global (persistido)
-- **React Hook Form** + **Yup** para formularios y validación
-- **Recharts** para gráficas y reportes
-- **next-intl** para internacionalización (i18n)
-- **Socket.IO** para notificaciones en tiempo real (opcional)
-- **Sistema de notificaciones** con sincronización backend
-- Diseño responsive y moderno
-- Autenticación JWT con cookies seguras
-- Configuración centralizada de variables de entorno
+---
 
-## 📋 Requisitos Previos
+## 📋 Resumen Ejecutivo
 
-- Node.js 20.19.5
-- npm o yarn
-- Backend API ejecutándose en puerto 5000
+**NizerApp** es una aplicación web de finanzas personales diseñada para usuarios que buscan simplicidad sin sacrificar funcionalidad. Combina un stack moderno con prácticas de desarrollo enterprise-ready.
 
-## 🛠️ Instalación
+| Aspecto | Detalle |
+|---------|--------|
+| **Producto** | App de control de gastos con dashboard, reportes y notificaciones |
+| **Usuarios objetivo** | Personas que quieren organizar sus finanzas sin complicaciones |
+| **Diferenciador** | UX minimalista + features avanzados (i18n, real-time, suscripciones) |
+| **Estado** | MVP en producción → [nizerapp.net](https://www.nizerapp.net) |
+| **Modelo de negocio** | Freemium con trial de 7 días → suscripción mensual via Stripe |
 
-### 1. Instalar dependencias
+---
+
+## 🎯 El Problema
+
+Muchas personas pierden el control de sus gastos porque las herramientas existentes son complicadas o no se adaptan a sus necesidades. **NizerApp** ofrece una solución simple pero poderosa para registrar, categorizar y visualizar tus finanzas en tiempo real.
+
+## ✨ Características Principales
+
+| Característica | Descripción |
+|----------------|-------------|
+| 📊 **Dashboard intuitivo** | Resumen financiero con métricas clave al instante |
+| 💸 **Gestión de transacciones** | Registra ingresos y gastos con categorías personalizadas |
+| 📈 **Reportes visuales** | Gráficas interactivas para analizar tus hábitos |
+| 🔔 **Notificaciones** | Alertas en tiempo real via WebSockets (respaldado por RabbitMQ) |
+| 🌐 **Multiidioma** | Español e Inglés con detección automática |
+| 📱 **Responsive** | Diseño adaptado para móvil y desktop |
+| 🔐 **Seguro** | Autenticación JWT con cookies HTTP-only |
+
+## 🛠️ Tecnologías Clave y Por Qué
+
+| Tecnología | Propósito | Por qué esta elección |
+|------------|-----------|----------------------|
+| **Next.js 14** | Framework React | SSR/SSG, App Router, optimización automática, SEO-friendly |
+| **TypeScript** | Tipado estático | Menos bugs en producción, mejor DX, refactoring seguro |
+| **Zustand** | Estado global | Más ligero que Redux, API simple, persistencia built-in |
+| **Ant Design** | UI Components | Componentes enterprise-ready, consistencia visual, accesibilidad |
+| **React Hook Form** | Formularios | Performance superior, validación con Yup, menos re-renders |
+| **next-intl** | Internacionalización | Integración nativa con App Router, type-safe |
+| **WebSockets** | Real-time | Notificaciones instantáneas (RabbitMQ en backend) |
+| **MongoDB Atlas** | Base de datos | Esquema flexible, escalabilidad horizontal, managed service |
+| **AWS Amplify** | Hosting producción | CI/CD integrado, SSL automático, escalabilidad |
+
+### Stack Resumido
+
+```
+Frontend:  Next.js 14 · React 18 · TypeScript · Ant Design 5
+Estado:    Zustand (persistido) · React Hook Form + Yup
+Backend:   Express.js · MongoDB Atlas · RabbitMQ · WebSockets
+Deploy:    Frontend → AWS Amplify | Backend → AWS Fargate
+```
+
+## 🚀 Quick Start
+
 ```bash
+# Clonar e instalar
+git clone <repo-url>
+cd frontend
 yarn install
-```
 
-### 2. Configurar variables de entorno
-```bash
+# Configurar variables de entorno
 cp env.example .env.local
-```
 
-Edita `.env.local` con tus valores:
-```env
-# URL de la API del backend
-NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1.0.0
-
-# Habilitar notificaciones en tiempo real via Socket.IO (true/false)
-NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS=false
-
-# Google reCAPTCHA v3 (dejar vacío para deshabilitar)
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
-```
-
-### 3. Ejecutar la aplicación
-
-#### Desarrollo
-```bash
+# Ejecutar en desarrollo
 yarn dev
 ```
 
-#### Producción
-```bash
-yarn build
-yarn start
-```
+La aplicación estará disponible en `http://localhost:3000`
 
-## 🏗️ Estructura del Proyecto
+## 🗺️ Roadmap
 
-```
-frontend/
-├── app/                      # App Router de Next.js
-│   ├── layout.tsx            # Root layout
-│   └── [locale]/             # Rutas con soporte i18n
-│       ├── layout.tsx        # Layout con providers (i18n, socket)
-│       ├── page.tsx          # Página de inicio
-│       ├── auth/             # Páginas de autenticación
-│       │   ├── login/
-│       │   ├── register/
-│       │   └── recoverypass/
-│       ├── dashboard/        # Páginas del dashboard
-│       │   ├── page.tsx
-│       │   ├── add-transaction/
-│       │   ├── categories/
-│       │   ├── profile/
-│       │   ├── transactions/
-│       │   │   ├── page.tsx      # Lista de transacciones
-│       │   │   └── [id]/         # Edición de transacción
-│       │   └── reports/
-│       ├── privacy/          # Política de privacidad
-│       ├── terms/            # Términos y condiciones
-│       ├── subscription/     # Gestión de suscripción
-│       └── reset-password/
-├── components/               # Componentes reutilizables
-│   ├── LanguageSwitcher.tsx  # Selector de idioma
-│   ├── auth/
-│   │   └── ProtectedRoute.tsx
-│   ├── layout/
-│   │   ├── AuthLayout.tsx
-│   │   └── MainLayout.tsx
-│   ├── notifications/
-│   │   └── NotificationBell.tsx  # Campanita de notificaciones
-│   ├── providers/
-│   │   ├── AntdConfigProvider.tsx # Configuración de Ant Design
-│   │   └── ClientProviders.tsx    # Wrapper de providers client-side
-│   └── transactions/
-│       └── TransactionForm.tsx
-├── config/                   # Configuración centralizada
-│   └── env.ts                # Variables de entorno saneadas
-├── contexts/                 # Contextos de React
-│   └── SocketContext.tsx     # Conexión Socket.IO singleton
-├── hooks/                    # Custom hooks
-│   ├── useCategories.ts
-│   ├── useFormatters.ts      # Formateo de moneda y fechas
-│   ├── useInvisibleRecaptcha.ts
-│   └── useNotifications.ts   # Sincronización de notificaciones
-├── i18n/                     # Configuración de internacionalización
-│   ├── config.ts             # Locales disponibles (esp, eng)
-│   ├── request.ts            # Carga de mensajes del servidor
-│   └── routing.ts            # Navegación con soporte i18n
-├── messages/                 # Archivos de traducciones
-│   ├── esp.json              # Español (por defecto)
-│   └── eng.json              # Inglés
-├── middleware.ts             # Middleware de detección de idioma
-├── store/                    # Estado global con Zustand
-│   └── index.ts              # Auth, Transactions, Notifications stores
-├── types/                    # Tipos TypeScript centralizados
-│   ├── index.ts              # Tipos de dominio + re-exports
-│   ├── forms.ts              # Interfaces de formularios
-│   ├── stores.ts             # Interfaces de stores Zustand
-│   ├── components.ts         # Props de componentes reutilizables
-│   ├── contexts.ts           # Tipos para contextos React
-│   └── reports.ts            # Tipos para reportes y gráficas
-├── utils/                    # Utilidades y API client
-│   ├── api.ts                # Cliente Axios + endpoints
-│   └── helpers.ts
-├── next.config.js            # Configuración de Next.js con next-intl
-├── tsconfig.json             # Configuración de TypeScript
-├── .eslintrc.json            # Configuración de ESLint
-├── env.example               # Variables de entorno de ejemplo
-└── package.json
-```
+| Fase | Feature | Estado |
+|------|---------|--------|
+| ✅ | MVP: Dashboard, transacciones, categorías, reportes | Completado |
+| ✅ | Autenticación JWT + recuperación de contraseña | Completado |
+| ✅ | Internacionalización (ES/EN) | Completado |
+| ✅ | Notificaciones con sincronización backend | Completado |
+| ✅ | Suscripciones con Stripe | Completado |
+| ✅ | Notificaciones real-time (WebSockets + RabbitMQ) | Completado |
+| 🔄 | Presupuestos y alertas automáticas | En desarrollo
+| 📋 | Exportación de reportes (PDF/Excel) | Planeado |
+| 📋 | Multi-moneda y tasas de cambio | Planeado |
+| 📋 | App móvil (React Native) Android y IO's | Futuro |
 
-## 🔧 Scripts Disponibles
 
-- `yarn dev` - Servidor de desarrollo Next.js
-- `yarn build` - Construir para producción
-- `yarn start` - Ejecutar versión de producción
-- `yarn lint` - Ejecutar linter
-- `yarn type-check` - Verificar tipos TypeScript
+## 📚 Documentación
 
-## 🎨 Tecnologías Utilizadas
-
-- Next.js 14 (App Router)
-- React 18
-- TypeScript
-- Ant Design 5
-- Zustand (con persistencia)
-- React Hook Form
-- Yup
-- Recharts
-- next-intl
-- Socket.IO Client
-- Axios
-- Day.js
-- js-cookie
-
-## �️ Arquitectura General
-
-### Diagrama de Flujo
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        FRONTEND (Next.js)                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │
-│  │   App Router │    │  Components  │    │    Hooks     │      │
-│  │  [locale]/   │───▶│   Layout/    │◀───│ useCategories│      │
-│  │  dashboard/  │    │   Auth/      │    │ useNotifs    │      │
-│  │  auth/       │    │   UI         │    │ useRecaptcha │      │
-│  └──────────────┘    └──────────────┘    └──────────────┘      │
-│         │                   │                   │               │
-│         ▼                   ▼                   ▼               │
-│  ┌─────────────────────────────────────────────────────┐       │
-│  │              Zustand Stores (persistido)            │       │
-│  │  ┌─────────────┐ ┌───────────────┐ ┌─────────────┐  │       │
-│  │  │ AuthStore   │ │TransactionStore│ │NotifStore   │  │       │
-│  │  │ user, token │ │ transactions  │ │ notifications│  │       │
-│  │  └─────────────┘ └───────────────┘ └─────────────┘  │       │
-│  └─────────────────────────────────────────────────────┘       │
-│         │                                                       │
-│         ▼                                                       │
-│  ┌─────────────────────────────────────────────────────┐       │
-│  │                 Utils / API Client                   │       │
-│  │  ┌─────────────┐ ┌───────────────┐ ┌─────────────┐  │       │
-│  │  │ authAPI     │ │transactionsAPI│ │ stripeAPI   │  │       │
-│  │  │ categoriesAPI│ │notificationsAPI│ │ usersAPI   │  │       │
-│  │  └─────────────┘ └───────────────┘ └─────────────┘  │       │
-│  └─────────────────────────────────────────────────────┘       │
-│         │                                     │                 │
-└─────────│─────────────────────────────────────│─────────────────┘
-          │ HTTP (Axios)                        │ WebSocket
-          ▼                                     ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     BACKEND (Express.js)                        │
-├─────────────────────────────────────────────────────────────────┤
-│  REST API: /api/v1.0.0/*          Socket.IO (notificaciones)   │
-│  - Auth (JWT + HTTP-only cookies)                               │
-│  - Transactions CRUD                                            │
-│  - Categories CRUD                                              │
-│  - Notifications                                                │
-│  - Stripe (suscripciones)                                       │
-└─────────────────────────────────────────────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                        MongoDB Atlas                            │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Flujo de Autenticación
-```
-Usuario ──▶ Login/Register ──▶ Backend valida ──▶ JWT en HTTP-only cookie
-                                                         │
-                                                         ▼
-                                              AuthStore actualiza estado
-                                                         │
-                                                         ▼
-                                              Redirección a /dashboard
-```
-
-### Flujo de Datos (Transacciones)
-```
-Componente ──▶ useTransactionStore() ──▶ transactionsAPI.getAll()
-                      │                           │
-                      │                           ▼
-                      │                    Backend + MongoDB
-                      │                           │
-                      ◀───────────────────────────┘
-                      │
-                      ▼
-              Re-render con datos actualizados
-```
-
-## 🚀 Despliegue
-
-### Entornos
-
-| Entorno | Plataforma | URL | Rama |
-|---------|------------|-----|------|
-| **Desarrollo** | Vercel | Preview URLs automáticas | `staging`, PRs |
-| **Producción** | AWS Amplify | https://www.nizerapp.net | `main` |
-
-### Desarrollo (Vercel)
-- Despliegue automático en cada push a `staging`
-- Preview deployments para cada Pull Request
-- Variables de entorno configuradas en el dashboard de Vercel
-
-### Producción (AWS Amplify)
-- Despliegue automático desde rama `main`
-- Dominio personalizado: **https://www.nizerapp.net**
-- SSL/TLS gestionado por AWS
-- Variables de entorno configuradas en la consola de Amplify
-
-## �🌐 Internacionalización (i18n)
-
-La aplicación soporta múltiples idiomas usando **next-intl**.
-
-### Idiomas Disponibles
-- **Español (esp)** - Idioma por defecto
-- **English (eng)**
-
-### Estructura de URLs
-- Español (por defecto): `/esp/dashboard`, `/esp/auth/login`
-- Inglés: `/eng/dashboard`, `/eng/auth/login`
-
-### Uso en Componentes
-```tsx
-import { useTranslations } from 'next-intl';
-
-const MyComponent = () => {
-  const t = useTranslations();
-  return <h1>{t('dashboard.title')}</h1>;
-};
-```
-
-### Agregar Nuevo Idioma
-1. Crear archivo de traducciones en `/messages/[locale].json`
-2. Agregar el locale en `/i18n/config.ts`
-3. Agregar label en los componentes de registro/perfil
-
-### Idioma del Usuario
-El idioma preferido del usuario se guarda en el perfil y se sincroniza con el backend. Al iniciar sesión o registrarse, la aplicación redirige automáticamente al locale correspondiente al idioma del usuario.
-
-## 🔔 Sistema de Notificaciones
-
-La aplicación incluye un sistema completo de notificaciones con soporte para tiempo real.
-
-### Características
-- **Campanita en el header** con contador de no leídas
-- **Dropdown** con lista de notificaciones
-- **Soporte i18n** - Títulos y mensajes traducibles
-- **Sincronización con backend** - Persistencia en MongoDB
-- **Tiempo real opcional** - Via Socket.IO (configurable)
-
-### Arquitectura
-```
-SocketContext (singleton)
-    ├── Carga notificaciones no leídas al iniciar sesión
-    ├── Conecta Socket.IO (si está habilitado)
-    └── Escucha eventos 'notification'
-            │
-            ▼
-NotificationStore (Zustand persistido)
-    ├── notifications[]
-    ├── unreadCount
-    └── addNotification, markAsRead, etc.
-            │
-            ▼
-NotificationBell (UI)
-    └── useNotifications() → Sincroniza acciones con backend
-```
-
-### Configuración
-```env
-# Habilitar notificaciones en tiempo real (requiere Socket.IO en backend)
-NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS=true
-```
-
-### API de Notificaciones
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/notifications/:userId` | Obtener no leídas |
-| PUT | `/notifications/:userId/:id` | Marcar como leída |
-| PUT | `/notifications/:userId` | Marcar todas como leídas |
-| DELETE | `/notifications/:userId/:id` | Eliminar notificación |
-
-### Uso en Componentes
-```tsx
-import { useNotifications } from '@/hooks/useNotifications';
-
-const MyComponent = () => {
-  const { markAsReadWithSync, deleteNotificationWithSync } = useNotifications();
-  
-  // Las acciones se sincronizan automáticamente con el backend
-  await markAsReadWithSync(notificationId);
-};
-```
-
-## 📊 Características del Dashboard
-
-### Páginas Principales
-- **Dashboard** - Resumen financiero con métricas clave
-- **Agregar Transacción** - Formulario intuitivo para ingresos y gastos
-- **Categorías** - Gestión de categorías personalizadas
-- **Historial** - Tabla completa con filtros y paginación
-- **Reportes** - Gráficas interactivas y análisis visual
-- **Perfil** - Configuración de usuario
-
-### Funcionalidades
-- **Resumen financiero** con métricas clave
-- **Formulario intuitivo** para agregar transacciones
-- **Gestión de categorías** personalizadas por usuario
-- **Historial completo** con filtros y paginación
-- **Reportes visuales** con gráficas interactivas
-- **Diseño responsive** para móviles y desktop
-- **Autenticación segura** con JWT y cookies
-- **Soporte multiidioma** con selector de idioma
-
-## 🔐 Autenticación
-
-### Flujo de Autenticación
-1. **Registro** - Crear nueva cuenta de usuario
-2. **Login** - Iniciar sesión con credenciales
-3. **Protección de rutas** - Middleware para rutas privadas
-4. **Recuperación de contraseña** - Envío de email para reset
-5. **Logout** - Cerrar sesión y limpiar estado
-
-### Componentes de Autenticación
-- `AuthLayout` - Layout para páginas de auth
-- `ProtectedRoute` - Componente para proteger rutas
-- `useAuthStore` - Store de Zustand para estado de auth
-
-## 📈 Gráficas y Reportes
-
-### Tipos de Gráficas
-- **Gráfica de barras** - Gastos por categoría
-- **Gráfica circular** - Distribución ingresos vs gastos
-- **Gráfica de líneas** - Tendencia mensual
-
-### Librerías Utilizadas
-- Recharts para gráficas interactivas
-- Day.js para manejo de fechas
-- Utilidades personalizadas para formateo (`useFormatters`)
-
-## 🎨 Diseño y UI
-
-### Ant Design Components
-- Layout (Sider, Header, Content)
-- Form, Input, Button, Card
-- Table, Pagination, Select
-- Charts, Statistic, Typography
-
-### Características de Diseño
-- **Colores neutros** con buena jerarquía visual
-- **Padding generoso** para mejor legibilidad
-- **Diseño responsive** para todos los dispositivos
-- **Iconografía consistente** con Ant Design Icons
-
-## 🔧 Configuración
-
-### Variables de Entorno
-
-Todas las variables de entorno están centralizadas en `config/env.ts`:
-
-```typescript
-import { api, socket, recaptcha } from '@/config/env';
-
-api.url           // URL de la API
-socket.url        // URL del servidor Socket.IO
-socket.enabled    // true/false
-recaptcha.siteKey // Clave de reCAPTCHA
-recaptcha.enabled // true/false
-```
-
-#### Variables disponibles
-| Variable | Descripción | Default |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_API_URL` | URL de la API del backend | `http://localhost:5000/api/v1.0.0` |
-| `NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS` | Habilitar Socket.IO | `false` |
-| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | Clave de Google reCAPTCHA v3 | (vacío = deshabilitado) |
-
-### TypeScript
-- Configuración estricta habilitada
-- Paths absolutos configurados (`@/`)
-- Tipos personalizados para API
-
-### Next.js
-- App Router habilitado
-- Configuración de imágenes
-- Variables de entorno públicas
-- Plugin next-intl para i18n
-
-## 🆘 Solución de Problemas
-
-### Error de conexión con API
-- Verifica que el backend esté ejecutándose
-- Revisa la configuración de `NEXT_PUBLIC_API_URL`
-- Asegúrate de que CORS esté configurado correctamente
-
-### Problemas de autenticación
-- Verifica que las cookies estén habilitadas
-- Revisa que el token JWT sea válido
-- Asegúrate de que el store de Zustand esté funcionando
-
-### Errores de compilación
-- Verifica que todas las dependencias estén instaladas
-- Revisa la configuración de TypeScript
-- Ejecuta `yarn type-check` para ver errores específicos
-
-### Problemas con i18n
-- Verifica que el middleware esté configurado correctamente
-- Revisa que los archivos de traducción existan en `/messages`
-- Asegúrate de usar `useTranslations()` dentro de componentes cliente
-
-### Problemas con notificaciones
-- Verifica que `NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS=true` si usas Socket.IO
-- Revisa que el backend tenga Socket.IO configurado
-- Verifica que el token JWT sea válido para la conexión del socket
-- Las notificaciones se cargan al iniciar sesión aunque Socket.IO esté deshabilitado
-
-### Errores de caché
-- Elimina la carpeta `.next` y reinicia el servidor
-```bash
-rm -rf .next && yarn dev
-```
-
-### Problemas de renderizado
-- Verifica que los componentes estén correctamente importados
-- Revisa la configuración de Next.js
-- Asegúrate de que los hooks estén siendo usados correctamente
-
+| Documento | Descripción |
+|-----------|-------------|
+| [Arquitectura](./docs/arquitectura.md) | Estructura del proyecto y diagramas |
+| [API Client](./docs/api.md) | Endpoints y configuración del cliente |
+| [Notificaciones](./docs/notificaciones.md) | Sistema de notificaciones en tiempo real |
+| [Internacionalización](./docs/i18n.md) | Configuración de idiomas |
+| [Despliegue](./docs/despliegue.md) | Guía de deploy en Vercel y AWS |
+| [Troubleshooting](./docs/troubleshooting.md) | Solución de problemas comunes |
 
 ## 📄 Licencia
 
-Todos los derechos reservados.
-Este proyecto es software propietario y confidencial.
-
-**UNLICENSED** - No se permite el uso, copia, modificación o distribución sin autorización expresa del autor.
+**UNLICENSED** - Software propietario y confidencial.  
+No se permite el uso, copia, modificación o distribución sin autorización expresa.
 
 © 2025 NizerApp / Ruben Bautista Mendoza
