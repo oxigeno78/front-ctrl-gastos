@@ -9,7 +9,7 @@ Aplicación web desarrollada con Next.js 14, React 18, TypeScript y Ant Design p
 - **Ant Design** para componentes UI
 - **Zustand** para manejo de estado global (persistido)
 - **React Hook Form** + **Yup** para formularios y validación
-- **Ant Design Charts** para gráficas y reportes
+- **Recharts** para gráficas y reportes
 - **next-intl** para internacionalización (i18n)
 - **Socket.IO** para notificaciones en tiempo real (opcional)
 - **Sistema de notificaciones** con sincronización backend
@@ -82,6 +82,9 @@ frontend/
 │       │   │   ├── page.tsx      # Lista de transacciones
 │       │   │   └── [id]/         # Edición de transacción
 │       │   └── reports/
+│       ├── privacy/          # Política de privacidad
+│       ├── terms/            # Términos y condiciones
+│       ├── subscription/     # Gestión de suscripción
 │       └── reset-password/
 ├── components/               # Componentes reutilizables
 │   ├── LanguageSwitcher.tsx  # Selector de idioma
@@ -93,7 +96,8 @@ frontend/
 │   ├── notifications/
 │   │   └── NotificationBell.tsx  # Campanita de notificaciones
 │   ├── providers/
-│   │   └── ClientProviders.tsx   # Wrapper de providers client-side
+│   │   ├── AntdConfigProvider.tsx # Configuración de Ant Design
+│   │   └── ClientProviders.tsx    # Wrapper de providers client-side
 │   └── transactions/
 │       └── TransactionForm.tsx
 ├── config/                   # Configuración centralizada
@@ -102,6 +106,7 @@ frontend/
 │   └── SocketContext.tsx     # Conexión Socket.IO singleton
 ├── hooks/                    # Custom hooks
 │   ├── useCategories.ts
+│   ├── useFormatters.ts      # Formateo de moneda y fechas
 │   ├── useInvisibleRecaptcha.ts
 │   └── useNotifications.ts   # Sincronización de notificaciones
 ├── i18n/                     # Configuración de internacionalización
@@ -118,7 +123,9 @@ frontend/
 │   ├── index.ts              # Tipos de dominio + re-exports
 │   ├── forms.ts              # Interfaces de formularios
 │   ├── stores.ts             # Interfaces de stores Zustand
-│   └── components.ts         # Props de componentes reutilizables
+│   ├── components.ts         # Props de componentes reutilizables
+│   ├── contexts.ts           # Tipos para contextos React
+│   └── reports.ts            # Tipos para reportes y gráficas
 ├── utils/                    # Utilidades y API client
 │   ├── api.ts                # Cliente Axios + endpoints
 │   └── helpers.ts
@@ -146,7 +153,7 @@ frontend/
 - Zustand (con persistencia)
 - React Hook Form
 - Yup
-- Ant Design Charts
+- Recharts
 - next-intl
 - Socket.IO Client
 - Axios
@@ -377,9 +384,9 @@ const MyComponent = () => {
 - **Gráfica de líneas** - Tendencia mensual
 
 ### Librerías Utilizadas
-- Ant Design Charts para gráficas interactivas
+- Recharts para gráficas interactivas
 - Day.js para manejo de fechas
-- Utilidades personalizadas para formateo
+- Utilidades personalizadas para formateo (`useFormatters`)
 
 ## 🎨 Diseño y UI
 
@@ -428,26 +435,6 @@ recaptcha.enabled // true/false
 - Configuración de imágenes
 - Variables de entorno públicas
 - Plugin next-intl para i18n
-
-## 🚀 Despliegue
-
-### Desarrollo Local
-```bash
-yarn dev
-```
-
-### Producción
-```bash
-yarn build
-yarn start
-```
-
-### Variables de Entorno para Producción
-```env
-NEXT_PUBLIC_API_URL=https://tu-api.com/api/v1.0.0
-NEXT_PUBLIC_ENABLE_REALTIME_NOTIFICATIONS=true
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=tu-clave-recaptcha
-```
 
 ## 🆘 Solución de Problemas
 
